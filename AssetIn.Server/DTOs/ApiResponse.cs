@@ -1,4 +1,4 @@
-﻿namespace AssetIn.Server
+﻿namespace AssetIn.Server.DTOs
 {
     public class ApiResponse
     {
