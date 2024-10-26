@@ -16,7 +16,7 @@ public class OrganizationsAssetRequest
     [Required]
     public int RequestStatus { get; set; }
     [Required]
-    public int UserID { get; set; }
+    public string UserID { get; set; }
     [ForeignKey("UserID")]
     public User User { get; set; }
 }

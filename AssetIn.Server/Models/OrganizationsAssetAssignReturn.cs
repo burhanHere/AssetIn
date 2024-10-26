@@ -12,9 +12,9 @@ public class OrganizationsAssetAssignReturn
     [Required]
     public string Notes { get; set; }
     [Required]
-    public int AssignedToUserID { get; set; }
+    public string AssignedToUserID { get; set; }
     [Required]
-    public int AssignedByUserID { get; set; }
+    public string AssignedByUserID { get; set; }
     [Required]
     public int AssetID { get; set; }
     [ForeignKey("AssignedToUserID")]
