@@ -4,27 +4,27 @@ namespace AssetIn.Server.DTOs;
 
 public class UserSignUpDTO
 {
-    [Required]
+    [Required(ErrorMessage = "User FullName is required")]
     [StringLength(100)]
-    public string FullName { get; set; }
-    [Required]
+    public required string? FullName { get; set; }
+    [Required(ErrorMessage = "User UserName is required")]
     [StringLength(50)]
-    public string UserName { get; set; }
-    [Required]
+    public required string? UserName { get; set; }
+    [Required(ErrorMessage = "User Gender is required")]
     [StringLength(10)]
-    public string Gender { get; set; }
-    [Required]
+    public required string? Gender { get; set; }
+    [Required(ErrorMessage = "User DateOfBirth is required")]
     public DateTime DateOfBirth { get; set; }
-    [Required]
+    [Required(ErrorMessage = "User Email is required")]
     [EmailAddress]
     [StringLength(100)]
-    public string Email { get; set; }
-    [Required]
+    public required string? Email { get; set; }
+    [Required(ErrorMessage = "User PhoneNumber is required")]
     [StringLength(15)]
-    public string PhoneNumber { get; set; }
-    [Required]
+    public required string? PhoneNumber { get; set; }
+    [Required(ErrorMessage = "User Password is required")]
     [StringLength(255)]
-    public string PasswordHash { get; set; }
-    [Required]
-    public String RequiredRole { get; set; }
+    public required string? Password { get; set; }
+    [Required(ErrorMessage = "User Role is required")]
+    public required string? RequiredRole { get; set; }
 }

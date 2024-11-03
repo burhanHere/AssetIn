@@ -1,5 +1,322 @@
-﻿namespace AssetIn.Server.Repositories;
+﻿using System.Drawing.Imaging;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using AssetIn.Server.Data;
+using AssetIn.Server.DTOs;
+using AssetIn.Server.Helpers;
+using AssetIn.Server.Models;
+using AssetIn.Server.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 
-public class AuthenticationRepository
+namespace AssetIn.Server.Repositories;
+
+public class AuthenticationRepository(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, EmailService emailService)
 {
+    private readonly UserManager<User> _userManager = userManager;
+    private readonly RoleManager<IdentityRole> _roleManager = roleManager;
+    private readonly IConfiguration _configuration = configuration;
+    private readonly EmailService _emailService = emailService;
+
+    public async Task<ApiResponse> UserSignUp(UserSignUpDTO userSignUpDTO)
+    {
+        // check is user already exist with this email
+        var userEmailExist = await _userManager.FindByEmailAsync(userSignUpDTO.Email!);
+        if (userEmailExist != null)
+        {
+            return new()
+            {
+                Status = StatusCodes.Status409Conflict,
+                ResponseData = "User email already registered.",
+                Errors = null,
+            };
+        }
+
+        //creating new user record
+        User newUser = new()
+        {
+            Email = userSignUpDTO.Email,
+            UserName = userSignUpDTO.UserName,
+            SecurityStamp = Guid.NewGuid().ToString(),
+        };
+
+        var createNewUser = await _userManager.CreateAsync(newUser, userSignUpDTO.Password!);
+        if (!createNewUser.Succeeded)
+        {
+            //if fail to create new user
+            return new()
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string>
+                {"Unable to create new user","Try again later."},
+                Errors = createNewUser.Errors,
+            };
+        }
+        //check if the required role exist in db
+        var requiredRoleExist = await _roleManager.FindByNameAsync(userSignUpDTO.RequiredRole!);
+
+        if (requiredRoleExist == null && (requiredRoleExist?.NormalizedName != "ORGANIZATIONOWNER" || requiredRoleExist.NormalizedName != "VENDOR"))
+        {
+            //if the required role does not exist
+            var deleteUser = await _userManager.DeleteAsync(newUser);
+            return new()
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Unable to create user Account." },
+                Errors = null,
+            };
+        }
+        // assigning the required role to the user
+        var newUserRole = await _userManager.AddToRoleAsync(newUser, requiredRoleExist.Name!);
+        if (!newUserRole.Succeeded)
+        {
+            // if fail to assign the required role to the user
+            var deleteUser = await _userManager.DeleteAsync(newUser);
+            return new()
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Unable to create user Account." },
+                Errors = null,
+            };
+        }
+        // genrating email confirmation token
+        var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+        //Confirmation Email message 
+        string message = $"Please click the below link to confirm you email address.\n Confirmation Link: <a href:={HelperFunctions.TokenToLink(_configuration.GetValue<string>("JWT:ValidAudience") + "/auth", "EmailConfirmation", emailConfirmationToken, newUser.Email!)}>Click Here </a>";
+        //Confirmation Email subject 
+        string subject = "Confirmation E-Mail (No Reply)";
+        //Sending Conformation Email 
+        var confirmationEmailSent = await _emailService.SendEmailAsync(newUser.Email!, subject, message);
+        if (!confirmationEmailSent)
+        {
+            // Account created, but email sending failed
+            return new()
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string>
+                    {
+                        "Account created successfully.",
+                        "Unable to send confirmation email. Please try to log in later to confirm your email."
+                    },
+                Errors = null,
+            };
+        }
+
+        // Account created, Email sent and role assigned successfully 
+        return new()
+        {
+            Status = StatusCodes.Status200OK,
+            ResponseData = new List<string>
+                    {
+                        "Account created successfully.",
+                        "Confirmation email sent.",
+                    }
+        };
+    }
+
+    public async Task<ApiResponse> SignIn(UserSignInDTO userSignInDTO)
+    {
+        // check is user exists
+        var userExist = await _userManager.FindByEmailAsync(userSignInDTO.Email!);
+        if (userExist == null)
+        {
+            return new()
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = "User Not Found",
+                Errors = null,
+            };
+        }
+        // check is user email is confirmed or not
+        if (!userExist.EmailConfirmed)
+        {
+            // if not email confirend 
+            // genrating email confirmation token
+            var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(userExist);
+            //Confirmation Email message 
+            string message = $"Please click the below link to confirm you email address.\n Confirmation Link: <a href:={HelperFunctions.TokenToLink(_configuration.GetValue<string>("JWT:ValidAudience") + "/auth", "EmailConfirmation", emailConfirmationToken, userExist.Email!)}>Click Here </a>";
+            //Confirmation Email subject 
+            string subject = "Confirmation E-Mail (No Reply)";
+            //Sending Conformation Email 
+            bool confirmationEmailSent = await _emailService.SendEmailAsync(userExist.Email!, subject, message);
+            if (!confirmationEmailSent)
+            {
+                // Account created, but email sending failed
+                return new()
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string>
+                    {
+                        "Unable to send confirmation email. Please try to log in later to confirm your email."
+                    },
+                    Errors = "Email not confirmed"
+                };
+            }
+            // user can login because email not confirmed
+            return new()
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = "Your email address has not been confirmed. Please check your inbox for the confirmation email and verify your account by the link in the email.",
+                Errors = "Email not confirmed"
+            };
+        }
+        // varify user password
+        bool correctPassowrd = await _userManager.CheckPasswordAsync(userExist, userSignInDTO.Password!);
+        if (!correctPassowrd)
+        {
+            return new()
+            {
+                Status = StatusCodes.Status401Unauthorized,
+                ResponseData = "Invalid Email or Password",
+                Errors = null,
+            };
+        }
+        // adding user Claims which we want to send in jwt token
+        var authClaims = new List<Claim>
+        {
+            new(ClaimTypes.Email, userExist.Email!),
+            new("EmailConfirmed", userExist.EmailConfirmed?"true":"flase"),
+            new("FullName",userExist.UserName!),
+        };
+        var userRoles = await _userManager.GetRolesAsync(userExist);
+        authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+        // getting encryption key for jwt token encruption
+        var secret = _configuration.GetValue<string>("JWT:Secret");
+        // getting Valid Issuer of the token
+        var issuer = _configuration.GetValue<string>("JWT:ValidIssuer");
+        // setting up encryption key to encrypt jwt
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret!));
+        // formeing jwt token
+        var newJwtToken = new JwtSecurityToken(
+            issuer: issuer,
+            expires: DateTime.Now.AddHours(12),
+            claims: authClaims,
+            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+        );
+        // genrating final jwt token for the user authorizatin
+        var finalJwtToken = new JwtSecurityTokenHandler().WriteToken(newJwtToken);
+        return new()
+        {
+            Status = StatusCodes.Status200OK,
+            ResponseData = new
+            {
+                message = "SignIn Successful;",
+                jwt = finalJwtToken
+            }
+        };
+    }
+
+    public async Task<ApiResponse> ConfirmEmail(string token, string email)
+    {
+        // check is user exists
+        var userExist = await _userManager.FindByEmailAsync(email!);
+        if (userExist == null)
+        {
+            return new()
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = "User Not Found",
+                Errors = null,
+            };
+        }
+        // check is user email is confirmed or not
+        if (userExist.EmailConfirmed)
+        {
+            // User already confirmed
+            return new()
+            {
+                Status = StatusCodes.Status409Conflict,
+                ResponseData = "Your email address is already confirmed.",
+                Errors = "Email already confirmed"
+            };
+        }
+        // confirming the email
+        var confirmationResult = _userManager.ConfirmEmailAsync(userExist, token);
+        if (!confirmationResult.Result.Succeeded)
+        {
+            return new()
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = "Your email address is already confirmed.",
+                Errors = "Email already confirmed"
+            };
+        }
+        return new()
+        {
+            Status = StatusCodes.Status200OK,
+            ResponseData = "Email address is confirmed successfully.",
+            Errors = null
+        };
+    }
+
+    public async Task<ApiResponse> ForgetPassword(ForgetPasswordDTO userSignInDTO)
+    {
+        // check is user exists
+        var userExist = await _userManager.FindByEmailAsync(userSignInDTO.Email!);
+        if (userExist == null)
+        {
+            return new()
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = "User Not Found",
+                Errors = null,
+            };
+        }
+        //genrating Password Reset Token
+        var passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(userExist);
+        // converting he token in to link forming messgae 
+        string message = $"Please click the link below to reset your password.\nPassowrd Reset Link: <a href ={HelperFunctions.TokenToLink("http://localhost:4200/auth", "resetpassword", passwordResetToken, userExist.Email!)}>Click</a>";
+        // subject of passowrd reset email  
+        string subject = "Reset password E-Mail (No Reply)";
+        bool emailStatus = await _emailService.SendEmailAsync(userExist.Email!, subject, message);
+        if (!emailStatus)
+        {
+            // Failed to send the reset password email
+            return new()
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = "Unable to send Reset password email. Please try again later.",
+                Errors = null
+            };
+        }
+        return new()
+        {
+            Status = StatusCodes.Status200OK,
+            ResponseData = "Passowrd reset link sent to you email.",
+            Errors = null
+        };
+    }
+
+    public async Task<ApiResponse> ResetPassword(ResetPasswordDTO resetPassowrdDTO)
+    {
+        // check is user exists
+        var userExist = await _userManager.FindByEmailAsync(resetPassowrdDTO.Email!);
+        if (userExist == null)
+        {
+            return new()
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = "User Not Found",
+                Errors = null,
+            };
+        }
+        // validate password reset token and reset password
+        var passwordReset = _userManager.ResetPasswordAsync(userExist, resetPassowrdDTO.Token!, resetPassowrdDTO.NewPassword!);
+        if (!passwordReset.Result.Succeeded)
+        {
+            return new()
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = "failed to reset password.",
+                Errors = null
+            };
+        }
+        return new()
+        {
+            Status = StatusCodes.Status200OK,
+            ResponseData = "Password reset successful. Please log in again.",
+            Errors = null
+        };
+    }
 }
