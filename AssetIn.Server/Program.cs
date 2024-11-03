@@ -1,6 +1,7 @@
 using System.Text;
 using AssetIn.Server.Data;
 using AssetIn.Server.Models;
+using AssetIn.Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,11 +12,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+// Add DbContext
 var ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-Console.WriteLine(ConnectionString);
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(
    ConnectionString, new MySqlServerVersion(new Version(8, 0, 2))
 ));
+
+// Add Identity framework
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Password.RequiredLength = 11;
@@ -25,9 +29,11 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.Password.RequireUppercase = true;
     options.User.RequireUniqueEmail = true;
     options.SignIn.RequireConfirmedEmail = true;
+    options.Tokens.EmailConfirmationTokenProvider = Convert.ToString(TimeSpan.FromHours(24))!;
 }).AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
+// Add JWT Authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -46,6 +52,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Add Role Based Policies for Authorization 
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("OrganizationOwnerPolicy", policy => policy.RequireRole("OrganizationOwner"));
@@ -53,11 +60,20 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("OrganizationOwnerOrganizationAssetManagerOrganizationEmployeePolicy", policy => policy.RequireRole("OrganizationOwner", "OrganizationAssetManager", "OrganizationEmployee"));
     options.AddPolicy("VendorPolicy", policy => policy.RequireRole("Vendor"));
 });
+
+// Add Cors to accep requests  
 builder.Services.AddCors(options =>
        {
            options.AddPolicy("AllowSepcificOrigin", builder => builder.WithOrigins("*").AllowAnyHeader().AllowAnyMethod());
        });
+
+// Add Email Service
+builder.Services.AddTransient<EmailService>();
+// Add Iconfigurations
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
