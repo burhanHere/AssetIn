@@ -1,4 +1,3 @@
-using AssetIn.Server.Data;
 using AssetIn.Server.DTOs;
 using AssetIn.Server.Models;
 using AssetIn.Server.Repositories;
@@ -6,7 +5,6 @@ using AssetIn.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing.Template;
 
 namespace AssetIn.Server.Controllers;
 
@@ -31,19 +29,6 @@ public class AuthenticationController(UserManager<User> userManager, RoleManager
         };
     }
 
-    [HttpPost(template: "SignIn")]
-    public async Task<IActionResult> SignIn([FromBody] UserSignInDTO userSignInDTO)
-    {
-        ApiResponse result = await _authenticationRepository.SignIn(userSignInDTO);
-        return result.Status switch
-        {
-            StatusCodes.Status200OK => Ok(result),
-            StatusCodes.Status401Unauthorized => Unauthorized(result),
-            StatusCodes.Status403Forbidden => StatusCode(StatusCodes.Status403Forbidden, result),
-            StatusCodes.Status404NotFound => NotFound(result),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error occurred."),
-        };
-    }
     [HttpGet(template: "ConfirmEmail")]
     public async Task<IActionResult> ConfirmEmail(string token, string email)
     {
@@ -57,6 +42,21 @@ public class AuthenticationController(UserManager<User> userManager, RoleManager
             _ => StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error occurred."),
         };
     }
+
+     [HttpPost(template: "SignIn")]
+    public async Task<IActionResult> SignIn([FromBody] UserSignInDTO userSignInDTO)
+    {
+        ApiResponse result = await _authenticationRepository.SignIn(userSignInDTO);
+        return result.Status switch
+        {
+            StatusCodes.Status200OK => Ok(result),
+            StatusCodes.Status401Unauthorized => Unauthorized(result),
+            StatusCodes.Status403Forbidden => StatusCode(StatusCodes.Status403Forbidden, result),
+            StatusCodes.Status404NotFound => NotFound(result),
+            _ => StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error occurred."),
+        };
+    }
+
     [HttpPost("ForgetPassword")]
     public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordDTO forgetPasswordDTO)
     {
@@ -69,6 +69,7 @@ public class AuthenticationController(UserManager<User> userManager, RoleManager
             _ => StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error occurred."),
         };
     }
+    
     [HttpPost("ResetPassword")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO resetPasswordDTO)
     {

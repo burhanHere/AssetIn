@@ -29,7 +29,6 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.Password.RequireUppercase = true;
     options.User.RequireUniqueEmail = true;
     options.SignIn.RequireConfirmedEmail = true;
-    options.Tokens.EmailConfirmationTokenProvider = Convert.ToString(TimeSpan.FromHours(24))!;
 }).AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
@@ -69,6 +68,7 @@ builder.Services.AddCors(options =>
 
 // Add Email Service
 builder.Services.AddTransient<EmailService>();
+
 // Add Iconfigurations
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
@@ -88,13 +88,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseCors("AllowSepcificOrigin");
-
 app.UseAuthentication();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
