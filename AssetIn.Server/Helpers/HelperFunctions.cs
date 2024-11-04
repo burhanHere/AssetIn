@@ -1,7 +1,4 @@
 ﻿using System.Net;
-using AssetIn.Server.Models;
-using AssetIn.Server.Services;
-using Microsoft.AspNetCore.Identity;
 
 namespace AssetIn.Server.Helpers;
 

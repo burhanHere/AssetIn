@@ -1,8 +1,6 @@
-﻿using System.Drawing.Imaging;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using AssetIn.Server.Data;
 using AssetIn.Server.DTOs;
 using AssetIn.Server.Helpers;
 using AssetIn.Server.Models;
@@ -81,11 +79,13 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
             };
         }
         // genrating email confirmation token
-        var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+        var targetUser = await _userManager.FindByEmailAsync(userSignUpDTO.Email!);
+        var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(targetUser!);
+        var tokenToLink = HelperFunctions.TokenToLink(_configuration.GetValue<string>("JWT:ValidAudience") + "//auth", "EmailConfirmation", emailConfirmationToken, newUser.Email!);
         //Confirmation Email message 
-        string message = $"Please click the below link to confirm you email address.\n Confirmation Link: <a href:={HelperFunctions.TokenToLink(_configuration.GetValue<string>("JWT:ValidAudience") + "/auth", "EmailConfirmation", emailConfirmationToken, newUser.Email!)}>Click Here </a>";
+        string message = $"Please click the below link to confirm you email address.\n Confirmation Link: <a href:={tokenToLink}>Click Here </a>";
         //Confirmation Email subject 
-        string subject = "Confirmation E-Mail (No Reply)";
+        string subject = "AssetIn: Confirmation E-Mail (No Reply)";
         //Sending Conformation Email 
         var confirmationEmailSent = await _emailService.SendEmailAsync(newUser.Email!, subject, message);
         if (!confirmationEmailSent)
