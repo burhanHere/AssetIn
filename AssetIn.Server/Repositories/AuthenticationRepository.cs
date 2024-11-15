@@ -124,7 +124,7 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
             return new()
             {
                 Status = StatusCodes.Status404NotFound,
-                ResponseData = "User Not Found",
+                ResponseData = new List<string>() { "User Not Found" },
                 Errors = null,
             };
         }
@@ -157,7 +157,9 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
             return new()
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Your email address has not been confirmed. Please check your inbox for the confirmation email and verify your account by the link in the email.",
+                ResponseData = new List<string>{
+                    "Your email address has not been confirmed. Please check your inbox for the confirmation email and verify your account by the link in the email."
+                    },
                 Errors = "Email not confirmed"
             };
         }
@@ -168,7 +170,7 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
             return new()
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = "Invalid Email or Password",
+                ResponseData = new List<string> { "Invalid Email or Password" },
                 Errors = null,
             };
         }
@@ -201,7 +203,7 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
             Status = StatusCodes.Status200OK,
             ResponseData = new
             {
-                message = "SignIn Successful;",
+                message = "SignIn Successful",
                 jwt = finalJwtToken
             }
         };
