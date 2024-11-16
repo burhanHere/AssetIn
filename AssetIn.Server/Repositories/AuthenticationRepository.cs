@@ -135,7 +135,7 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
             // genrating email confirmation token
             var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(userExist);
             //Confirmation Email message 
-            string message = $"Please click the below link to confirm you email address.\n Confirmation Link: <a href:={HelperFunctions.TokenToLink(_configuration.GetValue<string>("JWT:ValidAudience") + "/auth", "EmailConfirmation", emailConfirmationToken, userExist.Email!)}>Click Here </a>";
+            string message = $"Please click the below link to confirm you email address.\n Confirmation Link: <a href={HelperFunctions.TokenToLink(_configuration.GetValue<string>("JWT:ValidAudience") + "/auth", "emailConfirmation", emailConfirmationToken, userExist.Email!)}>Click Here </a>";
             //Confirmation Email subject 
             string subject = "Confirmation E-Mail (No Reply)";
             //Sending Conformation Email 
@@ -218,7 +218,10 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
             return new()
             {
                 Status = StatusCodes.Status404NotFound,
-                ResponseData = "User Not Found",
+                ResponseData = new List<string>
+                {
+                    "User Not Found"
+                },
                 Errors = null,
             };
         }
@@ -229,8 +232,11 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
             return new()
             {
                 Status = StatusCodes.Status409Conflict,
-                ResponseData = "Your email address is already confirmed.",
-                Errors = "Email already confirmed"
+                ResponseData = new List<string>
+                {
+                    "Your email address is already confirmed. Try to login."
+                },
+                Errors = null
             };
         }
         // confirming the email
@@ -240,14 +246,20 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
             return new()
             {
                 Status = StatusCodes.Status400BadRequest,
-                ResponseData = "Your email address is already confirmed.",
-                Errors = "Email already confirmed"
+                ResponseData = new List<string>
+                {
+                    "Failed to confirm email"
+                },
+                Errors = null
             };
         }
         return new()
         {
             Status = StatusCodes.Status200OK,
-            ResponseData = "Email address is confirmed successfully.",
+            ResponseData = new List<string>
+            {
+                "Email address is confirmed successfully."
+            },
             Errors = null
         };
     }

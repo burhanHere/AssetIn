@@ -13,7 +13,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrl: './sign-in.component.css',
 })
 export class SignInComponent {
-  private authenticationServiceService: AuthenticationService = inject(
+  private authenticationService: AuthenticationService = inject(
     AuthenticationService
   );
   private router: Router = inject(Router);
@@ -29,11 +29,9 @@ export class SignInComponent {
   signIn(): void {
     if (!this.loginForm.invalid) {
       this.isLoading = true;
-      // console.log(this.loginForm.value);
-      this.authenticationServiceService.SignIn(this.loginForm.value).subscribe(
+      this.authenticationService.SignIn(this.loginForm.value).subscribe(
         (response: ApiResponse) => {
           this.isLoading = false;
-          // console.log(response);
           this.errorCardTitle = 'Congratulations 🎉';
           this.errorCardMessage = response.responseData['message'];
           this.showAlertCard = true;
@@ -41,7 +39,6 @@ export class SignInComponent {
         },
         (error: HttpErrorResponse) => {
           this.isLoading = false;
-          // console.log(error);
           if (error['status'] == 500) {
             // redirecting to error page
             this.router.navigateByUrl('**');

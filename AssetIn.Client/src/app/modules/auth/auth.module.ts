@@ -9,9 +9,10 @@ import { AlertCardComponent } from '../../shared/components/alert-card/alert-car
 import { PageLoaderComponent } from '../../shared/components/page-loader/page-loader.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { EmailConfirmationComponent } from './email-confirmation/email-confirmation.component';
 
 @NgModule({
-  declarations: [SignInComponent, SignUpComponent, ForgotPasswordComponent],
+  declarations: [SignInComponent, SignUpComponent, ForgotPasswordComponent, EmailConfirmationComponent],
   imports: [
     CommonModule,
     AuthRoutingModule,

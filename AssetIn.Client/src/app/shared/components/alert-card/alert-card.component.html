@@ -1,9 +1,9 @@
-<div class="burhan_bodyContainer" (click)="closeCard.emit(false)">
+<div class="burhan_bodyContainer">
   <div class="burhan_box">
     <button class="close-button btn btn-outline-primary" (click)="closeCard.emit(false)">X</button>
     <div class="error-card">
-      <h1>{{ errorTitle }}</h1>
-      <p>{{ errorMessage }}</p>
+      <h1>{{ title }}</h1>
+      <p>{{ message }}</p>
     </div>
   </div>
 </div>

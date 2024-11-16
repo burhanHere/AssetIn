@@ -1,0 +1,12 @@
+@if (isLoading) {
+<app-page-loader></app-page-loader>
+}
+
+@if (showAlert) {
+<app-alert-card (closeCard)="dismissAlertAndLogin($event)" [title]="alertCardTitle"
+  [message]="alertCardMessage"></app-alert-card>
+}
+
+
+<div class="burhan_bodyContainer">
+</div>

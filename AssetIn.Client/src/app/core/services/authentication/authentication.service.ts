@@ -18,14 +18,18 @@ export class AuthenticationService {
   // Public methods for authentication functionalities
 
   // Method for new user sign up using HTTP POST request with user data
-  // public SignUp(): Observable<ApiResponse> {
-  //   return Object();
-  // }
+  public SignUp(): Observable<ApiResponse> {
+    return Object();
+  }
 
   // Method for user email confirmation using HTTP GET request with user data
-  // public ConfirmEmail(): Observable<ApiResponse> {
-  //   return Object();
-  // }
+  public ConfirmEmail(token: string, email: string): Observable<ApiResponse> {
+    return this.httpClient.get<ApiResponse>(
+      this.apiUrls.baseUrl +
+        this.apiUrls.authentionApiUrls.ConfirmEmail +
+        `?token=${token}&email=${email}`
+    );
+  }
 
   // Method for user sign in using HTTP POST request with user data
   public SignIn(userData: SignIn): Observable<ApiResponse> {
@@ -36,12 +40,12 @@ export class AuthenticationService {
   }
 
   // Method for forget password request using HTTP POST request with user data
-  // public ForgetPassword(): Observable<ApiResponse> {
-  //   return Object();
-  // }
+  public ForgetPassword(): Observable<ApiResponse> {
+    return Object();
+  }
 
   // Method for user reset password using HTTP POST request with user data
-  // public ResetPassword(): Observable<ApiResponse> {
-  //   return Object();
-  // }
+  public ResetPassword(): Observable<ApiResponse> {
+    return Object();
+  }
 }
