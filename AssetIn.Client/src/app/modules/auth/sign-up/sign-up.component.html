@@ -4,7 +4,7 @@
 }
 
 @if (showAlert) {
-<app-alert-card [title]="alertTitle" [message]="alertMessage" (closeCard)="showAlert = $event"></app-alert-card>
+<app-alert-card [title]="alertTitle" [message]="alertMessage" (closeCard)="dismissAlertAndLogin($event)"></app-alert-card>
 }
 
 <div class="burhan_bodyContainer">
@@ -102,16 +102,16 @@
       </div>
       <div class="row w-100 justify-content-between pt-1 pb-5">
         <div class="burhan_input-box">
-          <select formControlName="requireRole" name="requireRole" required>
+          <select formControlName="requiredRole" name="requiredRole" required>
             <option value="" disabled selected>Account Type</option>
-            <option value="male">Organizatin Owner</option>
-            <option value="female">Vendor</option>
+            <option value="OrganizationOwner">Organization Owner</option>
+            <option value="Vendor">Vendor</option>
           </select>
           <span>Account Type</span>
           <i></i>
-          @if (signUpForm.controls['requireRole'].touched) {
+          @if (signUpForm.controls['requiredRole'].touched) {
           <div class="inputError">
-            @if (signUpForm.controls['requireRole'].errors?.['required']) {
+            @if (signUpForm.controls['requiredRole'].errors?.['required']) {
             <span>Account Type is required.</span>
             }
           </div>
@@ -129,7 +129,7 @@
             <span>Your password must contain at least 11 characters.</span>
             } @else if (signUpForm.controls['password'].errors?.['pattern']) {
             <span>Password must have at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special
-              character.</span>
+              character and password length must be atleast 11.</span>
             }
           </div>
           }

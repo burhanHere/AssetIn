@@ -26,7 +26,7 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
             return new()
             {
                 Status = StatusCodes.Status409Conflict,
-                ResponseData = "User email already registered.",
+                ResponseData = new List<string> { "User email already registered." },
                 Errors = null,
             };
         }
@@ -47,7 +47,7 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
             {
                 Status = StatusCodes.Status400BadRequest,
                 ResponseData = new List<string>
-                {"Unable to create new user","Try again later."},
+                {"Unable to create new user Account"},
                 Errors = createNewUser.Errors,
             };
         }
@@ -61,7 +61,7 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
             return new()
             {
                 Status = StatusCodes.Status400BadRequest,
-                ResponseData = new List<string> { "Unable to create user Account." },
+                ResponseData = new List<string> { "Unable to create new user Account." },
                 Errors = null,
             };
         }
@@ -74,7 +74,7 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
             return new()
             {
                 Status = StatusCodes.Status400BadRequest,
-                ResponseData = new List<string> { "Unable to create user Account." },
+                ResponseData = new List<string> { "Unable to create new user Account." },
                 Errors = null,
             };
         }
@@ -83,7 +83,7 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
         var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(targetUser!);
         var tokenToLink = HelperFunctions.TokenToLink(_configuration.GetValue<string>("JWT:ValidAudience") + "//auth", "EmailConfirmation", emailConfirmationToken, newUser.Email!);
         //Confirmation Email message 
-        string message = $"Please click the below link to confirm you email address.\n Confirmation Link: <a href:={tokenToLink}>Click Here </a>";
+        string message = $"Please click the below link to confirm you email address.\n Confirmation Link: <a href={tokenToLink}>Click Here </a>";
         //Confirmation Email subject 
         string subject = "AssetIn: Confirmation E-Mail (No Reply)";
         //Sending Conformation Email 
@@ -96,8 +96,7 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
                 Status = StatusCodes.Status200OK,
                 ResponseData = new List<string>
                     {
-                        "Account created successfully.",
-                        "Unable to send confirmation email. Please try to log in later to confirm your email."
+                        "Account created successfully. LogIn to get email confirmation link."
                     },
                 Errors = null,
             };
@@ -107,11 +106,7 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
         return new()
         {
             Status = StatusCodes.Status200OK,
-            ResponseData = new List<string>
-                    {
-                        "Account created successfully.",
-                        "Confirmation email sent.",
-                    }
+            ResponseData = new List<string> { "Account created successfully.", "Confirmation email sent."  }
         };
     }
 

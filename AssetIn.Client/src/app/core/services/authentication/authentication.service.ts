@@ -5,6 +5,7 @@ import { SignIn } from '../../models/signIn';
 
 import { ApiUrls } from '../../constants/api-urls';
 import { ApiResponse } from '../../models/apiResponse';
+import { SignUp } from '../../models/sign-up';
 
 @Injectable({
   providedIn: 'root',
@@ -18,8 +19,11 @@ export class AuthenticationService {
   // Public methods for authentication functionalities
 
   // Method for new user sign up using HTTP POST request with user data
-  public SignUp(): Observable<ApiResponse> {
-    return Object();
+  public SignUp(userData: SignUp): Observable<ApiResponse> {
+    return this.httpClient.post<ApiResponse>(
+      this.apiUrls.baseUrl + this.apiUrls.authentionApiUrls.SignUp,
+      userData
+    );
   }
 
   // Method for user email confirmation using HTTP GET request with user data

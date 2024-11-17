@@ -58,7 +58,7 @@ export class EmailConfirmationComponent implements OnInit {
     );
   }
 
-  dismissAlertAndLogin(event: boolean) {
+  public dismissAlertAndLogin(event: boolean) {
     this.showAlert = event;
     this.router.navigateByUrl('auth/signIn');
   }

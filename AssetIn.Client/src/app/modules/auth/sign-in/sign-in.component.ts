@@ -26,7 +26,7 @@ export class SignInComponent {
   public errorCardMessage: string = '';
   public errorCardTitle: string = '';
 
-  signIn(): void {
+  public signIn(): void {
     if (!this.loginForm.invalid) {
       this.isLoading = true;
       this.authenticationService.SignIn(this.loginForm.value).subscribe(
@@ -39,7 +39,7 @@ export class SignInComponent {
         },
         (error: HttpErrorResponse) => {
           this.isLoading = false;
-          if (error['status'] == 500) {
+          if (error.status == 500) {
             // redirecting to error page
             this.router.navigateByUrl('**');
           } else {

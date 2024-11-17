@@ -1,6 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthenticationService } from '../../../core/services/authentication/authentication.service';
+import { SignUp } from '../../../core/models/sign-up';
+import { ApiResponse } from '../../../core/models/apiResponse';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorPageComponent } from '../../../shared/components/error-page/error-page.component';
 
 @Component({
   selector: 'app-sign-up',
@@ -9,6 +14,9 @@ import { Router } from '@angular/router';
 })
 export class SignUpComponent {
   private router: Router = inject(Router);
+  private authenticationService: AuthenticationService = inject(
+    AuthenticationService
+  );
   public signUpForm: FormGroup = new FormGroup({
     fullName: new FormControl('', [Validators.required]),
     userName: new FormControl('', [Validators.required]),
@@ -19,15 +27,13 @@ export class SignUpComponent {
       Validators.required,
       Validators.maxLength(13),
       Validators.minLength(13),
-      Validators.pattern(
-        /^\+(\d{1,3})\s?\(?\d{1,4}\)?[\s\-]?\d{1,4}[\s\-]?\d{1,4}[\s\-]?\d{1,4}$/
-      ),
+      Validators.pattern(/^\+\d{1,3}\d{9,12}$/),
     ]),
-    requireRole: new FormControl('', [Validators.required]),
+    requiredRole: new FormControl('', [Validators.required]),
     password: new FormControl('', [
       Validators.required,
       Validators.minLength(11),
-      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/),
+      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{11,}$/),
     ]),
     confirmPassword: new FormControl('', [Validators.required]),
   });
@@ -37,6 +43,39 @@ export class SignUpComponent {
   public alertMessage: string = '';
 
   public signUpUser(): void {
-    console.log(this.signUpForm.value);
+    if (this.signUpForm.valid) {
+      this.isLoading = true;
+      let userData: SignUp = this.signUpForm.value;
+      console.log(userData);
+      this.authenticationService.SignUp(userData).subscribe(
+        (response: ApiResponse) => {
+          console.log(response);
+          this.isLoading = false;
+          this.showAlert = true;
+          this.alertTitle = 'Successful🎉.';
+          this.alertMessage = response.responseData[0];
+        },
+        (error: HttpErrorResponse) => {
+          console.log(error);
+          this.isLoading = false;
+          this.showAlert = true;
+          if (error.status == 500) {
+            // redirecting to error page
+            this.router.navigateByUrl('**');
+          } else {
+            // 409conflict User email already registered.
+            // 400BadRequest Unable to create new user
+            this.alertTitle = error.status.toString();
+            this.alertMessage = error.error.responseData[0];
+          }
+        }
+      );
+      this.signUpForm.reset();
+    }
+  }
+
+  public dismissAlertAndLogin(event: boolean) {
+    this.showAlert = event;
+    this.router.navigateByUrl('auth/signIn');
   }
 }
