@@ -1,10 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { SignIn } from '../../models/signIn';
+import { SignIn } from '../../models/sign-in';
 
 import { ApiUrls } from '../../constants/api-urls';
 import { ApiResponse } from '../../models/apiResponse';
+import { SignUp } from '../../models/sign-up';
+import { ForgetPassword } from '../../models/forget-password';
+import { ResetPassword } from '../../models/reset-password';
 
 @Injectable({
   providedIn: 'root',
@@ -18,14 +21,21 @@ export class AuthenticationService {
   // Public methods for authentication functionalities
 
   // Method for new user sign up using HTTP POST request with user data
-  // public SignUp(): Observable<ApiResponse> {
-  //   return Object();
-  // }
+  public SignUp(userData: SignUp): Observable<ApiResponse> {
+    return this.httpClient.post<ApiResponse>(
+      this.apiUrls.baseUrl + this.apiUrls.authentionApiUrls.SignUp,
+      userData
+    );
+  }
 
   // Method for user email confirmation using HTTP GET request with user data
-  // public ConfirmEmail(): Observable<ApiResponse> {
-  //   return Object();
-  // }
+  public ConfirmEmail(token: string, email: string): Observable<ApiResponse> {
+    return this.httpClient.get<ApiResponse>(
+      this.apiUrls.baseUrl +
+        this.apiUrls.authentionApiUrls.ConfirmEmail +
+        `?token=${token}&email=${email}`
+    );
+  }
 
   // Method for user sign in using HTTP POST request with user data
   public SignIn(userData: SignIn): Observable<ApiResponse> {
@@ -36,12 +46,15 @@ export class AuthenticationService {
   }
 
   // Method for forget password request using HTTP POST request with user data
-  // public ForgetPassword(): Observable<ApiResponse> {
-  //   return Object();
-  // }
+  public ForgetPassword(userData: ForgetPassword): Observable<ApiResponse> {
+    return this.httpClient.post<ApiResponse>(
+      this.apiUrls.baseUrl + this.apiUrls.authentionApiUrls.ForgetPassword,
+      userData
+    );
+  }
 
   // Method for user reset password using HTTP POST request with user data
-  // public ResetPassword(): Observable<ApiResponse> {
-  //   return Object();
-  // }
+  public ResetPassword(userData: ResetPassword): Observable<ApiResponse> {
+    return this.httpClient.post<ApiResponse>(this.apiUrls.baseUrl+this.apiUrls.authentionApiUrls.ResetPassword,userData);
+  }
 }

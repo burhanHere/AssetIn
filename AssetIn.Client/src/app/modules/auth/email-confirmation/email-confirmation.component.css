@@ -1,0 +1,14 @@
+.burhan_bodyContainer {
+  margin-left: 0px;
+  margin-right: 0px;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: url('https://i.postimg.cc/XYjWrv36/dark-hexagonal-background-with-gradient-color_79603-1409.jpg') no-repeat;
+  background-size: cover;
+  background-position: center;
+}

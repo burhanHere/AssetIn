@@ -8,7 +8,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   styleUrl: './alert-card.component.css',
 })
 export class AlertCardComponent {
-  @Input() public errorTitle: string = '';
-  @Input() public errorMessage: string = '';
+  @Input() public title: string = '';
+  @Input() public message: string = '';
   @Output() public closeCard: EventEmitter<boolean> = new EventEmitter();
 }

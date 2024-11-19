@@ -10,7 +10,7 @@ public class HelperFunctions
         var encodedToken = WebUtility.UrlEncode(token);
         var encodedEmail = WebUtility.UrlEncode(email);
 
-        var emailConfirmationLink = $"{baseUrl}/{endpoint}/{encodedToken}&email={encodedEmail}";
+        var emailConfirmationLink = $"{baseUrl}/{endpoint}?token={encodedToken}&email={encodedEmail}";
         return emailConfirmationLink;
     }
 }
