@@ -1,18 +1,19 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../../core/services/authentication/authentication.service';
 import { SignUp } from '../../../core/models/sign-up';
 import { ApiResponse } from '../../../core/models/apiResponse';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorPageComponent } from '../../../shared/components/error-page/error-page.component';
+import { Init } from 'v8';
+import { formControlValueMatch } from '../../../shared/validators/form-control-value-match.validator';
 
 @Component({
   selector: 'app-sign-up',
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.css',
 })
-export class SignUpComponent {
+export class SignUpComponent implements OnInit {
   private router: Router = inject(Router);
   private authenticationService: AuthenticationService = inject(
     AuthenticationService
@@ -42,6 +43,15 @@ export class SignUpComponent {
   public alertTitle: string = '';
   public alertMessage: string = '';
 
+  ngOnInit(): void {
+    this.signUpForm
+      .get('confirmPassword')
+      ?.setValidators([
+        Validators.required,
+        formControlValueMatch(this.signUpForm.get('password')!),
+      ]);
+  }
+
   public signUpUser(): void {
     if (this.signUpForm.valid) {
       this.isLoading = true;
@@ -59,14 +69,14 @@ export class SignUpComponent {
           console.log(error);
           this.isLoading = false;
           this.showAlert = true;
-          if (error.status == 500) {
-            // redirecting to error page
-            this.router.navigateByUrl('**');
-          } else {
+          if (error.status === 409 || error.status === 400) {
             // 409conflict User email already registered.
             // 400BadRequest Unable to create new user
             this.alertTitle = error.status.toString();
             this.alertMessage = error.error.responseData[0];
+          } else {
+            // redirecting to error page
+            this.router.navigateByUrl('**');
           }
         }
       );
@@ -74,7 +84,7 @@ export class SignUpComponent {
     }
   }
 
-  public dismissAlertAndLogin(event: boolean) {
+  public dismissAlertAndLogin(event: boolean): void {
     this.showAlert = event;
     this.router.navigateByUrl('auth/signIn');
   }

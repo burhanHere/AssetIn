@@ -10,9 +10,10 @@ import { PageLoaderComponent } from '../../shared/components/page-loader/page-lo
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { EmailConfirmationComponent } from './email-confirmation/email-confirmation.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 @NgModule({
-  declarations: [SignInComponent, SignUpComponent, ForgotPasswordComponent, EmailConfirmationComponent],
+  declarations: [SignInComponent, SignUpComponent, ForgotPasswordComponent, EmailConfirmationComponent, ResetPasswordComponent],
   imports: [
     CommonModule,
     AuthRoutingModule,

@@ -4,7 +4,8 @@
 }
 
 @if (showAlert) {
-<app-alert-card [title]="alertTitle" [message]="alertMessage" (closeCard)="dismissAlertAndLogin($event)"></app-alert-card>
+<app-alert-card [title]="alertTitle" [message]="alertMessage"
+  (closeCard)="dismissAlertAndLogin($event)"></app-alert-card>
 }
 
 <div class="burhan_bodyContainer">
@@ -142,7 +143,7 @@
           <div class="inputError">
             @if (signUpForm.controls['confirmPassword'].errors?.['required']) {
             <span>Confirm Your Password.</span>
-            }@else if (signUpForm.controls['password'].value !== signUpForm.controls['confirmPassword'].value ) {
+            }@else if (signUpForm.controls['confirmPassword'].errors?.['valueMismatch']) {
             <span>Your passwords don't match. Please ensure both fields are identical.</span>
             }
           </div>

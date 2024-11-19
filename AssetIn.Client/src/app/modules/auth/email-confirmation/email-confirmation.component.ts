@@ -3,8 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../../core/services/authentication/authentication.service';
 import { ApiResponse } from '../../../core/models/apiResponse';
 import { HttpErrorResponse } from '@angular/common/http';
-import { catchError, throwError } from 'rxjs';
-import { registerAppScopedDispatcher } from '@angular/core/primitives/event-dispatch';
 
 @Component({
   selector: 'app-email-confirmation',
@@ -28,6 +26,7 @@ export class EmailConfirmationComponent implements OnInit {
       this.token = encodeURIComponent(params['token']);
       this.email = encodeURIComponent(params['email']);
     });
+    debugger;
     this.authenticationService.ConfirmEmail(this.token, this.email).subscribe(
       (response: ApiResponse) => {
         this.alertCardTitle = 'SUCCESS🎉';
@@ -39,10 +38,7 @@ export class EmailConfirmationComponent implements OnInit {
         //404not found-> user not found
         //400bad request-> failed to confirm email
         //403conflict->email already confirmed
-        if (error.status == 409) {
-          this.alertCardTitle = 'Already Confirmed';
-          this.alertCardMessage = error.error.responseData[0];
-        } else if (error.status == 400) {
+        if (error.status == 409 || error.status == 400) {
           this.alertCardTitle = error.status.toString();
           this.alertCardMessage = error.error.responseData[0];
         } else if (error.status == 404) {
@@ -50,7 +46,8 @@ export class EmailConfirmationComponent implements OnInit {
           this.alertCardMessage = 'Some error occured';
         } else {
           this.alertCardTitle = 'Error';
-          this.alertCardMessage = 'Some error occured';
+          this.alertCardMessage =
+            'Some error occured֫. Try again by getting a new link.';
         }
         this.isLoading = false;
         this.showAlert = true;
@@ -58,7 +55,7 @@ export class EmailConfirmationComponent implements OnInit {
     );
   }
 
-  public dismissAlertAndLogin(event: boolean) {
+  public dismissAlertAndLogin(event: boolean): void {
     this.showAlert = event;
     this.router.navigateByUrl('auth/signIn');
   }

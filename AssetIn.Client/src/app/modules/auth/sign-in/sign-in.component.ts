@@ -23,8 +23,8 @@ export class SignInComponent {
   });
   public isLoading: boolean = false;
   public showAlertCard: boolean = false;
-  public errorCardMessage: string = '';
-  public errorCardTitle: string = '';
+  public alertCardMessage: string = '';
+  public alertCardTitle: string = '';
 
   public signIn(): void {
     if (!this.loginForm.invalid) {
@@ -32,25 +32,29 @@ export class SignInComponent {
       this.authenticationService.SignIn(this.loginForm.value).subscribe(
         (response: ApiResponse) => {
           this.isLoading = false;
-          this.errorCardTitle = 'Congratulations 🎉';
-          this.errorCardMessage = response.responseData['message'];
+          this.alertCardTitle = 'Congratulations 🎉';
+          this.alertCardMessage = response.responseData['message'];
           this.showAlertCard = true;
           localStorage.setItem('auth', response.responseData['jwt']);
         },
         (error: HttpErrorResponse) => {
           this.isLoading = false;
-          if (error.status == 500) {
-            // redirecting to error page
-            this.router.navigateByUrl('**');
-          } else {
+          if (
+            error.status === 401 ||
+            error.status === 403 ||
+            error.status === 404
+          ) {
             // all good
             // ----------------------
             //401unauthorized-> wrong password
             //403forbidden-> unable to confirm email or email is not confirmed yet
             //404not found-> user not found
-            this.errorCardTitle = error.error.status.toString();
-            this.errorCardMessage = error.error.responseData[0];
+            this.alertCardTitle = error.error.status.toString();
+            this.alertCardMessage = error.error.responseData[0];
             this.showAlertCard = true;
+          } else {
+            // redirecting to error page
+            this.router.navigateByUrl('**');
           }
         }
       );
