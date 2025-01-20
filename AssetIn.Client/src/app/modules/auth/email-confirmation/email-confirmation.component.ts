@@ -26,7 +26,6 @@ export class EmailConfirmationComponent implements OnInit {
       this.token = encodeURIComponent(params['token']);
       this.email = encodeURIComponent(params['email']);
     });
-    debugger;
     this.authenticationService.ConfirmEmail(this.token, this.email).subscribe(
       (response: ApiResponse) => {
         this.alertCardTitle = 'SUCCESS🎉';

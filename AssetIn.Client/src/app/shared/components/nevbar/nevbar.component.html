@@ -1,0 +1,8 @@
+<div class="mainDiv">
+  @for (nevbarOption of nevbarOptions; track $index) {
+  <a [routerLink]="nevbarOption.path" routerLinkActive="nevbarOptionActive" class="d-flex nevbarOption">
+    <img [src]="nevbarOption.iconPath" alt="" height="auto" width="15%" />
+    {{ nevbarOption.displayName }}
+  </a>
+  }
+</div>

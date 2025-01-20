@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { ApiResponse } from '../../../core/models/apiResponse';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { JwtService } from '../../../core/services/jwt/jwt.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -17,6 +18,7 @@ export class SignInComponent {
     AuthenticationService
   );
   private router: Router = inject(Router);
+  private jwtService: JwtService = inject(JwtService);
   public loginForm: FormGroup = new FormGroup({
     Email: new FormControl('', [Validators.required, Validators.email]),
     Password: new FormControl('', [Validators.required]),
@@ -35,7 +37,23 @@ export class SignInComponent {
           this.alertCardTitle = 'Congratulations 🎉';
           this.alertCardMessage = response.responseData['message'];
           this.showAlertCard = true;
-          localStorage.setItem('auth', response.responseData['jwt']);
+          sessionStorage.setItem('auth-jwt', response.responseData['jwt']);
+          console.log(response);
+          const userClaims = this.jwtService.getTokenClaims(response.responseData['jwt']||'');
+          console.log(userClaims);
+          //redirect here
+          if(userClaims['Role'].includes('OrganizationOwner')){
+            this.router.navigateByUrl('organizationOwner');
+          }
+          else if (userClaims['Role'].includes('OrganizationAssetManager')) {
+            this.router.navigateByUrl('organizationAdmin');
+          }
+          else if (userClaims['Role'].includes('OrganizationEmployee')) {
+            this.router.navigateByUrl('organizationEmployee');
+          }
+          else if (userClaims['Role'] === 'Vendor') {
+            this.router.navigateByUrl('vendor');
+          }
         },
         (error: HttpErrorResponse) => {
           this.isLoading = false;
