@@ -34,7 +34,6 @@ export class ResetPasswordComponent implements OnInit {
   public alertCardMessage: string = '';
 
   ngOnInit(): void {
-    debugger;
     this.passwordResetFrom
       .get('confirmNewPassowrd')
       ?.setValidators([
@@ -50,7 +49,6 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   public resetPassowrd(): void {
-    debugger;
     if (this.passwordResetFrom.valid) {
       this.isLoading = true;
       const resetPassowrdData: ResetPassword = {

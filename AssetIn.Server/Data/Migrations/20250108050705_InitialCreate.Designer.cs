@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetIn.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241026180357_InitialCreate")]
+    [Migration("20250108050705_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -540,28 +540,28 @@ namespace AssetIn.Server.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "e43361e6-2b6e-42f7-87e2-22ffdee3b15e",
+                            ConcurrencyStamp = "e40b7007-b10e-420f-b6f2-113111a86be6",
                             Name = "OrganizationOwner",
                             NormalizedName = "ORGANIZATIONOWNER"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "e0488a2f-24a3-4bc0-9ed2-d68cdd3a629a",
+                            ConcurrencyStamp = "305a186d-d03c-4ba1-b4cc-18bffc031a7d",
                             Name = "OrganizationEmployee",
                             NormalizedName = "ORGANIZATIONEMPLOYEE"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "f23c37a4-8ae6-4581-9dee-9aacd345e966",
+                            ConcurrencyStamp = "80fc609c-b6ac-49ee-973a-beb175216d2f",
                             Name = "OrganizationAssetManager",
                             NormalizedName = "ORGANIZATIONASSETMANAGER"
                         },
                         new
                         {
                             Id = "4",
-                            ConcurrencyStamp = "56ac2f1d-0391-4006-a30e-f8e776d442b0",
+                            ConcurrencyStamp = "9523eb6f-c27e-457c-91fd-66bf09b225c1",
                             Name = "Vendor",
                             NormalizedName = "VENDOR"
                         });

@@ -1,0 +1,25 @@
+.mainDiv{
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
+/* WebKit Browsers (Chrome, Safari, Edge) */
+.mainDiv::-webkit-scrollbar {
+  width: 7px; /* Width of the scrollbar */
+}
+
+.mainDiv::-webkit-scrollbar-track {
+  background: #888; /* Background color of the track */
+  /* border-radius: 10px; Optional: Rounded corners for the track */
+}
+
+.mainDiv::-webkit-scrollbar-thumb {
+  background: #555; /* Color of the scrollbar thumb */
+  /* border-radius: 10px; Optional: Rounded corners for the thumb */
+}
+
+.mainDiv::-webkit-scrollbar-thumb:hover {
+  background: #f1f1f1; /* Color of the scrollbar thumb when hovered */
+}

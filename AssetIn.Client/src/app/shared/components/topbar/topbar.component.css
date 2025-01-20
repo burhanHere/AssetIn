@@ -1,0 +1,61 @@
+.mainDiv {
+  width: full;
+  height: 12vh;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 1vh;
+}
+
+
+.searchBoxDiv {
+  width: 40vw;
+  position: relative;
+  background-color: rgb(211, 216, 219);
+  border-radius: 5px;
+  align-items: center;
+}
+
+.searchBoxDiv input {
+  width: inherit;
+  height: 6vh;
+  border: none;
+  background-color: transparent;
+  padding-left: 3%;
+}
+
+.searchBoxDiv button {
+  border: 0px;
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  background-image: url(../../../../../public/icons/Icon-13.png);
+  background-size: cover;
+  position: absolute;
+  right: 0px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: 3%;
+}
+
+.notificationAndAvatarDiv {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20%;
+  margin-right: 2%;
+  width: 6%;
+  /* border: 1px solid red; */
+}
+
+.notificationAndAvatarDiv button {
+  border: 0px;
+  width: 22px;
+  height: 22px;
+  background-color: transparent;
+  background-size: cover;
+  right: 0px;
+  margin-right: 5px;
+}
