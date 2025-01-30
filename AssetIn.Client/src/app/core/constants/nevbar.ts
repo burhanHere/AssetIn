@@ -1,6 +1,6 @@
 export const nevbar = [
   {
-    path: 'organizationsDashboard',
+    path: '../../organizationOwner/organizationOwnerMain/organizationsDashboard',
     acceptableRoles: ['OrganizationOwner'],
     displayName: 'Organizations Dashboard',
     iconPath: './icons/Dashboard.png',
