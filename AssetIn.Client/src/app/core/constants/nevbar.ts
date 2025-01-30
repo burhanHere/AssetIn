@@ -1,36 +1,36 @@
 export const nevbar = [
   {
-    path: 'organizationsDashboard',
+    path: '../../organizationOwner/organizationOwnerMain/organizationsDashboard',
     acceptableRoles: ['OrganizationOwner'],
     displayName: 'Organizations Dashboard',
     iconPath: './icons/Dashboard.png',
   },
   {
-    path: 'organizationAdminDashboard',
+    path: '../../organizationAdmin/organizationAdminMain/organizationAdminDashboard',
     acceptableRoles: ['OrganizationOwner', 'OrganizationAssetManager'],
     displayName: 'Dashboard',
     iconPath: './icons/Dashboard.png',
   },
   {
-    path: 'organizationAssets',
+    path: '../../organizationAdmin/organizationAdminMain/organizationAssets',
     acceptableRoles: ['OrganizationOwner', 'OrganizationAssetManager'],
     displayName: 'Assets',
     iconPath: './icons/Assets.png',
   },
   {
-    path: 'organizationEmployees',
+    path: '../../organizationAdmin/organizationAdminMain/organizationEmployees',
     acceptableRoles: ['OrganizationOwner', 'OrganizationAssetManager'],
     displayName: 'Employees',
     iconPath: './icons/Employee.png',
   },
   {
-    path: 'organizationAssetRequests',
+    path: '../../organizationAdmin/organizationAdminMain/organizationAssetRequests',
     acceptableRoles: ['OrganizationOwner', 'OrganizationAssetManager'],
     displayName: 'Assets Requests',
     iconPath: './icons/AssetRequests.png',
   },
   {
-    path: 'myAssetRequests',
+    path: '../../organizationEmployee/organizationEmployeeMain/myAssetRequests',
     acceptableRoles: ['OrganizationOwner', 'OrganizationAssetManager', 'OrganizationEmployee'],
     displayName: 'My Assets Requests',
     iconPath: './icons/AssetRequests.png',
