@@ -1,0 +1,112 @@
+.main-div {
+    width: 85vw;
+    height: 88vh;
+    background-color: #f1f3f6;
+    display: flex;
+    flex-direction: column;
+    font-size: small;
+}
+
+.main-div-text {
+    padding: 1vw 0 0 1vw;
+}
+
+.content-div{
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+    flex: 1;
+    overflow: auto;
+}
+
+.table-div {
+    width: 80%;
+    height: 95%;
+    margin-left: 1vw;
+    background-color: #f8fafc;
+    overflow-y: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 0.5vw;
+    text-align: center;
+}
+
+th {
+    background-color: #0d3d4f;
+    color: white;
+}
+
+td span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5vw;
+}
+
+td label {
+    width: 6.5pc;
+    padding: 0.5vw;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+label.available {
+    background-color: #7ac6ec;
+}
+
+label.assigned {
+    background-color: #da498d94;
+}
+
+label.retired {
+    background-color: #96928c;
+}
+
+label.out-of-order {
+    background-color: #f4ba47;
+}
+
+label.lost {
+    background-color: #f35f5f;
+}
+
+label.under-repair {
+    background-color: #b7f95c;
+}
+
+.side-div {
+    width: 20%;
+    height: 89%;
+    padding: 1vw;
+    margin-right: 1vw;
+    background-color: #f8fafc;
+}
+
+.btn {
+    width: 100%;
+    height: 13%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1vw;
+    margin-bottom: 1vw;
+    padding: 1vw;
+    color: white;
+    font-size: larger;
+    background-image: linear-gradient(to right, #cf42d7, #7ac6ec);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.btn img {
+    width: 2vw;
+    height: 2vw;
+}
