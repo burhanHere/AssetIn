@@ -172,9 +172,11 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
     // adding user Claims which we want to send in jwt token
     var authClaims = new List<Claim>
         {
+            new("UserId", userExist.Id),
             new("Email", userExist.Email!),
             new("EmailConfirmed", userExist.EmailConfirmed?"true":"flase"),
             new("FullName",userExist.UserName!),
+              new(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
         };
     var userRoles = await _userManager.GetRolesAsync(userExist);
     authClaims.AddRange(userRoles.Select(role => new Claim("Role", role)));

@@ -1,4 +1,7 @@
-﻿namespace AssetIn.Server.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace AssetIn.Server.Models;
 
 public class Organization
 {
@@ -6,5 +9,9 @@ public class Organization
     public string OrganizationName { get; set; }
     public string Description { get; set; }
     public DateTime CreatedDate { get; set; }
-    public string IndustryType { get; set; }
+    public bool ActiveOrganization { get; set; }
+    [Required]
+    public string UserID { get; set; }
+    [ForeignKey("UserID")]
+    public User User { get; set; }
 }
