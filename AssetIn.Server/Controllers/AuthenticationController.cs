@@ -43,7 +43,7 @@ public class AuthenticationController(UserManager<User> userManager, RoleManager
         };
     }
 
-     [HttpPost(template: "SignIn")]
+    [HttpPost(template: "SignIn")]
     public async Task<IActionResult> SignIn([FromBody] UserSignInDTO userSignInDTO)
     {
         ApiResponse result = await _authenticationRepository.SignIn(userSignInDTO);
@@ -57,7 +57,7 @@ public class AuthenticationController(UserManager<User> userManager, RoleManager
         };
     }
 
-    [HttpPost("ForgetPassword")]
+    [HttpPost(template: "ForgetPassword")]
     public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordDTO forgetPasswordDTO)
     {
         ApiResponse result = await _authenticationRepository.ForgetPassword(forgetPasswordDTO);
@@ -69,8 +69,8 @@ public class AuthenticationController(UserManager<User> userManager, RoleManager
             _ => StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error occurred."),
         };
     }
-    
-    [HttpPost("ResetPassword")]
+
+    [HttpPost(template: "ResetPassword")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO resetPasswordDTO)
     {
         ApiResponse result = await _authenticationRepository.ResetPassword(resetPasswordDTO);
