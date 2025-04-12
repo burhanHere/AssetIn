@@ -9,8 +9,4 @@ public class OrganizationsAssetStatus
     public int OrganizationsAssetStatusID { get; set; }
     [Required]
     public string OrganizationsAssetStatusName { get; set; }
-    [Required]
-    public int OrganizationsID { get; set; }
-    [ForeignKey("OrganizationsID")]
-    public Organization Organization { get; set; }
 }

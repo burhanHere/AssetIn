@@ -37,7 +37,7 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
         };
     }
 
-    [HttpPost(template: "UpdateOrganization")]
+    [HttpPatch(template: "UpdateOrganization")]
     [Authorize(Policy = "OrganizationOwnerPolicy")]
     public async Task<IActionResult> UpdateOrganization([FromBody] OrganizationDto updateOrganizationDTO)
     {
@@ -61,7 +61,7 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
         };
     }
 
-    [HttpPost(template: "DeleteOrganization")]
+    [HttpDelete(template: "DeleteOrganization")]
     [Authorize(Policy = "OrganizationOwnerPolicy")]
     public async Task<IActionResult> DeleteOrganization(int organizationId)
     {

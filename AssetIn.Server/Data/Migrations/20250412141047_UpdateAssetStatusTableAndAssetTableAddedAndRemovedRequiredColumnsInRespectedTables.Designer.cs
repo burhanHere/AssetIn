@@ -4,6 +4,7 @@ using AssetIn.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetIn.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250412141047_UpdateAssetStatusTableAndAssetTableAddedAndRemovedRequiredColumnsInRespectedTables")]
+    partial class UpdateAssetStatusTableAndAssetTableAddedAndRemovedRequiredColumnsInRespectedTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -266,50 +269,6 @@ namespace AssetIn.Server.Data.Migrations
                     b.HasIndex("UserID");
 
                     b.ToTable("OrganizationsAssetRequests");
-                });
-
-            modelBuilder.Entity("AssetIn.Server.Models.OrganizationsAssetRequestStatus", b =>
-                {
-                    b.Property<int>("OrganizationsAssetRequestStatusID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("OrganizationsAssetRequestStatusID"));
-
-                    b.Property<string>("OrganizationsAssetRequestStatusName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("OrganizationsAssetRequestStatusID");
-
-                    b.ToTable("OrganizationsAssetRequestStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            OrganizationsAssetRequestStatusID = 1,
-                            OrganizationsAssetRequestStatusName = "Accepted"
-                        },
-                        new
-                        {
-                            OrganizationsAssetRequestStatusID = 2,
-                            OrganizationsAssetRequestStatusName = "Pending"
-                        },
-                        new
-                        {
-                            OrganizationsAssetRequestStatusID = 3,
-                            OrganizationsAssetRequestStatusName = "Declined"
-                        },
-                        new
-                        {
-                            OrganizationsAssetRequestStatusID = 4,
-                            OrganizationsAssetRequestStatusName = "Fulfilled"
-                        },
-                        new
-                        {
-                            OrganizationsAssetRequestStatusID = 5,
-                            OrganizationsAssetRequestStatusName = "Canceled"
-                        });
                 });
 
             modelBuilder.Entity("AssetIn.Server.Models.OrganizationsAssetRetirement", b =>
@@ -609,28 +568,28 @@ namespace AssetIn.Server.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "1f41557f-e62b-4768-a0ff-5423bd105d98",
+                            ConcurrencyStamp = "4d49d309-9a18-4b5e-93ba-6292297ae743",
                             Name = "OrganizationOwner",
                             NormalizedName = "ORGANIZATIONOWNER"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "a27b62f2-9084-44a5-83a7-7a68c65d9da0",
+                            ConcurrencyStamp = "b39c7ac2-04d2-45a8-8906-9b79ece6f48b",
                             Name = "OrganizationEmployee",
                             NormalizedName = "ORGANIZATIONEMPLOYEE"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "53fe79c9-fd1b-4462-ba62-469c008695fd",
+                            ConcurrencyStamp = "5a677668-afe6-49e9-88f7-22ab7b8d9c5e",
                             Name = "OrganizationAssetManager",
                             NormalizedName = "ORGANIZATIONASSETMANAGER"
                         },
                         new
                         {
                             Id = "4",
-                            ConcurrencyStamp = "5682b6be-06c9-4410-b87e-31d96c2a15be",
+                            ConcurrencyStamp = "5a9b68a7-a14e-4050-affe-34200663878f",
                             Name = "Vendor",
                             NormalizedName = "VENDOR"
                         });
@@ -750,7 +709,7 @@ namespace AssetIn.Server.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AssetIn.Server.Models.OrganizationsAssetRequestStatus", "OrganizationsAssetStatus")
+                    b.HasOne("AssetIn.Server.Models.OrganizationsAssetStatus", "OrganizationsAssetStatus")
                         .WithMany()
                         .HasForeignKey("AssetStatusID")
                         .OnDelete(DeleteBehavior.Cascade)
