@@ -33,5 +33,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             new IdentityRole { Id = "3", Name = "OrganizationAssetManager", ConcurrencyStamp = Guid.NewGuid().ToString(), NormalizedName = "ORGANIZATIONASSETMANAGER" },
             new IdentityRole { Id = "4", Name = "Vendor", ConcurrencyStamp = Guid.NewGuid().ToString(), NormalizedName = "VENDOR" }
         );
+
+        modelBuilder.Entity<OrganizationsAssetStatus>().HasData(
+            new OrganizationsAssetStatus { OrganizationsAssetStatusID = 1, OrganizationsAssetStatusName = "Assigned" },
+            new OrganizationsAssetStatus { OrganizationsAssetStatusID = 2, OrganizationsAssetStatusName = "Retired" },
+            new OrganizationsAssetStatus { OrganizationsAssetStatusID = 4, OrganizationsAssetStatusName = "Available" },
+            new OrganizationsAssetStatus { OrganizationsAssetStatusID = 3, OrganizationsAssetStatusName = "UnderMaintenance" }
+        );
     }
 }
