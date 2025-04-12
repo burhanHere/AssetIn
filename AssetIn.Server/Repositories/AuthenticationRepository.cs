@@ -123,6 +123,15 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
         Errors = null,
       };
     }
+    if (!userExist.Status)
+    {
+      return new()
+      {
+        Status = StatusCodes.Status403Forbidden,
+        ResponseData = new List<string> { "User account is blocked. Contact Admin Sopport." },
+        Errors = null,
+      };
+    }
     // check is user email is confirmed or not
     if (!userExist.EmailConfirmed)
     {
@@ -222,6 +231,15 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
         Errors = null,
       };
     }
+    if (!userExist.Status)
+    {
+      return new()
+      {
+        Status = StatusCodes.Status403Forbidden,
+        ResponseData = new List<string> { "User account is blocked. Contact Admin Sopport." },
+        Errors = null,
+      };
+    }
     // check is user email is confirmed or not
     if (userExist.EmailConfirmed)
     {
@@ -274,6 +292,15 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
         Errors = null,
       };
     }
+    if (!userExist.Status)
+    {
+      return new()
+      {
+        Status = StatusCodes.Status403Forbidden,
+        ResponseData = new List<string> { "User account is blocked. Contact Admin Sopport." },
+        Errors = null,
+      };
+    }
     //genrating Password Reset Token
     var passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(userExist);
     // converting he token in to link forming messgae 
@@ -309,6 +336,15 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
       {
         Status = StatusCodes.Status404NotFound,
         ResponseData = new List<string> { "User Not Found" },
+        Errors = null,
+      };
+    }
+    if (!userExist.Status)
+    {
+      return new()
+      {
+        Status = StatusCodes.Status403Forbidden,
+        ResponseData = new List<string> { "User account is blocked. Contact Admin Sopport." },
         Errors = null,
       };
     }

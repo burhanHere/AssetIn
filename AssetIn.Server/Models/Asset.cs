@@ -23,22 +23,24 @@ public class Asset
     [Required]
     public DateTime PurchaseDate { get; set; }
     [Required]
+    public bool DeletedByOrganization { get; set; }
+    [Required]
     public string Location { get; set; }
     public float DepreciationRate { get; set; }
     public string Problem { get; set; }
     public string AssetIdentificationNumber { get; set; }
     [Required]
-    public int OrganizationlD { get; set; }
+    public int OrganizationID { get; set; }
     [Required]
-    public int AssetStatuslD { get; set; }
+    public int AssetStatusID { get; set; }
     [Required]
     public int AssetCatagoryID { get; set; }
     [Required]
     public int AssetTypeID { get; set; }
 
-    [ForeignKey("OrganizationlD")]
+    [ForeignKey("OrganizationID")]
     public Organization Organization { get; set; }
-    [ForeignKey("AssetStatuslD")]
+    [ForeignKey("AssetStatusID")]
     public OrganizationsAssetStatus OrganizationsAssetStatus { get; set; }
     [ForeignKey("AssetCatagoryID")]
     public OrganizationsAssetCatagory OrganizationsAssetCatagory { get; set; }

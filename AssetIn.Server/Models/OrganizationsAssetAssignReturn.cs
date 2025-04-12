@@ -8,7 +8,9 @@ public class OrganizationsAssetAssignReturn
     [Key]
     public int ID { get; set; }
     [Required]
-    public DateTime Date { get; set; }
+    public DateTime AssignedAt { get; set; }
+    [Required]
+    public DateTime ReturnedAt { get; set; }
     [Required]
     public string Notes { get; set; }
     [Required]
