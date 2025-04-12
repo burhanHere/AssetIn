@@ -13,6 +13,7 @@ namespace AssetIn.Server.Controllers;
 public class AssesmentManagementController(ApplicationDbContext applicationDbContext) : ControllerBase
 {
     private readonly AssestManagementRepository _assestManagementRepository = new(applicationDbContext);
+    [HttpPost("CreateAsset")]
     public async Task<IActionResult> CreateAsset(AssetDTO newAsset)
     {
         var userId = User.FindFirst("UserId")?.Value;
@@ -38,6 +39,8 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         // (result.Status == StatusCodes.Status403Forbidden)
         return StatusCode(StatusCodes.Status403Forbidden, result);
     }
+
+    [HttpPatch(template: "UpdateAsset")]
     public async Task<IActionResult> UpdateAsset(AssetDTO newAsset)
     {
         var userId = User.FindFirst("UserId")?.Value;
@@ -67,6 +70,8 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         // (result.Status == StatusCodes.Status403Forbidden)
         return StatusCode(StatusCodes.Status403Forbidden, result);
     }
+
+    [HttpDelete(template: "DeleteAsset")]
     public async Task<IActionResult> DeleteAsset(int assetID)
     {
         var result = await _assestManagementRepository.DeleteAsset(assetID);
@@ -85,6 +90,8 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         // (result.Status == StatusCodes.Status403Forbidden)
         return StatusCode(StatusCodes.Status403Forbidden, result);
     }
+
+    [HttpGet(template: "GetAllAsset")]
     public async Task<IActionResult> GetAllAsset(int organizationID)
     {
         var result = await _assestManagementRepository.GetAllAsset(organizationID);
@@ -99,6 +106,8 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         // (result.Status == StatusCodes.Status403Forbidden)
         return StatusCode(StatusCodes.Status403Forbidden, result);
     }
+
+    [HttpGet(template: "GetAsset")]
     public async Task<IActionResult> GetAsset(int assetID)
     {
         var result = await _assestManagementRepository.GetAsset(assetID);
@@ -109,6 +118,8 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         // (result.Status == StatusCodes.Status403Forbidden)
         return StatusCode(StatusCodes.Status403Forbidden, result);
     }
+
+    [HttpPost(template: "CreateNewAssetCatagory")]
     public async Task<IActionResult> CreateNewAssetCatagory(AssetCatagoryDTO newCatagory)
     {
         var userId = User.FindFirst("UserId")?.Value;
@@ -134,6 +145,8 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         // (result.Status == StatusCodes.Status403Forbidden)
         return StatusCode(StatusCodes.Status403Forbidden, result);
     }
+
+    [HttpDelete(template: "DeleteAssetCatagory")]
     public async Task<IActionResult> DeleteAssetCatagory(int catagoryID)
     {
         var result = await _assestManagementRepository.DeleteAssetCatagory(catagoryID);
@@ -148,6 +161,8 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         // (result.Status == StatusCodes.Status403Forbidden)
         return StatusCode(StatusCodes.Status403Forbidden, result);
     }
+
+    [HttpPatch(template: "UpdateAssetCatagory")]
     public async Task<IActionResult> UpdateAssetCatagory(AssetCatagoryDTO assetCatagory)
     {
         var result = await _assestManagementRepository.UpdateAssetCatagory(assetCatagory);
@@ -162,6 +177,8 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         // (result.Status == StatusCodes.Status403Forbidden)
         return StatusCode(StatusCodes.Status403Forbidden, result);
     }
+
+    [HttpGet(template: "GetAllAssetCatagory")]
     public async Task<IActionResult> GetAllAssetCatagory(int organizationID)
     {
         var result = await _assestManagementRepository.GetAllAssetCatagory(organizationID);
@@ -176,6 +193,8 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         // (result.Status == StatusCodes.Status403Forbidden)
         return StatusCode(StatusCodes.Status403Forbidden, result);
     }
+
+    [HttpGet(template: "GetAllAssetStatus")]
     public async Task<IActionResult> GetAllAssetStatus(int organizationID)
     {
         var result = await _assestManagementRepository.GetAllAssetStatus(organizationID);
@@ -186,6 +205,8 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         //    (result.Status == StatusCodes.Status404NotFound)
         return NotFound(result);
     }
+
+    [HttpPost(template: "CreateNewAssetType")]
     public async Task<IActionResult> CreateNewAssetType(AssetTypeDTO assetType)
     {
         var userId = User.FindFirst("UserId")?.Value;
@@ -211,6 +232,8 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         // (result.Status == StatusCodes.Status403Forbidden)
         return StatusCode(StatusCodes.Status403Forbidden, result);
     }
+
+    [HttpDelete(template: "DeleteAssetType")]
     public async Task<IActionResult> DeleteAssetType(int AssetTypeID)
     {
         var result = await _assestManagementRepository.DeleteAssetType(AssetTypeID);
@@ -225,6 +248,8 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         // (result.Status == StatusCodes.Status403Forbidden)
         return StatusCode(StatusCodes.Status403Forbidden, result);
     }
+
+    [HttpPatch(template: "UpdateAssetType")]
     public async Task<IActionResult> UpdateAssetType(AssetTypeDTO assetType)
     {
         var result = await _assestManagementRepository.UpdateAssetType(assetType);
@@ -239,6 +264,8 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         // (result.Status == StatusCodes.Status403Forbidden)
         return StatusCode(StatusCodes.Status403Forbidden, result);
     }
+
+    [HttpGet(template: "GetAllAssetType")]
     public async Task<IActionResult> GetAllAssetType(int organizationID)
     {
         var result = await _assestManagementRepository.GetAllAssetType(organizationID);

@@ -1,6 +1,7 @@
 using AssetIn.Server.Data;
 using AssetIn.Server.DTOs;
 using AssetIn.Server.Models;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
 namespace AssetIn.Server.Repositories;
@@ -155,7 +156,19 @@ public class AssestManagementRepository(ApplicationDbContext applicationDbContex
                 ResponseData = "Unable to delete asset."
             };
         }
+        if (targetAsset.AssetStatusID == 4)
+        {
 
+            // 1   Assigned
+            // 2   Retired
+            // 3   UnderMaintenance
+            // 4   Available
+            return new()
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = "Asset is not available right now. Unable to delete."
+            };
+        }
         targetAsset.DeletedByOrganization = true;
 
         _applicationDbContext.Assets.Update(targetAsset);
