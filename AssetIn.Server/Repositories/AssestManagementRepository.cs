@@ -391,140 +391,6 @@ public class AssestManagementRepository(ApplicationDbContext applicationDbContex
             ResponseData = allCatagories
         };
     }
-    public async Task<ApiResponse> CreateNewAssetStatus(AssetStatusDTO newStatus, string userId)
-    {
-        var currentUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
-        if (currentUser == null)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to crete asset status."
-            };
-        }
-
-        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == newStatus.OrganizationsID);
-        if (targetOrganization == null || !targetOrganization.ActiveOrganization)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to crete new asset status."
-            };
-        }
-
-        OrganizationsAssetStatus newAssetStatus = new()
-        {
-            OrganizationsAssetStatusID = newStatus.OrganizationsAssetStatusID,
-            OrganizationsAssetStatusName = newStatus.OrganizationsAssetStatusName,
-            OrganizationsID = targetOrganization.OrganizationID
-        };
-
-        await _applicationDbContext.OrganizationsAssetStatuses.AddAsync(newAssetStatus);
-        var newAssetCreated = await _applicationDbContext.SaveChangesAsync();
-        if (newAssetCreated > 0)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status200OK,
-                ResponseData = "Asset status created successfully."
-            };
-        }
-
-        return new ApiResponse
-        {
-            Status = StatusCodes.Status400BadRequest,
-            ResponseData = "Unable to create asset status."
-        };
-    }
-    public async Task<ApiResponse> DeleteAssetStatus(int statusID)
-    {
-        OrganizationsAssetStatus? targetStatus = await _applicationDbContext.OrganizationsAssetStatuses.FirstOrDefaultAsync(x => x.OrganizationsAssetStatusID == statusID);
-        if (targetStatus != null || !targetStatus.Organization.ActiveOrganization)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to delete asset status."
-            };
-        }
-        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetStatus.OrganizationsID);
-        if (targetOrganization == null || !targetOrganization.ActiveOrganization)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to delete asset status."
-            };
-        }
-        var statusAssociationCheckWithAsset = _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetStatusID == statusID);
-
-        if (statusAssociationCheckWithAsset != null)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to delete asset status. Asset status is associated with some assets."
-            };
-        }
-
-        _applicationDbContext.OrganizationsAssetStatuses.Remove(targetStatus!);
-        var statusDeleted = await _applicationDbContext.SaveChangesAsync();
-        if (statusDeleted > 0)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status200OK,
-                ResponseData = "Asset status deleted successfully."
-            };
-        }
-
-        return new ApiResponse
-        {
-            Status = StatusCodes.Status400BadRequest,
-            ResponseData = "Unable to delete asset status."
-        };
-    }
-    public async Task<ApiResponse> UpdateAssetStatus(AssetStatusDTO assetStatus)
-    {
-        OrganizationsAssetStatus? targetStatus = await _applicationDbContext.OrganizationsAssetStatuses.FirstOrDefaultAsync(x => x.OrganizationsAssetStatusID == assetStatus.OrganizationsAssetStatusID);
-        if (targetStatus != null)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to delete asset status."
-            };
-        }
-        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetStatus.OrganizationsID);
-        if (targetOrganization == null || !targetOrganization.ActiveOrganization)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to update asset status."
-            };
-        }
-
-        targetStatus.OrganizationsAssetStatusName = assetStatus.OrganizationsAssetStatusName;
-
-        _applicationDbContext.OrganizationsAssetStatuses.Update(targetStatus);
-        var statusUpdated = await _applicationDbContext.SaveChangesAsync();
-        if (statusUpdated > 0)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status200OK,
-                ResponseData = "Asset status updated successfully."
-            };
-        }
-
-        return new ApiResponse
-        {
-            Status = StatusCodes.Status400BadRequest,
-            ResponseData = "Unable to delete asset status."
-        };
-    }
     public async Task<ApiResponse> GetAllAssetStatus(int organizationID)
     {
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == organizationID);
@@ -537,7 +403,7 @@ public class AssestManagementRepository(ApplicationDbContext applicationDbContex
             };
         }
 
-        List<OrganizationsAssetStatus> allStatus = await _applicationDbContext.OrganizationsAssetStatuses.Where(x => x.OrganizationsID == organizationID).ToListAsync();
+        List<OrganizationsAssetStatus> allStatus = await _applicationDbContext.OrganizationsAssetStatuses.ToListAsync();
         if (allStatus.Count == 0)
         {
             return new ApiResponse

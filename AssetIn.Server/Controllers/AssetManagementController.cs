@@ -176,58 +176,6 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         // (result.Status == StatusCodes.Status403Forbidden)
         return StatusCode(StatusCodes.Status403Forbidden, result);
     }
-    public async Task<IActionResult> CreateNewAssetStatus(AssetStatusDTO newStatus)
-    {
-        var userId = User.FindFirst("UserId")?.Value;
-        if (string.IsNullOrEmpty(userId))
-        {
-            // If the username is not found, return an unauthorized response
-            return Unauthorized(new ApiResponse
-            {
-                Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
-            });
-        }
-        var result = await _assestManagementRepository.CreateNewAssetStatus(newStatus, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status400BadRequest)
-        {
-            return BadRequest(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
-    }
-    public async Task<IActionResult> DeleteAssetStatus(int statusID)
-    {
-        var result = await _assestManagementRepository.DeleteAssetStatus(statusID);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status400BadRequest)
-        {
-            return BadRequest(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
-    }
-    public async Task<IActionResult> UpdateAssetStatus(AssetStatusDTO assetStatus)
-    {
-        var result = await _assestManagementRepository.UpdateAssetStatus(assetStatus);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status400BadRequest)
-        {
-            return BadRequest(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
-    }
     public async Task<IActionResult> GetAllAssetStatus(int organizationID)
     {
         var result = await _assestManagementRepository.GetAllAssetStatus(organizationID);
@@ -235,12 +183,8 @@ public class AssesmentManagementController(ApplicationDbContext applicationDbCon
         {
             return Ok(result);
         }
-        else if (result.Status == StatusCodes.Status404NotFound)
-        {
-            return NotFound(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        //    (result.Status == StatusCodes.Status404NotFound)
+        return NotFound(result);
     }
     public async Task<IActionResult> CreateNewAssetType(AssetTypeDTO assetType)
     {
