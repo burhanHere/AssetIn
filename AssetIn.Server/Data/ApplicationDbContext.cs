@@ -15,6 +15,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<OrganizationsAssetRequest> OrganizationsAssetRequests { get; set; }
     public DbSet<OrganizationsAssetRetirement> OrganizationsAssetRetirements { get; set; }
     public DbSet<OrganizationsAssetStatus> OrganizationsAssetStatuses { get; set; }
+    public DbSet<OrganizationsAssetRequestStatus> OrganizationsAssetRequestStatuses { get; set; }
     public DbSet<OrganizationsAssetType> OrganizationsAssetTypes { get; set; }
     public DbSet<OrganizationsDomain> OrganizationsDomains { get; set; }
     public DbSet<Vendor> Vendors { get; set; }
@@ -40,5 +41,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             new OrganizationsAssetStatus { OrganizationsAssetStatusID = 4, OrganizationsAssetStatusName = "Available" },
             new OrganizationsAssetStatus { OrganizationsAssetStatusID = 3, OrganizationsAssetStatusName = "UnderMaintenance" }
         );
+
+        modelBuilder.Entity<OrganizationsAssetRequestStatus>().HasData(
+           new OrganizationsAssetRequestStatus { OrganizationsAssetRequestStatusID = 1, OrganizationsAssetRequestStatusName = "Accepted" },
+           new OrganizationsAssetRequestStatus { OrganizationsAssetRequestStatusID = 2, OrganizationsAssetRequestStatusName = "Pending" },
+           new OrganizationsAssetRequestStatus { OrganizationsAssetRequestStatusID = 3, OrganizationsAssetRequestStatusName = "Declined" },
+           new OrganizationsAssetRequestStatus { OrganizationsAssetRequestStatusID = 4, OrganizationsAssetRequestStatusName = "Fulfilled" },
+           new OrganizationsAssetRequestStatus { OrganizationsAssetRequestStatusID = 5, OrganizationsAssetRequestStatusName = "Canceled" }
+       );
     }
 }

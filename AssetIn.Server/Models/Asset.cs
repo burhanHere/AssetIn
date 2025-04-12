@@ -41,7 +41,7 @@ public class Asset
     [ForeignKey("OrganizationID")]
     public Organization Organization { get; set; }
     [ForeignKey("AssetStatusID")]
-    public OrganizationsAssetStatus OrganizationsAssetStatus { get; set; }
+    public OrganizationsAssetRequestStatus OrganizationsAssetStatus { get; set; }
     [ForeignKey("AssetCatagoryID")]
     public OrganizationsAssetCatagory OrganizationsAssetCatagory { get; set; }
     [ForeignKey("AssetTypeID")]

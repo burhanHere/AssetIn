@@ -417,6 +417,7 @@ public class AssestManagementRepository(ApplicationDbContext applicationDbContex
         }
 
         List<OrganizationsAssetStatus> allStatus = await _applicationDbContext.OrganizationsAssetStatuses.ToListAsync();
+
         if (allStatus.Count == 0)
         {
             return new ApiResponse
@@ -426,6 +427,7 @@ public class AssestManagementRepository(ApplicationDbContext applicationDbContex
             };
 
         }
+        
         return new ApiResponse
         {
             Status = StatusCodes.Status200OK,
