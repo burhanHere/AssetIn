@@ -18,7 +18,6 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
     public async Task<IActionResult> CreateOrganization([FromBody] OrganizationDto createOrganizationDTO)
     {
         var userId = User.FindFirst("UserId")?.Value;
-        Console.WriteLine(userId);
         if (string.IsNullOrEmpty(userId))
         {
             // If the username is not found, return an unauthorized response
@@ -43,7 +42,6 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
     public async Task<IActionResult> UpdateOrganization([FromBody] OrganizationDto updateOrganizationDTO)
     {
         var userId = User.FindFirst("UserId")?.Value;
-        Console.WriteLine(userId);
         if (string.IsNullOrEmpty(userId))
         {
             // If the username is not found, return an unauthorized response
@@ -68,7 +66,6 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
     public async Task<IActionResult> DeleteOrganization(int organizationId)
     {
         var userId = User.FindFirst("UserId")?.Value;
-        Console.WriteLine(userId);
         if (string.IsNullOrEmpty(userId))
         {
             // If the username is not found, return an unauthorized response
@@ -93,7 +90,6 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
     public async Task<IActionResult> GetOrganizationInfo(int OrganizationID)
     {
         var userId = User.FindFirst("UserId")?.Value;
-        Console.WriteLine(userId);
         if (string.IsNullOrEmpty(userId))
         {
             // If the username is not found, return an unauthorized response
@@ -114,8 +110,18 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
 
     [HttpGet(template: "GetOrganizations")]
     [Authorize(Policy = "OrganizationOwnerPolicy")]
-    public async Task<IActionResult> GetOrganizations(string userID)
+    public async Task<IActionResult> GetOrganizations()
     {
+        var userID = User.FindFirst("UserId")?.Value;
+        if (string.IsNullOrEmpty(userID))
+        {
+            // If the username is not found, return an unauthorized response
+            return Unauthorized(new ApiResponse
+            {
+                Status = StatusCodes.Status401Unauthorized,
+                ResponseData = new List<string> { "User not found in token." }
+            });
+        }
         ApiResponse result = await _organizationManagementRepository.GetOrganizations(userID);
         return result.Status switch
         {

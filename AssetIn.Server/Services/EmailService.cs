@@ -6,7 +6,6 @@ namespace AssetIn.Server.Services;
 public class EmailService(IConfiguration configuration)
 {
     private readonly IConfiguration _configuration = configuration;
-
     public async Task<bool> SendEmailAsync(string targetEmail, string subject, string message)
     {
         MailMessage mail = CreateMailMessage(targetEmail, subject, message);
