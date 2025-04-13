@@ -10,9 +10,9 @@ namespace AssetIn.Server.Controllers;
 [ApiController]
 [Route("AssetIn.Server/[controller]")]
 [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerPolicy")]
-public class AssesmentManagementController(ApplicationDbContext applicationDbContext) : ControllerBase
+public class AssetManagementController(ApplicationDbContext applicationDbContext) : ControllerBase
 {
-    private readonly AssestManagementRepository _assestManagementRepository = new(applicationDbContext);
+    private readonly AssetManagementRepository _assestManagementRepository = new(applicationDbContext);
     [HttpPost("CreateAsset")]
     public async Task<IActionResult> CreateAsset(AssetDTO newAsset)
     {
