@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AssetIn.Server.Repositories;
 
-public class AssestManagementRepository(ApplicationDbContext applicationDbContext)
+public class AssetManagementRepository(ApplicationDbContext applicationDbContext)
 {
     private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
 
