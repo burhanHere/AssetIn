@@ -8,8 +8,8 @@ namespace AssetIn.Server.Controllers;
 
 class OrganizationManagementRepository(ApplicationDbContext applicationDbContext, UserManager<User> userManager)
 {
-    private ApplicationDbContext _applicationDbContext = applicationDbContext;
-    private UserManager<User> _userManager = userManager;
+    private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
+    private readonly UserManager<User> _userManager = userManager;
 
     public async Task<ApiResponse> CreateOrganization(OrganizationDto createOrganizationDTO, string userId)
     {
