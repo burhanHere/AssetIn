@@ -19,12 +19,11 @@ export class NevbarComponent {
     let token = sessionStorage.getItem('auth-jwt') || '';
     this.currentRole = this.jwtServue.getTokenClaims(token)['Role'];
     this.nevbarOptions = this.initializeNevbarOptoins(nevbar);
-    console.log(this.activatedRoute.snapshot.url);
+    console.log('Navbar ionit');
   }
 
   private initializeNevbarOptoins(nevbar: Array<any>): Array<any> {
     let options = nevbar;
-    debugger;
     options = options.filter(i => i.acceptableRoles.includes(this.currentRole));
     return options;
   }

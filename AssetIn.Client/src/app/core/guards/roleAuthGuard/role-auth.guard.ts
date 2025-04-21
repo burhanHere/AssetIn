@@ -16,10 +16,9 @@ export const roleAuthGuard: CanActivateFn = (
   const userJwt = sessionStorage.getItem('auth-jwt') || '';
   const userClaims = jwtService.getTokenClaims(userJwt);
   const userRoles = userClaims['Role'];
-  const acceptableRoles = route.data['roles'];
+  const acceptableRoles = route.data['Roles'];
   for (let index = 0; index < acceptableRoles.length; index++) {
     if (userRoles.includes(acceptableRoles[index])) {
-      console.log('User has the required role');
       return true;
     }
   }

@@ -5,7 +5,6 @@ import { AuthenticationService } from '../../../core/services/authentication/aut
 import { SignUp } from '../../../core/models/sign-up';
 import { ApiResponse } from '../../../core/models/apiResponse';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Init } from 'v8';
 import { formControlValueMatch } from '../../../shared/validators/form-control-value-match.validator';
 
 @Component({
@@ -56,17 +55,14 @@ export class SignUpComponent implements OnInit {
     if (this.signUpForm.valid) {
       this.isLoading = true;
       let userData: SignUp = this.signUpForm.value;
-      console.log(userData);
       this.authenticationService.SignUp(userData).subscribe(
         (response: ApiResponse) => {
-          console.log(response);
           this.isLoading = false;
           this.showAlert = true;
           this.alertTitle = 'Successful🎉.';
           this.alertMessage = response.responseData[0];
         },
         (error: HttpErrorResponse) => {
-          console.log(error);
           this.isLoading = false;
           this.showAlert = true;
           if (error.status === 409 || error.status === 400) {
