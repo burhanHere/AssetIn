@@ -38,21 +38,19 @@ export class SignInComponent {
           this.alertCardMessage = response.responseData['message'];
           this.showAlertCard = true;
           sessionStorage.setItem('auth-jwt', response.responseData['jwt']);
-          console.log(response);
-          const userClaims = this.jwtService.getTokenClaims(response.responseData['jwt']||'');
-          console.log(userClaims);
+          const userClaims = this.jwtService.getTokenClaims(response.responseData['jwt'] || '');
           //redirect here
-          if(userClaims['Role'].includes('OrganizationOwner')){
-            this.router.navigateByUrl('organizationOwner');
+          if (userClaims['Role'].includes('OrganizationOwner')) {
+            this.router.navigateByUrl('board/mainBoard/organizationOwner');
           }
           else if (userClaims['Role'].includes('OrganizationAssetManager')) {
-            this.router.navigateByUrl('organizationAdmin');
+            this.router.navigateByUrl('board/mainBoard/organizationAdmin');
           }
           else if (userClaims['Role'].includes('OrganizationEmployee')) {
-            this.router.navigateByUrl('organizationEmployee');
+            this.router.navigateByUrl('board/mainBoard/organizationEmployee');
           }
           else if (userClaims['Role'] === 'Vendor') {
-            this.router.navigateByUrl('vendor');
+            this.router.navigateByUrl('board/mainBoard/vendor');
           }
         },
         (error: HttpErrorResponse) => {

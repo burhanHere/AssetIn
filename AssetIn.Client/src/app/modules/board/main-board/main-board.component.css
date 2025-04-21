@@ -1,0 +1,12 @@
+.container {
+  width: 100%;
+  height: max-content;
+  display: flex;
+}
+
+.routerOutletCommonProperties {
+  margin-top: 0.5%;
+  background-color: #f0f1f3;
+  width: 100%;
+  height: auto;
+}
