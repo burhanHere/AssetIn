@@ -33,6 +33,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
         {
             OrganizationName = createOrganizationDTO.OrganizationName,
             Description = createOrganizationDTO.Description,
+            OrganizationLogo = "",
             CreatedDate = DateTime.UtcNow,
             ActiveOrganization = true,
             UserID = user.Id,
@@ -47,7 +48,8 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
                 Status = StatusCodes.Status400BadRequest,
                 ResponseData = new List<string>
                 {
-                "Failed to create new organization."
+                    "Some error Occured",
+                    "Failed to create new organization."
                 }
             };
         }
@@ -57,7 +59,8 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
             Status = StatusCodes.Status200OK,
             ResponseData = new List<string>
             {
-            "New organization created successfully."
+                "Success",
+                "New organization created successfully."
             }
         };
     }
@@ -71,7 +74,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status404NotFound,
-                ResponseData = new List<String> { "Organization not found." }
+                ResponseData = new List<String> { "404", "Organization not found." }
             };
         }
         requiredOrganization.ActiveOrganization = false;
@@ -83,17 +86,18 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status400BadRequest,
-                ResponseData = new List<string> { "Failed to delete organizatino, try again later." },
+                ResponseData = new List<string> {
+                    "Some error Occured", "Failed to delete organizatino, try again later." },
             };
         }
         return new ApiResponse
         {
             Status = StatusCodes.Status200OK,
-            ResponseData = new List<string> { "Organizatino deleted successfully." },
+            ResponseData = new List<string> { "Success", "Organizatino deleted successfully." },
         };
     }
 
-    public async Task<ApiResponse> GetOrganizationInfo(int OrganizationID,string userId)
+    public async Task<ApiResponse> GetOrganizationInfoForOrganizationDashboard(int OrganizationID, string userId)
     {
         var requiredOrganization = await _applicationDbContext.Organizations
             .FirstAsync(x => x.OrganizationID == OrganizationID && x.UserID == userId);
@@ -105,7 +109,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
         };
     }
 
-    public async Task<ApiResponse> GetOrganizations(string userId)
+    public async Task<ApiResponse> GetOrganizationsListForOrganizationsDashboard(string userId)
     {
         // Find the user by ID
         var user = await _userManager.FindByIdAsync(userId);
@@ -125,11 +129,31 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
         var requiredOrganizations = await _applicationDbContext.Organizations
             .Where(x => x.UserID == userId)
             .ToListAsync();
+        List<object> requiresOrganizationDataList = [];
+        int tempOrganizationAssetsCount = 0;
+        decimal tempOrganizationAssetWorth = 0;
+        int tempOrganizationEmployeeCount = 0;
+        foreach (var item in requiredOrganizations)
+        {
+            tempOrganizationAssetsCount = await _applicationDbContext.Assets.CountAsync(x => x.OrganizationID == item.OrganizationID);
+            tempOrganizationAssetWorth = await _applicationDbContext.Assets
+                .Where(x => x.OrganizationID == item.OrganizationID)
+                .SumAsync(x => x.CostPrice);
+            tempOrganizationEmployeeCount = await _applicationDbContext.Users.CountAsync(x => x.OrganizationId == item.OrganizationID);
+            requiresOrganizationDataList.Add(new
+            {
+                OrganizationName = item.OrganizationName,
+                OrganizationLogo = item.OrganizationLogo,
+                OrganizationEmployeeCount = tempOrganizationEmployeeCount,
+                OrganizationAssetCount = tempOrganizationAssetsCount,
+                OrganizationAssetWorth = tempOrganizationAssetWorth,
+            });
 
+        }
         return new ApiResponse
         {
             Status = StatusCodes.Status200OK,
-            ResponseData = requiredOrganizations,
+            ResponseData = requiresOrganizationDataList,
         };
     }
 
@@ -143,7 +167,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status404NotFound,
-                ResponseData = new List<string> { "Organization not found." },
+                ResponseData = new List<string> { "404", "Organization not found." },
             };
         }
         requiredOrganizationToUpdate.OrganizationName = updateOrganizationDTO.OrganizationName;
@@ -156,13 +180,14 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status400BadRequest,
-                ResponseData = new List<string> { "Failed to update organizatino, try again later." },
+                ResponseData = new List<string> {
+                    "Some error Occured", "Failed to update organizatino, try again later." },
             };
         }
         return new ApiResponse
         {
             Status = StatusCodes.Status200OK,
-            ResponseData = new List<string> { "Organiation updated successfully." }
+            ResponseData = new List<string> { "Success", "Organiation updated successfully." }
         };
     }
 }

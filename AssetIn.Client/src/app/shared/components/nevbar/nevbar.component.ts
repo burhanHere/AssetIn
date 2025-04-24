@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnChanges, SimpleChanges } from '@angular/core';
 import { nevbar } from '../../../core/constants/nevbar';
-import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { JwtService } from '../../../core/services/jwt/jwt.service';
 @Component({
   selector: 'app-nevbar',
@@ -9,9 +9,9 @@ import { JwtService } from '../../../core/services/jwt/jwt.service';
   templateUrl: './nevbar.component.html',
   styleUrl: './nevbar.component.css',
 })
-export class NevbarComponent {
+export class NevbarComponent implements OnChanges {
   private jwtServue: JwtService = inject(JwtService);
-  private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private router: Router = inject(Router);
   public nevbarOptions: Array<any>;
   public currentRole: string;
 
@@ -19,7 +19,9 @@ export class NevbarComponent {
     let token = sessionStorage.getItem('auth-jwt') || '';
     this.currentRole = this.jwtServue.getTokenClaims(token)['Role'];
     this.nevbarOptions = this.initializeNevbarOptoins(nevbar);
-    console.log('Navbar ionit');
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
   }
 
   private initializeNevbarOptoins(nevbar: Array<any>): Array<any> {

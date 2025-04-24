@@ -1,49 +1,93 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { OrganizationManagementService } from '../../../../core/services/organizationManagement/organization-management.service';
+import { Organization } from '../../../../core/models/organization';
+import { HttpErrorResponse } from '@angular/common/http';
+import { setThrowInvalidWriteToSignalError } from '@angular/core/primitives/signals';
+import { TitleStrategy } from '@angular/router';
 
 @Component({
   selector: 'app-organizations-dashboard',
   templateUrl: './organizations-dashboard.component.html',
   styleUrl: './organizations-dashboard.component.css'
 })
-export class OrganizationsDashboardComponent {
-  public organizations: Array<any> = [
-    {
-      name: 'Systems Limited',
-      employees: 5320,
-      assets: 1500,
-      assetWorth: '$10M',
-      icon: ''
-    },
-    {
-      name: 'Tech Corp',
-      employees: 3210,
-      assets: 800,
-      assetWorth: '$7M',
-      icon: ''
-    },
-    {
-      name: 'Global Solutions',
-      employees: 2750,
-      assets: 950,
-      assetWorth: '$5M',
-      icon: ''
-    },
-    {
-      name: 'Prime Innovations',
-      employees: 4000,
-      assets: 1200,
-      assetWorth: '$9M',
-      icon: ''
-    },
-  ];
+export class OrganizationsDashboardComponent implements OnInit {
+  private organizationManagementService: OrganizationManagementService = inject(OrganizationManagementService);
 
-  public addNewOrganization(): void {
-    this.organizations.push({
-      name: 'New Organization',
-      employees: 0,
-      assets: 0,
-      assetWorth: '$0',
-      icon: ''
+  public createOrganizationForm: FormGroup;
+  public showNewOrganizationCreationForm: boolean;
+  public organizations: Array<any>;
+  public isLoading: boolean;
+  public showAlert: boolean;
+  public alertTitle: string;
+  public alertMessage: string;
+  public showFormError: boolean;
+
+  constructor() {
+    this.createOrganizationForm = new FormGroup({
+      organizationName: new FormControl('', [Validators.required]),
+      organizationDescription: new FormControl('', [Validators.required]),
     });
+    this.showNewOrganizationCreationForm = false;
+    this.organizations = [];
+    this.isLoading = false;
+    this.showAlert = false;
+    this.alertTitle = '';
+    this.alertMessage = '';
+    this.showFormError = false;
+  }
+
+  ngOnInit(): void {
+    this.getAllOrganization();
+  }
+
+  private getAllOrganization(): void {
+    this.isLoading = true;
+    this.organizationManagementService.GetOrganizationsListForOrganizationsDashboard().subscribe(
+      (responce: any) => {
+        this.isLoading = false;
+        this.organizations = responce.responseData;
+      },
+      (error: HttpErrorResponse) => {
+        this.isLoading = false;
+        this.showAlert = true;
+        this.alertMessage = error.error.responseData[0] || 'Error';
+        this.alertTitle = error.error.responseData[1] || 'An error occurred.';
+      }
+    );
+  }
+
+  public openCloseNewOrganizationForm(): void {
+    this.createOrganizationForm.reset();
+    this.showNewOrganizationCreationForm = !this.showNewOrganizationCreationForm;
+  }
+
+  public createOrganization(): void {
+    this.isLoading = true;
+    if (this.createOrganizationForm.valid) {
+      this.showNewOrganizationCreationForm = false;
+      const newOrganizationData: Organization = {
+        organzationId: 0,
+        organizationName: this.createOrganizationForm.controls["organizationName"].value,
+        description: this.createOrganizationForm.controls["organizationDescription"].value,
+      }
+      this.organizationManagementService.CreateOrganization(newOrganizationData).subscribe(
+        (responce: any) => {
+          this.isLoading = false;
+        },
+        (error: HttpErrorResponse) => {
+          this.showNewOrganizationCreationForm = true;
+          this.isLoading = false;
+          this.showAlert = true;
+          this.alertMessage = error.error.responseData[0] || 'Error';
+          this.alertTitle = error.error.responseData[1] || 'An error occurred.';
+        }, () => {
+          this.getAllOrganization();
+        }
+      );
+    } else {
+      this.showFormError = true;
+      this.isLoading = false;
+    }
   }
 }
