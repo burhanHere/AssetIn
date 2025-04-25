@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AssetIn.Server.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InetialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -45,6 +45,7 @@ namespace AssetIn.Server.Data.Migrations
                     ProfilePicturePath = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Status = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    OrganizationId = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     NormalizedUserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
@@ -75,46 +76,32 @@ namespace AssetIn.Server.Data.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Organizations",
+                name: "OrganizationsAssetRequestStatuses",
                 columns: table => new
                 {
-                    OrganizationID = table.Column<int>(type: "int", nullable: false)
+                    OrganizationsAssetRequestStatusID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    OrganizationName = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Description = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    IndustryType = table.Column<string>(type: "longtext", nullable: false)
+                    OrganizationsAssetRequestStatusName = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Organizations", x => x.OrganizationID);
+                    table.PrimaryKey("PK_OrganizationsAssetRequestStatuses", x => x.OrganizationsAssetRequestStatusID);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Vendors",
+                name: "OrganizationsAssetStatuses",
                 columns: table => new
                 {
-                    VendorID = table.Column<int>(type: "int", nullable: false)
+                    OrganizationsAssetStatusID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    VendorName = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    OfficeAddress = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    PhoneNumber = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Email = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    ContactPerson = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Status = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                    OrganizationsAssetStatusName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vendors", x => x.VendorID);
+                    table.PrimaryKey("PK_OrganizationsAssetStatuses", x => x.OrganizationsAssetStatusID);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -246,6 +233,35 @@ namespace AssetIn.Server.Data.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Organizations",
+                columns: table => new
+                {
+                    OrganizationID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    OrganizationLogo = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OrganizationName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Description = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ActiveOrganization = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    UserID = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Organizations", x => x.OrganizationID);
+                    table.ForeignKey(
+                        name: "FK_Organizations_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "OrganizationsAssetRequests",
                 columns: table => new
                 {
@@ -273,6 +289,38 @@ namespace AssetIn.Server.Data.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Vendors",
+                columns: table => new
+                {
+                    VendorID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    VendorName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OfficeAddress = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PhoneNumber = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Email = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ContactPerson = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Status = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    UserID = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Vendors", x => x.VendorID);
+                    table.ForeignKey(
+                        name: "FK_Vendors_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "OrganizationsAssetCatagories",
                 columns: table => new
                 {
@@ -287,28 +335,6 @@ namespace AssetIn.Server.Data.Migrations
                     table.PrimaryKey("PK_OrganizationsAssetCatagories", x => x.OrganizationsAssetCatagoryID);
                     table.ForeignKey(
                         name: "FK_OrganizationsAssetCatagories_Organizations_OrganizationsID",
-                        column: x => x.OrganizationsID,
-                        principalTable: "Organizations",
-                        principalColumn: "OrganizationID",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "OrganizationsAssetStatuses",
-                columns: table => new
-                {
-                    OrganizationsAssetStatusID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    OrganizationsAssetStatusName = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    OrganizationsID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OrganizationsAssetStatuses", x => x.OrganizationsAssetStatusID);
-                    table.ForeignKey(
-                        name: "FK_OrganizationsAssetStatuses_Organizations_OrganizationsID",
                         column: x => x.OrganizationsID,
                         principalTable: "Organizations",
                         principalColumn: "OrganizationID",
@@ -412,6 +438,9 @@ namespace AssetIn.Server.Data.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     PurchaseDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    PurchasePrice = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    CostPrice = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    DeletedByOrganization = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     Location = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DepreciationRate = table.Column<float>(type: "float", nullable: false),
@@ -419,8 +448,8 @@ namespace AssetIn.Server.Data.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     AssetIdentificationNumber = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    OrganizationlD = table.Column<int>(type: "int", nullable: false),
-                    AssetStatuslD = table.Column<int>(type: "int", nullable: false),
+                    OrganizationID = table.Column<int>(type: "int", nullable: false),
+                    AssetStatusID = table.Column<int>(type: "int", nullable: false),
                     AssetCatagoryID = table.Column<int>(type: "int", nullable: false),
                     AssetTypeID = table.Column<int>(type: "int", nullable: false)
                 },
@@ -434,10 +463,10 @@ namespace AssetIn.Server.Data.Migrations
                         principalColumn: "OrganizationsAssetCatagoryID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Assets_OrganizationsAssetStatuses_AssetStatuslD",
-                        column: x => x.AssetStatuslD,
-                        principalTable: "OrganizationsAssetStatuses",
-                        principalColumn: "OrganizationsAssetStatusID",
+                        name: "FK_Assets_OrganizationsAssetRequestStatuses_AssetStatusID",
+                        column: x => x.AssetStatusID,
+                        principalTable: "OrganizationsAssetRequestStatuses",
+                        principalColumn: "OrganizationsAssetRequestStatusID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Assets_OrganizationsAssetTypes_AssetTypeID",
@@ -446,8 +475,8 @@ namespace AssetIn.Server.Data.Migrations
                         principalColumn: "OrganizationsAssetTypeID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Assets_Organizations_OrganizationlD",
-                        column: x => x.OrganizationlD,
+                        name: "FK_Assets_Organizations_OrganizationID",
+                        column: x => x.OrganizationID,
                         principalTable: "Organizations",
                         principalColumn: "OrganizationID",
                         onDelete: ReferentialAction.Cascade);
@@ -460,7 +489,8 @@ namespace AssetIn.Server.Data.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    AssignedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ReturnedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Notes = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     AssignedToUserID = table.Column<string>(type: "varchar(255)", nullable: false)
@@ -549,10 +579,33 @@ namespace AssetIn.Server.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "1", "e40b7007-b10e-420f-b6f2-113111a86be6", "OrganizationOwner", "ORGANIZATIONOWNER" },
-                    { "2", "305a186d-d03c-4ba1-b4cc-18bffc031a7d", "OrganizationEmployee", "ORGANIZATIONEMPLOYEE" },
-                    { "3", "80fc609c-b6ac-49ee-973a-beb175216d2f", "OrganizationAssetManager", "ORGANIZATIONASSETMANAGER" },
-                    { "4", "9523eb6f-c27e-457c-91fd-66bf09b225c1", "Vendor", "VENDOR" }
+                    { "1", "c99b489a-b203-498b-a312-1d6886ce712f", "OrganizationOwner", "ORGANIZATIONOWNER" },
+                    { "2", "407c905f-8cfc-45b8-88cd-8d3accdeb92a", "OrganizationEmployee", "ORGANIZATIONEMPLOYEE" },
+                    { "3", "f1025f75-923c-4ab4-ad5b-7c9b36f809f8", "OrganizationAssetManager", "ORGANIZATIONASSETMANAGER" },
+                    { "4", "30ac464a-2f3c-42d1-b1e8-2b2191c75386", "Vendor", "VENDOR" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "OrganizationsAssetRequestStatuses",
+                columns: new[] { "OrganizationsAssetRequestStatusID", "OrganizationsAssetRequestStatusName" },
+                values: new object[,]
+                {
+                    { 1, "Accepted" },
+                    { 2, "Pending" },
+                    { 3, "Declined" },
+                    { 4, "Fulfilled" },
+                    { 5, "Canceled" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "OrganizationsAssetStatuses",
+                columns: new[] { "OrganizationsAssetStatusID", "OrganizationsAssetStatusName" },
+                values: new object[,]
+                {
+                    { 1, "Assigned" },
+                    { 2, "Retired" },
+                    { 3, "UnderMaintenance" },
+                    { 4, "Available" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -604,9 +657,9 @@ namespace AssetIn.Server.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Assets_AssetStatuslD",
+                name: "IX_Assets_AssetStatusID",
                 table: "Assets",
-                column: "AssetStatuslD");
+                column: "AssetStatusID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Assets_AssetTypeID",
@@ -614,14 +667,20 @@ namespace AssetIn.Server.Data.Migrations
                 column: "AssetTypeID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Assets_OrganizationlD",
+                name: "IX_Assets_OrganizationID",
                 table: "Assets",
-                column: "OrganizationlD");
+                column: "OrganizationID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Assets_SerialNumber",
                 table: "Assets",
                 column: "SerialNumber",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Organizations_UserID",
+                table: "Organizations",
+                column: "UserID",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -660,11 +719,6 @@ namespace AssetIn.Server.Data.Migrations
                 column: "AssetID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrganizationsAssetStatuses_OrganizationsID",
-                table: "OrganizationsAssetStatuses",
-                column: "OrganizationsID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_OrganizationsAssetTypes_OrganizationsID",
                 table: "OrganizationsAssetTypes",
                 column: "OrganizationsID");
@@ -684,6 +738,11 @@ namespace AssetIn.Server.Data.Migrations
                 table: "Vendors",
                 column: "Email",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vendors_UserID",
+                table: "Vendors",
+                column: "UserID");
         }
 
         /// <inheritdoc />
@@ -717,6 +776,9 @@ namespace AssetIn.Server.Data.Migrations
                 name: "OrganizationsAssetRetirements");
 
             migrationBuilder.DropTable(
+                name: "OrganizationsAssetStatuses");
+
+            migrationBuilder.DropTable(
                 name: "OrganizationsDomains");
 
             migrationBuilder.DropTable(
@@ -724,9 +786,6 @@ namespace AssetIn.Server.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Assets");
@@ -738,13 +797,16 @@ namespace AssetIn.Server.Data.Migrations
                 name: "OrganizationsAssetCatagories");
 
             migrationBuilder.DropTable(
-                name: "OrganizationsAssetStatuses");
+                name: "OrganizationsAssetRequestStatuses");
 
             migrationBuilder.DropTable(
                 name: "OrganizationsAssetTypes");
 
             migrationBuilder.DropTable(
                 name: "Organizations");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

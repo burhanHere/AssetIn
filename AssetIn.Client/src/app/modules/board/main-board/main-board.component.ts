@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnChanges } from '@angular/core';
 
 @Component({
   selector: 'app-main-board',
@@ -6,5 +6,4 @@ import { Component } from '@angular/core';
   styleUrl: './main-board.component.css'
 })
 export class MainBoardComponent {
-
 }

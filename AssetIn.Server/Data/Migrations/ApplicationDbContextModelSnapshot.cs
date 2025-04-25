@@ -47,6 +47,9 @@ namespace AssetIn.Server.Data.Migrations
                     b.Property<int>("AssetTypeID")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("CostPrice")
+                        .HasColumnType("decimal(65,30)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime(6)");
 
@@ -81,6 +84,9 @@ namespace AssetIn.Server.Data.Migrations
 
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<decimal>("PurchasePrice")
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
@@ -126,6 +132,10 @@ namespace AssetIn.Server.Data.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("OrganizationLogo")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("OrganizationName")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -136,7 +146,8 @@ namespace AssetIn.Server.Data.Migrations
 
                     b.HasKey("OrganizationID");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserID")
+                        .IsUnique();
 
                     b.ToTable("Organizations");
                 });
@@ -457,6 +468,9 @@ namespace AssetIn.Server.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
+                    b.Property<int?>("OrganizationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext");
 
@@ -615,28 +629,28 @@ namespace AssetIn.Server.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "25e9d1c9-dc6e-4c55-b544-fd92306b3224",
+                            ConcurrencyStamp = "c99b489a-b203-498b-a312-1d6886ce712f",
                             Name = "OrganizationOwner",
                             NormalizedName = "ORGANIZATIONOWNER"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "1304ee64-3118-4e5c-96e9-a2a8e07f8a40",
+                            ConcurrencyStamp = "407c905f-8cfc-45b8-88cd-8d3accdeb92a",
                             Name = "OrganizationEmployee",
                             NormalizedName = "ORGANIZATIONEMPLOYEE"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "f364fa87-df9a-49dd-a8e0-2562ec35a4d6",
+                            ConcurrencyStamp = "f1025f75-923c-4ab4-ad5b-7c9b36f809f8",
                             Name = "OrganizationAssetManager",
                             NormalizedName = "ORGANIZATIONASSETMANAGER"
                         },
                         new
                         {
                             Id = "4",
-                            ConcurrencyStamp = "849fba08-c719-4d3e-b4d1-85254a0611e9",
+                            ConcurrencyStamp = "30ac464a-2f3c-42d1-b1e8-2b2191c75386",
                             Name = "Vendor",
                             NormalizedName = "VENDOR"
                         });
@@ -786,8 +800,8 @@ namespace AssetIn.Server.Data.Migrations
             modelBuilder.Entity("AssetIn.Server.Models.Organization", b =>
                 {
                     b.HasOne("AssetIn.Server.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
+                        .WithOne("Organization")
+                        .HasForeignKey("AssetIn.Server.Models.Organization", "UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -957,6 +971,12 @@ namespace AssetIn.Server.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AssetIn.Server.Models.User", b =>
+                {
+                    b.Navigation("Organization")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

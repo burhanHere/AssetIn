@@ -49,6 +49,21 @@
   animation-delay: -3s;
 }
 
+.burhan_box form h2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form_row_div {
+  padding-top: 1%;
+  padding-top: 5%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 @keyframes animate {
   0% {
     transform: rotate(0deg);
@@ -106,7 +121,7 @@ h2 {
 .burhan_input-box select {
   position: absolute;
   left: 0px;
-  top:-12px;
+  top: -12px;
   background-color: #23242a;
   color: #8f8f8f;
 }
@@ -160,9 +175,10 @@ input[type="submit"]:active {
   z-index: 9;
 }
 
-.inputError {
-  height: 3mm;
-  font-size: 3mm;
+.input-error {
+  font-size: 13px;
+  color: #d9534f;
+  margin-top: 5px;
 }
 
 .burhan_input-box input:valid~i,

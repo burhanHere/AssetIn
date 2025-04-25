@@ -1,12 +1,12 @@
 .mainDiv {
-  border: 1px solid green;
+  /* border: 1px solid green; */
   padding-top: 3%;
   width: 240px;
   height: 85.5vh;
 }
 
 .nevbarOption {
-  border: 1px solid red;
+  /* border: 1px solid red; */
   text-decoration: none;
   color: black;
   text-align: center;

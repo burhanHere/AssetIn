@@ -11,14 +11,14 @@
 <div class="burhan_bodyContainer">
   <div class="burhan_box">
     <form action="" [formGroup]="signUpForm">
-      <h2 class="justify-content-center">Sign Up</h2>
-      <div class="row w-100 justify-content-between pt-1 pb-5">
+      <h2>Sign Up</h2>
+      <div class="form_row_div">
         <div class="burhan_input-box">
           <input type="text" value="" formControlName="fullName" name="fullName" required>
           <span>Full Name</span>
           <i></i>
           @if (signUpForm.controls['fullName'].touched) {
-          <div class="inputError text-danger">
+          <div class="inputError">
             @if (signUpForm.controls['fullName'].errors?.['required']) {
             <span>Your full name is required.</span>
             }
@@ -56,7 +56,7 @@
           }
         </div>
       </div>
-      <div class="row w-100 justify-content-between pt-1 pb-5">
+      <div class="form_row_div">
         <div class="burhan_input-box">
           <!-- Date of Birth changed to date input -->
           <input type="date" formControlName="dateOfBirth" name="dateOfBirth" required>
@@ -101,7 +101,7 @@
           }
         </div>
       </div>
-      <div class="row w-100 justify-content-between pt-1 pb-5">
+      <div class="form_row_div">
         <div class="burhan_input-box">
           <select formControlName="requiredRole" name="requiredRole" required>
             <option value="" disabled selected>Account Type</option>

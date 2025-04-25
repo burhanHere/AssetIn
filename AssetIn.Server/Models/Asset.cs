@@ -23,6 +23,10 @@ public class Asset
     [Required]
     public DateTime PurchaseDate { get; set; }
     [Required]
+    public decimal PurchasePrice { get; set; }
+    [Required]
+    public decimal CostPrice { get; set; }
+    [Required]
     public bool DeletedByOrganization { get; set; }
     [Required]
     public string Location { get; set; }

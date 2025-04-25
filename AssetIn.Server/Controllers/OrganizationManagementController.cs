@@ -85,9 +85,9 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
         };
     }
 
-    [HttpGet(template: "GetOrganizationInfo")]
+    [HttpGet(template: "GetOrganizationInfoForOrganizationDashboard")]
     [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerPolicy")]
-    public async Task<IActionResult> GetOrganizationInfo(int OrganizationID)
+    public async Task<IActionResult> GetOrganizationInfoForOrganizationDashboard(int OrganizationID)
     {
         var userId = User.FindFirst("UserId")?.Value;
         if (string.IsNullOrEmpty(userId))
@@ -99,7 +99,7 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
                 ResponseData = new List<string> { "User not found in token." }
             });
         }
-        ApiResponse result = await _organizationManagementRepository.GetOrganizationInfo(OrganizationID, userId);
+        ApiResponse result = await _organizationManagementRepository.GetOrganizationInfoForOrganizationDashboard(OrganizationID, userId);
         return result.Status switch
         {
             StatusCodes.Status200OK => Ok(result),
@@ -108,7 +108,7 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
         };
     }
 
-    [HttpGet(template: "GetOrganizations")]
+    [HttpGet(template: "GetOrganizationsListForOrganizationsDashboard")]
     [Authorize(Policy = "OrganizationOwnerPolicy")]
     public async Task<IActionResult> GetOrganizations()
     {
@@ -122,7 +122,7 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
                 ResponseData = new List<string> { "User not found in token." }
             });
         }
-        ApiResponse result = await _organizationManagementRepository.GetOrganizations(userID);
+        ApiResponse result = await _organizationManagementRepository.GetOrganizationsListForOrganizationsDashboard(userID);
         return result.Status switch
         {
             StatusCodes.Status200OK => Ok(result),

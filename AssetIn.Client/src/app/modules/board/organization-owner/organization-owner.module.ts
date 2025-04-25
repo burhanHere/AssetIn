@@ -5,6 +5,9 @@ import { OrganizationOwnerRoutingModule } from './organization-owner-routing.mod
 import { OrganizationsDashboardComponent } from './organizations-dashboard/organizations-dashboard.component';
 import { ErrorPageComponent } from '../../../shared/components/error-page/error-page.component';
 import { SettingsComponent } from './settings/settings.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { PageLoaderComponent } from '../../../shared/components/page-loader/page-loader.component';
+import { AlertCardComponent } from '../../../shared/components/alert-card/alert-card.component';
 
 
 @NgModule({
@@ -15,7 +18,10 @@ import { SettingsComponent } from './settings/settings.component';
   imports: [
     CommonModule,
     OrganizationOwnerRoutingModule,
-    ErrorPageComponent
+    ErrorPageComponent,
+    ReactiveFormsModule,
+    PageLoaderComponent,
+    AlertCardComponent
   ]
 })
 export class OrganizationOwnerModule { }
