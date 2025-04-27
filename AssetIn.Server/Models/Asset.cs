@@ -13,6 +13,8 @@ public class Asset
     [Required]
     public string SerialNumber { get; set; }
     [Required]
+    public string Barcode { get; set; }
+    [Required]
     public string Model { get; set; }
     [Required]
     public string Manufacturer { get; set; }

@@ -38,8 +38,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<OrganizationsAssetStatus>().HasData(
             new OrganizationsAssetStatus { OrganizationsAssetStatusID = 1, OrganizationsAssetStatusName = "Assigned" },
             new OrganizationsAssetStatus { OrganizationsAssetStatusID = 2, OrganizationsAssetStatusName = "Retired" },
+            new OrganizationsAssetStatus { OrganizationsAssetStatusID = 3, OrganizationsAssetStatusName = "Under Maintenance" },
             new OrganizationsAssetStatus { OrganizationsAssetStatusID = 4, OrganizationsAssetStatusName = "Available" },
-            new OrganizationsAssetStatus { OrganizationsAssetStatusID = 3, OrganizationsAssetStatusName = "UnderMaintenance" }
+            new OrganizationsAssetStatus { OrganizationsAssetStatusID = 5, OrganizationsAssetStatusName = "Lost" },
+            new OrganizationsAssetStatus { OrganizationsAssetStatusID = 6, OrganizationsAssetStatusName = "Out Of Order" }
         );
 
         modelBuilder.Entity<OrganizationsAssetRequestStatus>().HasData(

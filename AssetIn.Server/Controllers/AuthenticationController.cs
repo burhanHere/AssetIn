@@ -1,3 +1,4 @@
+using AssetIn.Server.Data;
 using AssetIn.Server.DTOs;
 using AssetIn.Server.Models;
 using AssetIn.Server.Repositories;
@@ -11,10 +12,10 @@ namespace AssetIn.Server.Controllers;
 [ApiController]
 [AllowAnonymous]
 [Route("AssetIn.Server/[controller]")]
-public class AuthenticationController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, EmailService emailService)
+public class AuthenticationController(ApplicationDbContext applicationDbContext,UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, EmailService emailService)
  : ControllerBase
 {
-    private readonly AuthenticationRepository _authenticationRepository = new(userManager, roleManager, configuration, emailService);
+    private readonly AuthenticationRepository _authenticationRepository = new(applicationDbContext,userManager, roleManager, configuration, emailService);
 
     [HttpPost(template: "UserSignUp")]
     public async Task<IActionResult> UserSignUp([FromBody] UserSignUpDTO userSignUpDTO)

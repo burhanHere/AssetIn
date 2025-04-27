@@ -1,21 +1,24 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AssetIn.Server.Data;
 using AssetIn.Server.DTOs;
 using AssetIn.Server.Helpers;
 using AssetIn.Server.Models;
 using AssetIn.Server.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AssetIn.Server.Repositories;
 
-public class AuthenticationRepository(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, EmailService emailService)
+public class AuthenticationRepository(ApplicationDbContext applicationDbContext, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, EmailService emailService)
 {
   private readonly UserManager<User> _userManager = userManager;
   private readonly RoleManager<IdentityRole> _roleManager = roleManager;
   private readonly IConfiguration _configuration = configuration;
   private readonly EmailService _emailService = emailService;
+  private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
 
   public async Task<ApiResponse> UserSignUp(UserSignUpDTO userSignUpDTO)
   {
@@ -189,6 +192,22 @@ public class AuthenticationRepository(UserManager<User> userManager, RoleManager
         };
     var userRoles = await _userManager.GetRolesAsync(userExist);
     authClaims.AddRange(userRoles.Select(role => new Claim("Role", role)));
+    if (userRoles[0] == "OrganizationAssetManager" || userRoles[0] == "OrganizationEmployee")
+    {
+      authClaims.Add(new Claim("OrganizationId", userExist.OrganizationId.ToString()!));
+    }
+    else if (userRoles[0] == "Vendor")
+    {
+      var targetVendorData = _applicationDbContext.Vendors.FirstOrDefault(x => userExist.Id == x.UserID);
+      if (targetVendorData == null)
+      {
+        authClaims.Add(new Claim("VendorId", 0.ToString()));
+      }
+      else
+      {
+        authClaims.Add(new Claim("VendorId", targetVendorData?.VendorID.ToString()!));
+      }
+    }
     // getting encryption key for jwt token encruption
     var secret = _configuration.GetValue<string>("JWT:Secret");
     // getting Valid Issuer of the token

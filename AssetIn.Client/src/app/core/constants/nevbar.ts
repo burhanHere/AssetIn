@@ -48,12 +48,6 @@ export const nevbar = [
     iconPath: './icons/Dashboard.png',
   },
   {
-    path: '../../board/mainBoard/organizationOwner/organizationsSettings',
-    acceptableRoles: ['OrganizationOwner'],
-    displayName: 'Settings',
-    iconPath: './icons/Settings.png',
-  },
-  {
     path: '../../board/mainBoard/organizationAdmin/organizationSettings',
     acceptableRoles: ['OrganizationAssetManager'],
     displayName: 'Settings',

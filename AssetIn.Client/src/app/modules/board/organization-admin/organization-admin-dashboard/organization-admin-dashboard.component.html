@@ -1,1 +1,13 @@
+@if(isLoading)
+{
+<app-page-loader></app-page-loader>
+}
+
+@if (showAlert) {
+<app-alert-card [title]="alertTitle" [message]="alertMessage" (closeCard)="showAlert = $event"></app-alert-card>
+}
 <p>organization-admin-dashboard works!</p>
+
+<p>
+  {{organizationData|json}}
+</p>

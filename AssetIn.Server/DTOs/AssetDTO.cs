@@ -6,6 +6,7 @@ public class AssetDTO
     public string AssetName { get; set; }
     public string Description { get; set; }
     public string SerialNumber { get; set; }
+    public string Barcode { get; set; }
     public string Model { get; set; }
     public string Manufacturer { get; set; }
     public DateTime PurchaseDate { get; set; }

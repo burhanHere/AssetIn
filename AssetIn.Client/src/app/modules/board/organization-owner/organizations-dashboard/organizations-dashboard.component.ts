@@ -3,8 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OrganizationManagementService } from '../../../../core/services/organizationManagement/organization-management.service';
 import { Organization } from '../../../../core/models/organization';
 import { HttpErrorResponse } from '@angular/common/http';
-import { setThrowInvalidWriteToSignalError } from '@angular/core/primitives/signals';
-import { TitleStrategy } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-organizations-dashboard',
@@ -13,7 +12,7 @@ import { TitleStrategy } from '@angular/router';
 })
 export class OrganizationsDashboardComponent implements OnInit {
   private organizationManagementService: OrganizationManagementService = inject(OrganizationManagementService);
-
+  private router: Router = inject(Router);
   public createOrganizationForm: FormGroup;
   public showNewOrganizationCreationForm: boolean;
   public organizations: Array<any>;
@@ -51,8 +50,8 @@ export class OrganizationsDashboardComponent implements OnInit {
       (error: HttpErrorResponse) => {
         this.isLoading = false;
         this.showAlert = true;
-        this.alertMessage = error.error.responseData[0] || 'Error';
-        this.alertTitle = error.error.responseData[1] || 'An error occurred.';
+        this.alertTitle = error.error.responseData[0] || 'Error';
+        this.alertMessage = error.error.responseData[1] || 'An error occurred.';
       }
     );
   }
@@ -89,5 +88,10 @@ export class OrganizationsDashboardComponent implements OnInit {
       this.showFormError = true;
       this.isLoading = false;
     }
+  }
+
+  public openTargetOrganizationDashboard(targetOrganization: any): void {
+    this.router.navigateByUrl('/board/mainBoard/organizationAdmin');
+    sessionStorage.setItem('targetOrganizationID', targetOrganization.organizationID);
   }
 }

@@ -27,30 +27,37 @@
   overflow-y: auto;
 }
 
-table {
+.table-div table {
   width: 100%;
   border-collapse: collapse;
 }
 
-th,
-td {
-  padding: 0.5vw;
-  text-align: center;
-}
-
-th {
+.table-div table thead {
   background-color: #0d3d4f;
   color: white;
 }
 
-td span {
+.table-div table tbody tr {
+  transition: 0.3s;
+}
+
+.table-div table tbody tr:hover {
+  transition: 0.3s;
+  transform: scale(1.02);
+  background-color: #f8fafc;
+}
+
+.table-div table tr th,
+.table-div tbody tr td {
+  padding: 0.5vw;
+  text-align: center;
+}
+
+.asset-status {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5vw;
-}
-
-td label {
   width: 6.5pc;
   padding: 0.5vw;
   border: none;
@@ -58,28 +65,97 @@ td label {
   font-weight: bold;
 }
 
-label.available {
+.available {
   background-color: #7ac6ec;
 }
 
-label.assigned {
+.assigned {
   background-color: #da498d94;
 }
 
-label.retired {
+.retired {
   background-color: #96928c;
 }
 
-label.out-of-order {
+.out-of-order {
   background-color: #f4ba47;
 }
 
-label.lost {
+.lost {
   background-color: #f35f5f;
 }
 
-label.under-repair {
+.under-maintenance {
   background-color: #b7f95c;
+}
+
+.delete-asset {
+  border: 2px solid #ec221f;
+  border-radius: 7px;
+  transition: 0.3s;
+}
+
+.delete-asset:hover {
+  transition: 0.3s;
+  background-color: #e0bdbc;
+  transform: scale(1.05);
+}
+
+
+.blur-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+
+.gradient-border-wrapper {
+  background: linear-gradient(to right, #CF42D7, #7AC6EC);
+  padding: 4px;
+  border-radius: 12px;
+  display: inline-block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+.delete-confirmation-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 50vw;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.delete-confirmation-container button {
+  padding: 10px 20px;
+  margin: 10px 5px 0 5px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.delete-confirmation-container button:first-of-type {
+  background-color: #d9534f;
+  color: white;
+}
+
+.delete-confirmation-container button:last-of-type {
+  background-color: #5bc0de;
+  color: white;
+}
+
+.delete-confirmation-container button:hover {
+  transform: scale(1.05);
 }
 
 .side-div {
@@ -105,9 +181,16 @@ label.under-repair {
   border: none;
   border-radius: 10px;
   cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  transition: 0.3s;
+  transform: scale(1.05);
 }
 
 .btn img {
   width: 2vw;
   height: 2vw;
 }
+

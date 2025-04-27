@@ -11,7 +11,7 @@
   <div>
     <button class="add-new-card-btn" (click)="openCloseNewOrganizationForm()">
       <img src="./icons/add new organization.png" class="button-logo" />
-      Add New
+      Add New Organization
     </button>
     @if(showNewOrganizationCreationForm)
     {
@@ -57,7 +57,7 @@
 
   <div class="cards-container">
     @for (org of organizations; track $index){
-    <div class="card">
+    <div class="card" (click)="openTargetOrganizationDashboard(org)">
       <div class="card-heading">
         <img [src]="org.organizationLogo===''?'./icons/Organizations.png':org.organizationLogo" alt="logo" width="50px"
           height="50px" />

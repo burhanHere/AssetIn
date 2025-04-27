@@ -18,7 +18,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to crete asset."
+                ResponseData = new List<string> { "Error", "Unable to crete asset." }
             };
         }
 
@@ -28,7 +28,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to crete asset."
+                ResponseData = new List<string> { "Error", "Unable to crete asset." }
             };
         }
 
@@ -38,6 +38,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             AssetName = newAsset.AssetName,
             Description = newAsset.Description,
             SerialNumber = newAsset.SerialNumber,
+            Barcode = newAsset.Barcode,
             Model = newAsset.Model,
             Manufacturer = newAsset.Manufacturer,
             CreatedDate = DateTime.UtcNow,
@@ -61,14 +62,14 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = "Asset created successfully."
+                ResponseData = new List<string> { "Success", "Asset created successfully." }
             };
         }
 
         return new ApiResponse
         {
             Status = StatusCodes.Status400BadRequest,
-            ResponseData = "Unable to create asset."
+            ResponseData = new List<string> { "Error", "Unable to create asset." }
         };
     }
     public async Task<ApiResponse> UpdateAsset(AssetDTO updatedAsset, string userId)
@@ -79,7 +80,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to update asset."
+                ResponseData = new List<string> { "Error", "Unable to update asset." }
             };
         }
 
@@ -89,7 +90,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to update asset."
+                ResponseData = new List<string> { "Error", "Unable to update asset." }
             };
         }
 
@@ -99,13 +100,14 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse()
             {
                 Status = StatusCodes.Status404NotFound,
-                ResponseData = "Unable to update asset."
+                ResponseData = new List<string> { "Error", "Unable to update asset." }
             };
         }
 
         targetAsset.AssetName = updatedAsset.AssetName;
         targetAsset.Description = updatedAsset.Description;
         targetAsset.SerialNumber = updatedAsset.SerialNumber;
+        targetAsset.Barcode = updatedAsset.Barcode;
         targetAsset.Model = updatedAsset.Model;
         targetAsset.Manufacturer = updatedAsset.Manufacturer;
         targetAsset.PurchaseDate = updatedAsset.PurchaseDate;
@@ -125,26 +127,25 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = "Asset updated successfully."
+                ResponseData = new List<string> { "Success", "Asset updated successfully." }
             };
         }
 
         return new ApiResponse
         {
             Status = StatusCodes.Status400BadRequest,
-            ResponseData = "Unable to updated asset."
+            ResponseData = new List<string> { "Error", "Unable to updated asset." }
         };
     }
     public async Task<ApiResponse> DeleteAsset(int assetID)
     {
-
         Asset? targetAsset = await _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetlD == assetID);
         if (targetAsset == null)
         {
             return new ApiResponse
             {
                 Status = StatusCodes.Status404NotFound,
-                ResponseData = "No asset found."
+                ResponseData = new List<string> { "Error", "No asset found." }
             };
         }
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetAsset.OrganizationID);
@@ -153,20 +154,21 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to delete asset."
+                ResponseData = new List<string> { "Error", "Unable to delete asset." }
             };
         }
-        if (targetAsset.AssetStatusID == 4)
+        if (targetAsset.AssetStatusID != 4)
         {
-
             // 1   Assigned
             // 2   Retired
             // 3   UnderMaintenance
             // 4   Available
+            // 5   Lost
+            // 6   Out Of Order
             return new()
             {
                 Status = StatusCodes.Status400BadRequest,
-                ResponseData = "Asset is not available right now. Unable to delete."
+                ResponseData = new List<string> { "Error", "Asset is not available right now. Unable to delete." }
             };
         }
         targetAsset.DeletedByOrganization = true;
@@ -178,14 +180,14 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = "Asset deleted successfully."
+                ResponseData = new List<string> { "Success", "Asset deleted successfully." }
             };
         }
 
         return new ApiResponse
         {
             Status = StatusCodes.Status400BadRequest,
-            ResponseData = "Unable to delete asset."
+            ResponseData = new List<string> { "Error", "Unable to delete asset." }
         };
     }
     public async Task<ApiResponse> GetAllAsset(int organizationID)
@@ -196,20 +198,25 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to get all asset."
+                ResponseData = new List<string> { "Error", "Unable to get all asset." }
             };
         }
 
-        List<Asset> allAssets = await _applicationDbContext.Assets.Where(x => x.OrganizationID == organizationID && !x.DeletedByOrganization).ToListAsync();
-        if (allAssets.Count == 0)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status404NotFound,
-                ResponseData = "No asset found."
-            };
 
-        }
+        var allAssets = await (from asset in _applicationDbContext.Assets
+                               join status in _applicationDbContext.OrganizationsAssetStatuses
+                               on asset.AssetStatusID equals status.OrganizationsAssetStatusID
+                               where asset.OrganizationID == organizationID && !asset.DeletedByOrganization
+                               select new
+                               {
+                                   AssetlD = asset.AssetlD,
+                                   AssetName = asset.AssetName,
+                                   Barcode = asset.Barcode,
+                                   SerialNumber = asset.SerialNumber,
+                                   CreatedDate = asset.CreatedDate,
+                                   UpdatedDate = asset.UpdatedDate,
+                                   AssetStatus = status.OrganizationsAssetStatusName,
+                               }).ToListAsync();
         return new ApiResponse
         {
             Status = StatusCodes.Status200OK,
@@ -224,7 +231,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status404NotFound,
-                ResponseData = "No asset found."
+                ResponseData = new List<string> { "Error", "No asset found." }
             };
         }
 
@@ -234,7 +241,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to get required asset."
+                ResponseData = new List<string> { "Error", "Unable to get required asset." }
             };
         }
 
@@ -252,7 +259,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to crete asset catagory ."
+                ResponseData = new List<string> { "Error", "Unable to crete asset catagory ." }
             };
         }
 
@@ -262,7 +269,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to crete asset catagory ."
+                ResponseData = new List<string> { "Error", "Unable to crete asset catagory ." }
             };
         }
 
@@ -280,14 +287,14 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = "Asset catagory created successfully."
+                ResponseData = new List<string> { "Success", "Asset catagory created successfully." }
             };
         }
 
         return new ApiResponse
         {
             Status = StatusCodes.Status400BadRequest,
-            ResponseData = "Unable to create asset catagory ."
+            ResponseData = new List<string> { "Error", "Unable to create asset catagory ." }
         };
     }
     public async Task<ApiResponse> DeleteAssetCatagory(int catagoryID)
@@ -298,7 +305,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to delete asset catagory."
+                ResponseData = new List<string> { "Error", "Unable to delete asset catagory." }
             };
         }
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetCatagory.OrganizationsID);
@@ -307,7 +314,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to delete asset catagory ."
+                ResponseData = new List<string> { "Error", "Unable to delete asset catagory ." }
             };
         }
         var catagoryAssociationCheckWithAsset = _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetCatagoryID == catagoryID);
@@ -317,7 +324,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to delete asset catagory. Asset catagory is associated with some assets."
+                ResponseData = new List<string> { "Error", "Unable to delete asset catagory. Asset catagory is associated with some assets." }
             };
         }
 
@@ -328,14 +335,14 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = "Asset catagory deleted successfully."
+                ResponseData = new List<string> { "Success", "Asset catagory deleted successfully." }
             };
         }
 
         return new ApiResponse
         {
             Status = StatusCodes.Status400BadRequest,
-            ResponseData = "Unable to delete asset catagory."
+            ResponseData = new List<string> { "Error", "Unable to delete asset catagory." }
         };
     }
     public async Task<ApiResponse> UpdateAssetCatagory(AssetCatagoryDTO assetCatagory)
@@ -346,7 +353,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to delete asset catagory."
+                ResponseData = new List<string> { "Error", "Unable to update asset catagory." }
             };
         }
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetCatagory.OrganizationsID);
@@ -355,7 +362,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to update asset catagory ."
+                ResponseData = new List<string> { "Error", "Unable to update asset catagory ." }
             };
         }
         targetCatagory.OrganizationsAssetCatagoryName = assetCatagory.OrganizationsAssetCatagoryName;
@@ -367,14 +374,14 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = "Asset catagory deleted successfully."
+                ResponseData = new List<string> { "Success", "Asset catagory updated successfully." }
             };
         }
 
         return new ApiResponse
         {
             Status = StatusCodes.Status400BadRequest,
-            ResponseData = "Unable to delete asset catagory."
+            ResponseData = new List<string> { "Error", "Unable to update asset catagory." }
         };
     }
     public async Task<ApiResponse> GetAllAssetCatagory(int organizationID)
@@ -385,19 +392,10 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to get all asset catagory ."
+                ResponseData = new List<string> { "Error", "Unable to get all asset catagory ." }
             };
         }
         List<OrganizationsAssetCatagory> allCatagories = await _applicationDbContext.OrganizationsAssetCatagories.Where(x => x.OrganizationsID == organizationID).ToListAsync();
-        if (allCatagories.Count == 0)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status404NotFound,
-                ResponseData = "No asset catagory found."
-            };
-
-        }
         return new ApiResponse
         {
             Status = StatusCodes.Status200OK,
@@ -412,22 +410,12 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to get asset status."
+                ResponseData = new List<string> { "Error", "Unable to get asset status." }
             };
         }
 
         List<OrganizationsAssetStatus> allStatus = await _applicationDbContext.OrganizationsAssetStatuses.ToListAsync();
 
-        if (allStatus.Count == 0)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status404NotFound,
-                ResponseData = "No asset status found."
-            };
-
-        }
-        
         return new ApiResponse
         {
             Status = StatusCodes.Status200OK,
@@ -442,7 +430,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to crete asset type."
+                ResponseData = new List<string> { "Error", "Unable to crete asset type." }
             };
         }
 
@@ -452,7 +440,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to crete asset type."
+                ResponseData = new List<string> { "Error", "Unable to crete asset type." }
             };
         }
 
@@ -470,14 +458,14 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = "Asset type created successfully."
+                ResponseData = new List<string> { "Success", "Asset type created successfully." }
             };
         }
 
         return new ApiResponse
         {
             Status = StatusCodes.Status400BadRequest,
-            ResponseData = "Unable to create asset type."
+            ResponseData = new List<string> { "Error", "Unable to create asset type." }
         };
     }
     public async Task<ApiResponse> DeleteAssetType(int AssetTypeID)
@@ -488,7 +476,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to delete asset type."
+                ResponseData = new List<string> { "Error", "Unable to delete asset type." }
             };
         }
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetAssetType.OrganizationsID);
@@ -497,7 +485,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to delete asset type."
+                ResponseData = new List<string> { "Error", "Unable to delete asset type." }
             };
         }
 
@@ -508,7 +496,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to delete asset status. Asset status is associated with some assets."
+                ResponseData = new List<string> { "Error", "Unable to delete asset status. Asset status is associated with some assets." }
             };
         }
 
@@ -519,14 +507,14 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = "Asset type deleted successfully."
+                ResponseData = new List<string> { "Success", "Asset type deleted successfully." }
             };
         }
 
         return new ApiResponse
         {
             Status = StatusCodes.Status400BadRequest,
-            ResponseData = "Unable to delete asset type."
+            ResponseData = new List<string> { "Error", "Unable to delete asset type." }
         };
     }
     public async Task<ApiResponse> UpdateAssetType(AssetTypeDTO assetType)
@@ -537,7 +525,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to delete asset type."
+                ResponseData = new List<string> { "Error", "Unable to delete asset type." }
             };
         }
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetAssetType.OrganizationsID);
@@ -546,7 +534,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to update asset type."
+                ResponseData = new List<string> { "Error", "Unable to update asset type." }
             };
         }
         targetAssetType.OrganizationsAssetTypeName = targetAssetType.OrganizationsAssetTypeName;
@@ -558,14 +546,14 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = "Asset type updated successfully."
+                ResponseData = new List<string> { "Success", "Asset type updated successfully." }
             };
         }
 
         return new ApiResponse
         {
             Status = StatusCodes.Status400BadRequest,
-            ResponseData = "Unable to delete asset type."
+            ResponseData = new List<string> { "Error", "Unable to delete asset type." }
         };
     }
     public async Task<ApiResponse> GetAllAssetType(int organizationID)
@@ -576,20 +564,12 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = "Unable to delete asset type."
+                ResponseData = new List<string> { "Error", "Unable to delete asset type." }
             };
         }
 
         List<OrganizationsAssetType> allAssetType = await _applicationDbContext.OrganizationsAssetTypes.Where(x => x.OrganizationsID == organizationID).ToListAsync();
-        if (allAssetType.Count == 0)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status404NotFound,
-                ResponseData = "No asset type found."
-            };
 
-        }
         return new ApiResponse
         {
             Status = StatusCodes.Status200OK,

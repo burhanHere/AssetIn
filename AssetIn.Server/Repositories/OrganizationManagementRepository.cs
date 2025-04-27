@@ -142,6 +142,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
             tempOrganizationEmployeeCount = await _applicationDbContext.Users.CountAsync(x => x.OrganizationId == item.OrganizationID);
             requiresOrganizationDataList.Add(new
             {
+                OrganizationID = item.OrganizationID,
                 OrganizationName = item.OrganizationName,
                 OrganizationLogo = item.OrganizationLogo,
                 OrganizationEmployeeCount = tempOrganizationEmployeeCount,
