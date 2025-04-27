@@ -1,3 +1,12 @@
+@if(isLoading)
+{
+<app-page-loader></app-page-loader>
+}
+
+@if (showAlert) {
+<app-alert-card [title]="alertTitle" [message]="alertMessage" (closeCard)="showAlert = $event"></app-alert-card>
+}
+
 <div class="main-div">
   <h2 class="main-div-text">Assets Dashboard</h2>
   <div class="content-div">
@@ -5,40 +14,63 @@
       <table>
         <thead>
           <tr>
-            <th>Asset ID</th>
             <th>Asset Name</th>
             <th>Barcode</th>
+            <th>Serial Number</th>
             <th>Last Updated</th>
             <th>Date Created</th>
-            <th>Manufacturer</th>
             <th>Asset Status</th>
+            <th style="padding-right: 15px;">Action</th>
           </tr>
         </thead>
         <tbody>
-          @for (asset of assets; track $index) {
-          <tr>
-            <td>{{ asset.id }}</td>
-            <td>{{ asset.name }}</td>
-            <td>{{ asset.barcode }}</td>
-            <td>{{ asset.lastUpdated }}</td>
-            <td>{{ asset.dateCreated }}</td>
-            <td>{{ asset.manufacturer }}</td>
-            <td>
-              <span>
-                <label [ngClass]="{
-                    available: asset.status === 'Available',
-                    assigned: asset.status === 'Assigned',
-                    retired: asset.status === 'Retired',
-                    'out-of-order': asset.status === 'Out Of Order',
-                    lost: asset.status === 'Lost',
-                    'under-repair': asset.status === 'Under Repair'
-                  }">
-                  {{ asset.status }}
-                </label>
-                <img src="icons/delete-red.png" alt="Delete" />
-              </span>
+          @if(assetList.length === 0) {
+          <tr style="background-color: #e0bdbc;">
+            <td colSpan="8">
+              No Asset in records yet.
             </td>
           </tr>
+          }@else {
+          @for (asset of assetList; track $index) {
+          <tr>
+            <td (click)="viewAssetDetails(asset.assetlD)">{{ asset.assetName }}</td>
+            <td (click)="viewAssetDetails(asset.assetlD)">{{ asset.barcode }}</td>
+            <td (click)="viewAssetDetails(asset.assetlD)">{{ asset.serialNumber }}</td>
+            <td (click)="viewAssetDetails(asset.assetlD)">{{ asset.updatedDate | date}}</td>
+            <td (click)="viewAssetDetails(asset.assetlD)">{{ asset.createdDate | date}}</td>
+            <td>
+              <span class="asset-status" [ngClass]="{
+                'available': asset.assetStatus === 'Available',
+                'assigned': asset.assetStatus === 'Assigned',
+                'retired': asset.assetStatus === 'Retired',
+                'out-of-order': asset.assetStatus === 'Out Of Order',
+                'lost': asset.assetStatus === 'Lost',
+                'under-maintenance': asset.assetStatus === 'Under Maintenance'
+              }">
+                {{ asset.assetStatus }}
+              </span>
+            </td>
+            <td>
+              <img src="icons/delete-red.png" alt="Delete" class="delete-asset"
+                (click)="showDeleteAssetAlert=!showDeleteAssetAlert" />
+              @if(showDeleteAssetAlert)
+              {
+              <div>
+                <div class="blur-overlay"></div>
+                <div class="gradient-border-wrapper">
+                  <div class="delete-confirmation-container">
+                    <div>
+                      <h3>Are you sure you want to delete this asset? </h3>
+                    </div>
+                    <button (click)="deleteAsset(asset.assetlD)">yes</button>
+                    <button (click)="showDeleteAssetAlert=!showDeleteAssetAlert">No</button>
+                  </div>
+                </div>
+              </div>
+              }
+            </td>
+          </tr>
+          }
           }
         </tbody>
       </table>

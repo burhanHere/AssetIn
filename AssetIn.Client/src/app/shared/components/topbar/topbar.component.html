@@ -13,28 +13,35 @@
     <input type="text" placeholder="Search" />
     <button></button>
   </div>
-
+  
   <div class="notificationAndAvatarDiv">
-    <button>
-      <img src="./icons/BellRinging04.png" alt="notification">
+    <button class="notificationBtn">
+      <img src="./icons/BellRinging04.png" alt="notification"/>
     </button>
-    <button (click)="toggleAvatarDiv()"><img src="./icons/Avatar.png" alt="Avatar"></button>
-  </div>
-  <!-- logout div -->
 
-  <div class="logoutDiv" #logoutDiv>
-    <ul>
-      <li>
-        <img src="./icons/Feedback.png" alt="help icon" /> Feedback
-      </li>
-      <hr />
-      <li>
-        <img src="./icons/Help Circle Contained.png" alt="help icon" /> help
-      </li>
-      <hr />
-      <li (click)="LogoutUser()">
-        <img src="./icons/Logout.png" alt="help icon" /> Logout
-      </li>
-    </ul>
+    <div class="avatarBtn">
+      <button class="avatarImageBtn">
+        <img src="./icons/Avatar.png" alt="Avatar">
+      </button>
+
+      <!-- logout div -->
+      <div class="logoutDiv">
+        <ul>
+          <li>
+            <img src="./icons/Feedback.png" alt="feedback icon" /> Feedback
+          </li>
+          <hr />
+          <li>
+            <img src="./icons/Help Circle Contained.png" alt="help icon" /> Help
+          </li>
+          <hr />
+          <li (click)="LogoutUser()">
+            <img src="./icons/Logout.png" alt="logout icon" /> Logout
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
+
+
 </div>

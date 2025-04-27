@@ -4,6 +4,7 @@ using AssetIn.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetIn.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250426123407_AddedBarcodeColumnInAssetTable")]
+    partial class AddedBarcodeColumnInAssetTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -385,23 +388,13 @@ namespace AssetIn.Server.Data.Migrations
                         },
                         new
                         {
-                            OrganizationsAssetStatusID = 3,
-                            OrganizationsAssetStatusName = "Under Maintenance"
-                        },
-                        new
-                        {
                             OrganizationsAssetStatusID = 4,
                             OrganizationsAssetStatusName = "Available"
                         },
                         new
                         {
-                            OrganizationsAssetStatusID = 5,
-                            OrganizationsAssetStatusName = "Lost"
-                        },
-                        new
-                        {
-                            OrganizationsAssetStatusID = 6,
-                            OrganizationsAssetStatusName = "Out Of Order"
+                            OrganizationsAssetStatusID = 3,
+                            OrganizationsAssetStatusName = "UnderMaintenance"
                         });
                 });
 
@@ -643,28 +636,28 @@ namespace AssetIn.Server.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "061a2e04-55c1-4ffc-9847-f6608d374ca2",
+                            ConcurrencyStamp = "6244f5ba-197e-4777-b01c-2a3b49114549",
                             Name = "OrganizationOwner",
                             NormalizedName = "ORGANIZATIONOWNER"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "8d68cf56-db52-47fe-bcb3-5422fcd5e15c",
+                            ConcurrencyStamp = "b1d505c7-4137-43e8-aac8-0fe395cea464",
                             Name = "OrganizationEmployee",
                             NormalizedName = "ORGANIZATIONEMPLOYEE"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "cdbaee74-ce44-4775-9db0-2294ef87d03f",
+                            ConcurrencyStamp = "49fd5171-f217-46ba-b834-d1be697ce597",
                             Name = "OrganizationAssetManager",
                             NormalizedName = "ORGANIZATIONASSETMANAGER"
                         },
                         new
                         {
                             Id = "4",
-                            ConcurrencyStamp = "66b60031-9684-430c-b130-1c34768aed65",
+                            ConcurrencyStamp = "665c4599-d7ec-4678-82d8-5d0e0de6a3a5",
                             Name = "Vendor",
                             NormalizedName = "VENDOR"
                         });

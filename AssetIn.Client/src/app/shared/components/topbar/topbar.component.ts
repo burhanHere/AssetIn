@@ -9,21 +9,11 @@ import { Router } from '@angular/router';
   styleUrl: './topbar.component.css',
 })
 export class TopbarComponent {
-  @ViewChild('logoutDiv') private logoutDiv!: ElementRef;
-  private router:Router=inject(Router)
+  private router: Router = inject(Router)
 
-  public toggleAvatarDiv():void {
-    if (this.logoutDiv) {
-      const divElement = this.logoutDiv.nativeElement;
-      divElement.style.display =
-        divElement.style.display === 'none' ? 'block' : 'none';
-    }
-  }
-  public LogoutUser():void
-  {
-    debugger;
+  public LogoutUser(): void {
     sessionStorage.removeItem('auth-jwt');
     this.router.navigateByUrl('auth')
   }
-  
+
 }

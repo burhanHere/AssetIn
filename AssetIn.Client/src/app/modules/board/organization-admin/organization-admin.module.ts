@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { inject, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { OrganizationAdminRoutingModule } from './organization-admin-routing.module';
@@ -9,6 +9,8 @@ import { EmployeesComponent } from './employees/employees.component';
 import { AssetRequestsComponent } from './asset-requests/asset-requests.component';
 import { VendorsComponent } from './vendors/vendors.component';
 import { SettingsComponent } from './settings/settings.component';
+import { PageLoaderComponent } from '../../../shared/components/page-loader/page-loader.component';
+import { AlertCardComponent } from '../../../shared/components/alert-card/alert-card.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { SettingsComponent } from './settings/settings.component';
   imports: [
     CommonModule,
     OrganizationAdminRoutingModule,
-    ErrorPageComponent
+    ErrorPageComponent,
+    PageLoaderComponent,
+    AlertCardComponent
   ]
 })
 export class OrganizationAdminModule { }

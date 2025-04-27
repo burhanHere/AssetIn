@@ -1,240 +1,77 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { AssetManagementService } from '../../../../core/services/AssetManagement/asset-management.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-assets',
   templateUrl: './assets.component.html',
   styleUrl: './assets.component.css'
 })
-export class AssetsComponent {
-  public assets: any[] = [
-    {
-      id: 4568,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Available'
-    },
-    {
-      id: 4569,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Available'
-    },
-    {
-      id: 4570,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Assigned'
-    },
-    {
-      id: 4571,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Retired'
-    },
-    {
-      id: 4572,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Out Of Order'
-    },
-    {
-      id: 4573,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Available'
-    },
-    {
-      id: 4574,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Assigned'
-    },
-    {
-      id: 4575,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Assigned'
-    },
-    {
-      id: 4576,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Lost'
-    },
-    {
-      id: 4577,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Under Repair'
-    },
-    {
-      id: 4578,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Available'
-    },
-    {
-      id: 4579,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Available'
-    },
-    {
-      id: 4580,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Retired'
-    },
-    {
-      id: 4581,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Retired'
-    },
-    {
-      id: 4582,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Under Repair'
-    },
-    {
-      id: 4583,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Out Of Order'
-    },
-    {
-      id: 4584,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Assigned'
-    },
-    {
-      id: 4585,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Assigned'
-    },
-    {
-      id: 4586,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Available'
-    },
-    {
-      id: 4587,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Under Repair'
-    },
-    {
-      id: 4588,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Available'
-    },
-    {
-      id: 4589,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Available'
-    },
-    {
-      id: 4590,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Retired'
-    },
-    {
-      id: 4591,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Under Repair'
-    },
-    {
-      id: 4592,
-      name: 'Keyboard',
-      barcode: '5154651484165',
-      lastUpdated: '25 Dec, 2024',
-      dateCreated: '12 Jan, 2022',
-      manufacturer: 'Logitech',
-      status: 'Out Of Order'
-    }
-  ];
+export class AssetsComponent implements OnInit {
+  private AssetManagementService: AssetManagementService = inject(AssetManagementService);
+  private organizationId: number;
+  public isLoading: boolean;
+  public showAlert: boolean;
+  public alertMessage: string;
+  public alertTitle: string;
+  public assetList: any;
+  public showDeleteAssetAlert: boolean;
+
+  constructor() {
+    const temp = sessionStorage.getItem('targetOrganizationID');
+    this.organizationId = Number(temp === null || temp === undefined ? 0 : temp);
+    this.isLoading = false;
+    this.showAlert = false;
+    this.alertMessage = '';
+    this.alertTitle = '';
+    this.assetList = null;
+    this.showDeleteAssetAlert = false;
+  }
+
+  ngOnInit(): void {
+    this.getAssetList();
+  }
+
+  private getAssetList(): void {
+    this.isLoading = true;
+    this.AssetManagementService.GetAllAsset(this.organizationId).subscribe(
+      (responce: any) => {
+        this.isLoading = false;
+        this.assetList = responce.responseData;
+      },
+      (error: HttpErrorResponse) => {
+        this.isLoading = false;
+        this.showAlert = true;
+        this.alertTitle = error.error.responseData[0] || 'Error';
+        this.alertMessage = error.error.responseData[1] || 'An error occurred.';
+      }
+    );
+  }
 
   public exportAssetList(): void {
 
+  }
+
+  viewAssetDetails(targetAssetId: number): void {
+    alert('viewAssetDetails: ' + targetAssetId)
+  }
+
+  deleteAsset(targetAssetId: number): void {
+    this.showDeleteAssetAlert = false;
+    this.isLoading = true;
+    this.AssetManagementService.DeleteAsset(targetAssetId).subscribe(
+      (responce: any) => {
+        this.isLoading = false;
+      },
+      (error: HttpErrorResponse) => {
+        this.isLoading = false;
+        this.showAlert = true;
+        this.alertTitle = error.error.responseData[0] || 'Error';
+        this.alertMessage = error.error.responseData[1] || 'An error occurred.';
+      },
+      () => {
+        this.getAssetList();
+      }
+    );
   }
 }
