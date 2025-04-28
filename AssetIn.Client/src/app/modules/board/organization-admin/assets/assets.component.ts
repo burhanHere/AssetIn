@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AssetManagementService } from '../../../../core/services/AssetManagement/asset-management.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { HelperFunctionService } from '../../../../core/services/HelperFunction/helper-function.service';
 
 @Component({
   selector: 'app-assets',
@@ -9,6 +10,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class AssetsComponent implements OnInit {
   private AssetManagementService: AssetManagementService = inject(AssetManagementService);
+  private helperFunctionService: HelperFunctionService = inject(HelperFunctionService);
   private organizationId: number;
   private assetToDelete: any;
   public isLoading: boolean;
@@ -17,7 +19,6 @@ export class AssetsComponent implements OnInit {
   public alertTitle: string;
   public assetList: any[];
   public showDeleteAssetAlert: boolean;
-
 
   constructor() {
     const temp = sessionStorage.getItem('targetOrganizationID');
@@ -54,8 +55,8 @@ export class AssetsComponent implements OnInit {
     );
   }
 
-  public exportAssetList(): void {
-
+  public downloadAssetList(): void {
+    this.helperFunctionService.exportAssetList(this.assetList, 'asset-list.csv');
   }
 
   public viewAssetDetails(targetAssetId: number): void {
