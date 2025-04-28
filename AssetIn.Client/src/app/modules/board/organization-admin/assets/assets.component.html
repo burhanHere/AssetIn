@@ -14,7 +14,6 @@
       <table>
         <thead>
           <tr>
-            <th>Asset ID</th>
             <th>Asset Name</th>
             <th>Barcode</th>
             <th>Serial Number</th>
@@ -34,7 +33,6 @@
           }@else {
           @for (asset of assetList; track $index) {
           <tr>
-            <td (click)="viewAssetDetails(asset.assetlD)">{{ asset.assetlD }}</td>
             <td (click)="viewAssetDetails(asset.assetlD)">{{ asset.assetName }}</td>
             <td (click)="viewAssetDetails(asset.assetlD)">{{ asset.barcode }}</td>
             <td (click)="viewAssetDetails(asset.assetlD)">{{ asset.serialNumber }}</td>

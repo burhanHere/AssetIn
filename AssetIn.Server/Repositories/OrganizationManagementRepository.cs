@@ -69,7 +69,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
     public async Task<ApiResponse> DeleteOrganization(int organizationId, string userId)
     {
         var requiredOrganization = await _applicationDbContext.Organizations
-             .FirstAsync(x => x.OrganizationID == organizationId && x.UserID == userId);
+             .FirstAsync(x => x.OrganizationID == organizationId);
         if (requiredOrganization == null)
         {
             return new ApiResponse
@@ -78,6 +78,16 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
                 ResponseData = new List<String> { "404", "Organization not found." }
             };
         }
+
+        if (requiredOrganization.UserID != userId)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "403", "User not authorized to update this organization." },
+            };
+        }
+
         requiredOrganization.ActiveOrganization = false;
         _applicationDbContext.Organizations.Update(requiredOrganization);
         var savedChanges = await _applicationDbContext.SaveChangesAsync();
@@ -98,10 +108,63 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
         };
     }
 
+    public async Task<ApiResponse> UpdateOrganization(OrganizationDto updateOrganizationDTO, string userId)
+    {
+        var requiredOrganizationToUpdate = await _applicationDbContext.Organizations
+           .FirstAsync(x => x.OrganizationID == updateOrganizationDTO.OrganzationId);
+
+        if (requiredOrganizationToUpdate == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "404", "Organization not found." },
+            };
+        }
+        if (requiredOrganizationToUpdate.UserID != userId)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "403", "User not authorized to update this organization." },
+            };
+        }
+
+        requiredOrganizationToUpdate.OrganizationName = updateOrganizationDTO.OrganizationName;
+        requiredOrganizationToUpdate.Description = updateOrganizationDTO.Description;
+        _applicationDbContext.Organizations.Update(requiredOrganizationToUpdate);
+        var savedChanges = await _applicationDbContext.SaveChangesAsync();
+        if (savedChanges == 0)
+        {
+
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> {
+                    "Some error Occured", "Failed to update organizatino, try again later." },
+            };
+        }
+        return new ApiResponse
+        {
+            Status = StatusCodes.Status200OK,
+            ResponseData = new List<string> { "Success", "Organiation updated successfully." }
+        };
+    }
+
     public async Task<ApiResponse> GetOrganizationInfoForOrganizationDashboard(int OrganizationID, string userId)
     {
-        var requiredOrganization = await _applicationDbContext.Organizations
-            .FirstAsync(x => x.OrganizationID == OrganizationID && x.UserID == userId);
+        var validUser = await _userManager.FindByIdAsync(userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "User not found." }
+            };
+        }
+
+        Organization? requiredOrganization = await _applicationDbContext.Organizations
+                .FirstOrDefaultAsync(x => x.OrganizationID == OrganizationID);
         if (requiredOrganization == null && !requiredOrganization.ActiveOrganization)
         {
             return new ApiResponse
@@ -109,6 +172,30 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
                 Status = StatusCodes.Status404NotFound,
                 ResponseData = new List<string> { "Error", "Organization not found." }
             };
+        }
+
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (requiredOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to access this organization." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to access this organization." }
+                };
+            }
         }
 
         // for organziation Employee count and pending requests count
@@ -123,7 +210,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
             .Where(x => x.OrganizationsID == OrganizationID)
             .ToListAsync();
         var organizationAssets = await _applicationDbContext.Assets
-            .Where(x => x.OrganizationID == OrganizationID)
+            .Where(x => x.OrganizationID == OrganizationID && !x.DeletedByOrganization)
             .ToListAsync();
         decimal organizationAssetWorth = organizationAssets.Sum(x => x.CostPrice);
         int organziationAssignedAssetCount = organizationAssets.Count(x => x.AssetStatusID == 1);
@@ -142,12 +229,14 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
             );
         }
 
-        Dictionary<int, List<decimal>> chartsData = Enumerable.Range(DateTime.UtcNow.Year - 1, 2).ToDictionary(
-          year => year,
-          year => Enumerable.Range(1, 12)
-              .Select(month => organizationAssets.Where(x => x.PurchaseDate.Month == month && x.PurchaseDate.Year == year).Sum(x => x.CostPrice)
-              ).ToList()
-            );
+        List<int> twoLatestYears = [.. organizationAssets.Select(x => x.PurchaseDate.Year).Distinct().OrderByDescending(x => x).Take(2)];
+
+        Dictionary<int, List<decimal>> chartsData = twoLatestYears.ToDictionary(
+                year => year,
+                year => Enumerable.Range(1, 12)
+                    .Select(month => organizationAssets.Where(x => x.PurchaseDate.Month == month && x.PurchaseDate.Year == year).Sum(x => x.CostPrice)
+                    ).ToList()
+                    );
 
         Dictionary<int, string> assetStatuses = await _applicationDbContext.OrganizationsAssetStatuses
             .ToDictionaryAsync(status =>
@@ -155,7 +244,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
              status => status.OrganizationsAssetStatusName
              );
 
-        List<object> recentlyUpdatedAssetsList = [.. organizationAssets.Take(10).Select(x => (object)new
+        List<object> recentlyUpdatedAssetsList = [.. organizationAssets.Take(8).Select(x => (object)new
         {
             AssetlD = x.AssetlD,
             Barcode = x.Barcode,
@@ -227,6 +316,8 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
             Status = StatusCodes.Status200OK,
             ResponseData = new
             {
+                organizationEmployeeCount = organizationEmployeeCount,
+                organizationAssetPendingRequestsCount = organizationAssetPendingRequestsCount,
                 organizationAssetWorth = organizationAssetWorth,
                 organziationAssignedAssetCount = organziationAssignedAssetCount,
                 organziationUnderMaintanenceAssetCount = organziationUnderMaintanenceAssetCount,
@@ -235,8 +326,6 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
                 chartsData = chartsData,
                 recentlyUpdatedAssetsList = recentlyUpdatedAssetsList,
                 recentActivitiesList = recentActivitiesList,
-                organizationEmployeeCount = organizationEmployeeCount,
-                organizationAssetPendingRequestsCount = organizationAssetPendingRequestsCount
             },
         };
     }
@@ -287,40 +376,6 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
         {
             Status = StatusCodes.Status200OK,
             ResponseData = requiresOrganizationDataList,
-        };
-    }
-
-    public async Task<ApiResponse> UpdateOrganization(OrganizationDto updateOrganizationDTO, string userId)
-    {
-        var requiredOrganizationToUpdate = await _applicationDbContext.Organizations
-           .FirstAsync(x => x.OrganizationID == updateOrganizationDTO.OrganzationId && x.UserID == userId);
-
-        if (requiredOrganizationToUpdate == null)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status404NotFound,
-                ResponseData = new List<string> { "404", "Organization not found." },
-            };
-        }
-        requiredOrganizationToUpdate.OrganizationName = updateOrganizationDTO.OrganizationName;
-        requiredOrganizationToUpdate.Description = updateOrganizationDTO.Description;
-        _applicationDbContext.Organizations.Update(requiredOrganizationToUpdate);
-        var savedChanges = await _applicationDbContext.SaveChangesAsync();
-        if (savedChanges == 0)
-        {
-
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status400BadRequest,
-                ResponseData = new List<string> {
-                    "Some error Occured", "Failed to update organizatino, try again later." },
-            };
-        }
-        return new ApiResponse
-        {
-            Status = StatusCodes.Status200OK,
-            ResponseData = new List<string> { "Success", "Organiation updated successfully." }
         };
     }
 }

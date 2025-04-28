@@ -16,7 +16,11 @@ public class OrganizationsAssetRequest
     [Required]
     public int RequestStatus { get; set; }
     [Required]
-    public DateTime RequestProcessedDate { get; set; }
+    public DateTime? RequestProcessedDate { get; set; }
+    [Required]
+    public bool CompletionStatus { get; set; }
+    [Required]
+    public DateTime? RequestCompletedDate { get; set; }
     [Required]
     public string UserID { get; set; }
     [ForeignKey("UserID")]

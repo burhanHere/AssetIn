@@ -101,5 +101,4 @@ public class VendorManagementController(ApplicationDbContext applicationDbContex
         return StatusCode(StatusCodes.Status403Forbidden, result);
     }
 
-
 }

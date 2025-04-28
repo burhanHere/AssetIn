@@ -2,18 +2,20 @@ using AssetIn.Server.Data;
 using AssetIn.Server.DTOs;
 using AssetIn.Server.Models;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AssetIn.Server.Repositories;
 
-public class AssetManagementRepository(ApplicationDbContext applicationDbContext)
+public class AssetManagementRepository(ApplicationDbContext applicationDbContext, UserManager<User> userManager)
 {
     private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
+    private readonly UserManager<User> _userManager = userManager;
 
     public async Task<ApiResponse> CreateAsset(AssetDTO newAsset, string userId)
     {
-        var currentUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
-        if (currentUser == null)
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
         {
             return new ApiResponse
             {
@@ -22,14 +24,37 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             };
         }
 
-        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == newAsset.OrganizationID);
-        if (targetOrganization == null || !targetOrganization.ActiveOrganization)
+        Organization? requiredOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == newAsset.OrganizationID);
+        if (requiredOrganization == null || !requiredOrganization.ActiveOrganization)
         {
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
                 ResponseData = new List<string> { "Error", "Unable to crete asset." }
             };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (requiredOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to create asset." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != newAsset.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to create asset." }
+                };
+            }
         }
 
         Asset newAssetModel = new()
@@ -47,7 +72,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             DepreciationRate = newAsset.DepreciationRate,
             Problem = newAsset.Problem,
             AssetIdentificationNumber = newAsset.AssetIdentificationNumber,
-            OrganizationID = targetOrganization.OrganizationID,
+            OrganizationID = requiredOrganization.OrganizationID,
             AssetStatusID = newAsset.AssetStatusID,
             AssetCatagoryID = newAsset.AssetCatagoryID,
             AssetTypeID = newAsset.AssetTypeID,
@@ -73,8 +98,8 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
     }
     public async Task<ApiResponse> UpdateAsset(AssetDTO updatedAsset, string userId)
     {
-        var currentUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
-        if (currentUser == null)
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
         {
             return new ApiResponse
             {
@@ -83,8 +108,8 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             };
         }
 
-        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == updatedAsset.OrganizationID);
-        if (targetOrganization == null || !targetOrganization.ActiveOrganization)
+        Organization? requiredOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == updatedAsset.OrganizationID);
+        if (requiredOrganization == null || !requiredOrganization.ActiveOrganization)
         {
             return new ApiResponse
             {
@@ -92,6 +117,30 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
                 ResponseData = new List<string> { "Error", "Unable to update asset." }
             };
         }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (requiredOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to update asset." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != updatedAsset.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to update asset." }
+                };
+            }
+        }
+
 
         var targetAsset = await _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetlD == updatedAsset.AssetlD && x.OrganizationID == updatedAsset.OrganizationID);
         if (targetAsset == null)
@@ -136,7 +185,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             ResponseData = new List<string> { "Error", "Unable to updated asset." }
         };
     }
-    public async Task<ApiResponse> DeleteAsset(int assetID)
+    public async Task<ApiResponse> DeleteAsset(int assetID, string userId)
     {
         Asset? targetAsset = await _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetlD == assetID);
         if (targetAsset == null)
@@ -144,9 +193,53 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status404NotFound,
-                ResponseData = new List<string> { "Error", "No asset found." }
+                ResponseData = new List<string> { "Error", "Asset not found." }
             };
         }
+
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to delete asset." }
+            };
+        }
+
+        Organization? requiredOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetAsset.OrganizationID);
+        if (requiredOrganization == null || !requiredOrganization.ActiveOrganization)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to delete asset." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (requiredOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to delete asset." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetAsset.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to delete asset." }
+                };
+            }
+        }
+
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetAsset.OrganizationID);
         if (targetOrganization == null || !targetOrganization.ActiveOrganization)
         {
@@ -189,18 +282,50 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             ResponseData = new List<string> { "Error", "Unable to delete asset." }
         };
     }
-    public async Task<ApiResponse> GetAllAsset(int organizationID)
+    public async Task<ApiResponse> GetAllAsset(int organizationID, string userId)
     {
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to get assets." }
+            };
+        }
+
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == organizationID);
         if (targetOrganization == null || !targetOrganization.ActiveOrganization)
         {
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = new List<string> { "Error", "Unable to get all asset." }
+                ResponseData = new List<string> { "Error", "Unable to get asset." }
             };
         }
 
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to get assets." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != organizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to get assets." }
+                };
+            }
+        }
 
         var allAssets = await (from asset in _applicationDbContext.Assets
                                join status in _applicationDbContext.OrganizationsAssetStatuses
@@ -226,26 +351,60 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             ResponseData = allAssets
         };
     }
-    public async Task<ApiResponse> GetAsset(int assetID)
+    public async Task<ApiResponse> GetAsset(int assetID, string userId)
     {
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to update asset." }
+            };
+        }
+
         Asset? targetAsset = await _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetlD == assetID && !x.DeletedByOrganization);
         if (targetAsset == null)
         {
             return new ApiResponse
             {
                 Status = StatusCodes.Status404NotFound,
-                ResponseData = new List<string> { "Error", "No asset found." }
+                ResponseData = new List<string> { "Error", "Asset not found." }
             };
         }
 
-        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetAsset.OrganizationID);
+        Organization? targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetAsset.OrganizationID);
+
         if (targetOrganization == null || !targetOrganization.ActiveOrganization)
         {
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = new List<string> { "Error", "Unable to get required asset." }
+                ResponseData = new List<string> { "Error", "Unable to get asset." }
             };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to get asset." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to get asset." }
+                };
+            }
         }
 
         return new ApiResponse
@@ -256,13 +415,13 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
     }
     public async Task<ApiResponse> CreateNewAssetCatagory(AssetCatagoryDTO newCatagory, string userId)
     {
-        var currentUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
-        if (currentUser == null)
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
         {
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = new List<string> { "Error", "Unable to crete asset catagory ." }
+                ResponseData = new List<string> { "Error", "Unable to crete asset catagory." }
             };
         }
 
@@ -272,8 +431,31 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = new List<string> { "Error", "Unable to crete asset catagory ." }
+                ResponseData = new List<string> { "Error", "Unable to crete asset catagory." }
             };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to crete asset catagory." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to crete asset catagory." }
+                };
+            }
         }
 
         OrganizationsAssetCatagory newAssetCatagory = new()
@@ -300,10 +482,20 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             ResponseData = new List<string> { "Error", "Unable to create asset catagory ." }
         };
     }
-    public async Task<ApiResponse> DeleteAssetCatagory(int catagoryID)
+    public async Task<ApiResponse> DeleteAssetCatagory(int catagoryID, string userId)
     {
         OrganizationsAssetCatagory? targetCatagory = await _applicationDbContext.OrganizationsAssetCatagories.FirstOrDefaultAsync(x => x.OrganizationsAssetCatagoryID == catagoryID);
-        if (targetCatagory != null || !targetCatagory.Organization.ActiveOrganization)
+        if (targetCatagory != null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "Unable to delete asset catagory." }
+            };
+        }
+
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
         {
             return new ApiResponse
             {
@@ -311,6 +503,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
                 ResponseData = new List<string> { "Error", "Unable to delete asset catagory." }
             };
         }
+
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetCatagory.OrganizationsID);
         if (targetOrganization == null || !targetOrganization.ActiveOrganization)
         {
@@ -320,9 +513,33 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
                 ResponseData = new List<string> { "Error", "Unable to delete asset catagory ." }
             };
         }
-        var catagoryAssociationCheckWithAsset = _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetCatagoryID == catagoryID);
 
-        if (catagoryAssociationCheckWithAsset != null)
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to delete assets catagory." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized todelete assets catagory." }
+                };
+            }
+        }
+
+        var catagoryAssociationCheckWithAsset = await _applicationDbContext.Assets.AnyAsync(x => x.AssetCatagoryID == catagoryID);
+
+        if (catagoryAssociationCheckWithAsset)
         {
             return new ApiResponse
             {
@@ -348,7 +565,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             ResponseData = new List<string> { "Error", "Unable to delete asset catagory." }
         };
     }
-    public async Task<ApiResponse> UpdateAssetCatagory(AssetCatagoryDTO assetCatagory)
+    public async Task<ApiResponse> UpdateAssetCatagory(AssetCatagoryDTO assetCatagory, string userId)
     {
         OrganizationsAssetCatagory? targetCatagory = await _applicationDbContext.OrganizationsAssetCatagories.FirstOrDefaultAsync(x => x.OrganizationsAssetCatagoryID == assetCatagory.OrganizationsAssetCatagoryID);
         if (targetCatagory != null || !targetCatagory.Organization.ActiveOrganization)
@@ -368,6 +585,40 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
                 ResponseData = new List<string> { "Error", "Unable to update asset catagory ." }
             };
         }
+
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to update asset catagory ." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to update asset catagory." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to update asset catagory." }
+                };
+            }
+        }
+
         targetCatagory.OrganizationsAssetCatagoryName = assetCatagory.OrganizationsAssetCatagoryName;
 
         _applicationDbContext.OrganizationsAssetCatagories.Update(targetCatagory);
@@ -387,7 +638,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             ResponseData = new List<string> { "Error", "Unable to update asset catagory." }
         };
     }
-    public async Task<ApiResponse> GetAllAssetCatagory(int organizationID)
+    public async Task<ApiResponse> GetAllAssetCatagory(int organizationID, string userId)
     {
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == organizationID);
         if (targetOrganization == null || !targetOrganization.ActiveOrganization)
@@ -395,56 +646,94 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = new List<string> { "Error", "Unable to get all asset catagory ." }
+                ResponseData = new List<string> { "Error", "Unable to get asset catagories." }
             };
         }
+
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to get asset catagories." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to get asset catagories." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to get asset catagories." }
+                };
+            }
+        }
+
         List<OrganizationsAssetCatagory> allCatagories = await _applicationDbContext.OrganizationsAssetCatagories.Where(x => x.OrganizationsID == organizationID).ToListAsync();
+
         return new ApiResponse
         {
             Status = StatusCodes.Status200OK,
             ResponseData = allCatagories
         };
     }
-    public async Task<ApiResponse> GetAllAssetStatus(int organizationID)
-    {
-        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == organizationID);
-        if (targetOrganization == null || !targetOrganization.ActiveOrganization)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status403Forbidden,
-                ResponseData = new List<string> { "Error", "Unable to get asset status." }
-            };
-        }
-
-        List<OrganizationsAssetStatus> allStatus = await _applicationDbContext.OrganizationsAssetStatuses.ToListAsync();
-
-        return new ApiResponse
-        {
-            Status = StatusCodes.Status200OK,
-            ResponseData = allStatus
-        };
-    }
     public async Task<ApiResponse> CreateNewAssetType(AssetTypeDTO assetType, string userId)
     {
-        var currentUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
-        if (currentUser == null)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status403Forbidden,
-                ResponseData = new List<string> { "Error", "Unable to crete asset type." }
-            };
-        }
-
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == assetType.OrganizationsID);
         if (targetOrganization == null || !targetOrganization.ActiveOrganization)
         {
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = new List<string> { "Error", "Unable to crete asset type." }
+                ResponseData = new List<string> { "Error", "Unable to create asset type." }
             };
+        }
+
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to create asset type." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to create asset type." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to create asset type." }
+                };
+            }
         }
 
         OrganizationsAssetType newAssetType = new()
@@ -471,8 +760,9 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             ResponseData = new List<string> { "Error", "Unable to create asset type." }
         };
     }
-    public async Task<ApiResponse> DeleteAssetType(int AssetTypeID)
+    public async Task<ApiResponse> DeleteAssetType(int AssetTypeID, string userId)
     {
+
         OrganizationsAssetType? targetAssetType = await _applicationDbContext.OrganizationsAssetTypes.FirstOrDefaultAsync(x => x.OrganizationsAssetTypeID == AssetTypeID);
         if (targetAssetType != null)
         {
@@ -482,6 +772,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
                 ResponseData = new List<string> { "Error", "Unable to delete asset type." }
             };
         }
+
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetAssetType.OrganizationsID);
         if (targetOrganization == null || !targetOrganization.ActiveOrganization)
         {
@@ -492,9 +783,42 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             };
         }
 
-        var statusAssociationCheckWithAsset = _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetTypeID == AssetTypeID);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to delete asset type." }
+            };
+        }
 
-        if (statusAssociationCheckWithAsset != null)
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to delete asset type." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to delete asset type." }
+                };
+            }
+        }
+
+        var statusAssociationCheckWithAsset = await _applicationDbContext.Assets.AnyAsync(x => x.AssetTypeID == AssetTypeID);
+
+        if (statusAssociationCheckWithAsset)
         {
             return new ApiResponse
             {
@@ -520,7 +844,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             ResponseData = new List<string> { "Error", "Unable to delete asset type." }
         };
     }
-    public async Task<ApiResponse> UpdateAssetType(AssetTypeDTO assetType)
+    public async Task<ApiResponse> UpdateAssetType(AssetTypeDTO assetType, string userId)
     {
         OrganizationsAssetType? targetAssetType = await _applicationDbContext.OrganizationsAssetTypes.FirstOrDefaultAsync(x => x.OrganizationsAssetTypeID == assetType.OrganizationsAssetTypeID);
         if (targetAssetType != null)
@@ -528,9 +852,10 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = new List<string> { "Error", "Unable to delete asset type." }
+                ResponseData = new List<string> { "Error", "Unable to update asset type." }
             };
         }
+
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetAssetType.OrganizationsID);
         if (targetOrganization == null || !targetOrganization.ActiveOrganization)
         {
@@ -540,6 +865,40 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
                 ResponseData = new List<string> { "Error", "Unable to update asset type." }
             };
         }
+
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to update asset type." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to update asset type." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to update asset type." }
+                };
+            }
+        }
+
         targetAssetType.OrganizationsAssetTypeName = targetAssetType.OrganizationsAssetTypeName;
 
         _applicationDbContext.OrganizationsAssetTypes.Update(targetAssetType);
@@ -556,10 +915,10 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
         return new ApiResponse
         {
             Status = StatusCodes.Status400BadRequest,
-            ResponseData = new List<string> { "Error", "Unable to delete asset type." }
+            ResponseData = new List<string> { "Error", "Unable to update asset type." }
         };
     }
-    public async Task<ApiResponse> GetAllAssetType(int organizationID)
+    public async Task<ApiResponse> GetAllAssetType(int organizationID, string userId)
     {
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == organizationID);
         if (targetOrganization == null || !targetOrganization.ActiveOrganization)
@@ -567,8 +926,41 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             return new ApiResponse
             {
                 Status = StatusCodes.Status403Forbidden,
-                ResponseData = new List<string> { "Error", "Unable to delete asset type." }
+                ResponseData = new List<string> { "Error", "Unable to get asset types." }
             };
+        }
+
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to get asset types." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to get asset types." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to get asset types." }
+                };
+            }
         }
 
         List<OrganizationsAssetType> allAssetType = await _applicationDbContext.OrganizationsAssetTypes.Where(x => x.OrganizationsID == organizationID).ToListAsync();
@@ -577,6 +969,59 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
         {
             Status = StatusCodes.Status200OK,
             ResponseData = allAssetType
+        };
+    }
+    public async Task<ApiResponse> GetAllAssetStatus(int organizationID, string userId)
+    {
+        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == organizationID);
+        if (targetOrganization == null || !targetOrganization.ActiveOrganization)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to get asset statuses." }
+            };
+        }
+
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to get asset statuses." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to get asset statuses." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to get asset statuses." }
+                };
+            }
+        }
+
+        List<OrganizationsAssetStatus> allStatus = await _applicationDbContext.OrganizationsAssetStatuses.ToListAsync();
+
+        return new ApiResponse
+        {
+            Status = StatusCodes.Status200OK,
+            ResponseData = allStatus
         };
     }
 }

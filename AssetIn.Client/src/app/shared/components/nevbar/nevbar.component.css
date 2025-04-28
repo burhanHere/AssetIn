@@ -1,7 +1,7 @@
 .mainDiv {
   /* border: 1px solid green; */
   padding-top: 3%;
-  width: 240px;
+  width: 250px;
   height: 85.5vh;
 }
 
@@ -18,6 +18,13 @@
   background-image: none;
   display: flex;
   align-items: center;
+  font-size: medium;
+  transition: 0.3s;
+}
+
+.nevbarOption:hover {
+  transition: 0.3s;
+  gap: 7%;
 }
 
 .nevbarOption img {
@@ -26,5 +33,12 @@
 }
 
 .nevbarOptionActive {
+  transition: 0.3s;
   background-image: linear-gradient(to right, #CF42D7, #7AC6EC);
+  color: white;
+}
+
+.nevbarOptionActive img {
+  transition: 0.3s;
+  filter: invert(1);
 }

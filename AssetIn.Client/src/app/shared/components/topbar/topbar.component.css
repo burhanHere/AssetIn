@@ -75,7 +75,7 @@
 }
 
 .logoutDiv {
-  width: 250px;
+  width: 200px;
   height: auto;
   position: absolute;
   right: 0;
@@ -94,7 +94,6 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
   font-size: 1rem;
   font-weight: bold;
   text-align: left;

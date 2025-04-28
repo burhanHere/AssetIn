@@ -33,6 +33,7 @@ export class OrganizationAdminDashboardComponent implements OnInit {
     if (this.organizationId === 0) {
       this.router.navigateByUrl('**');
     } else {
+      this.isLoading = true;
       this.organizationManagementService.GetOrganizationInfoForOrganizationDashboard(this.organizationId).subscribe(
         (responce: any) => {
           this.isLoading = false;

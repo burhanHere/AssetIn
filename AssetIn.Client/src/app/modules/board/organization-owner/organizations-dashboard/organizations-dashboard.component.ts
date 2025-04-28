@@ -34,6 +34,9 @@ export class OrganizationsDashboardComponent implements OnInit {
     this.alertTitle = '';
     this.alertMessage = '';
     this.showFormError = false;
+    if (sessionStorage.getItem('targetOrganizationID')) {
+      sessionStorage.removeItem('targetOrganizationID');
+    }
   }
 
   ngOnInit(): void {
