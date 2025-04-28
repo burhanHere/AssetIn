@@ -1,6 +1,6 @@
 .mainDiv {
   width: full;
-  height: 12vh;
+  height: 10vh;
   background-color: #ffffff;
   display: flex;
   justify-content: space-between;
@@ -125,7 +125,7 @@
 }
 
 
-/* 
+/*
 .notificationAndAvatarDiv {
   display: flex;
   align-items: center;

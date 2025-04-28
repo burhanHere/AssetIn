@@ -28,6 +28,60 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Asset>().HasIndex(a => a.SerialNumber).IsUnique();
         modelBuilder.Entity<Vendor>().HasIndex(u => u.Email).IsUnique();
 
+        modelBuilder.Entity<Organization>()
+       .HasOne(o => o.User)
+       .WithMany() // many Organizations can point to one User
+       .HasForeignKey(o => o.UserID)
+       .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
+
+        modelBuilder.Entity<OrganizationsAssetRequest>()
+       .HasOne(o => o.User)
+       .WithMany() // many Organizations can point to one User
+       .HasForeignKey(o => o.UserID)
+       .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
+
+        modelBuilder.Entity<OrganizationsDomain>()
+       .HasOne(o => o.Organization)
+       .WithMany() // many Organizations can point to one User
+       .HasForeignKey(o => o.OrganizationsID)
+       .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
+
+        modelBuilder.Entity<OrganizationsAssetType>()
+       .HasOne(o => o.Organization)
+       .WithMany() // many Organizations can point to one User
+       .HasForeignKey(o => o.OrganizationsID)
+       .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
+
+        modelBuilder.Entity<OrganizationsAssetCatagory>()
+       .HasOne(o => o.Organization)
+       .WithMany() // many Organizations can point to one User
+       .HasForeignKey(o => o.OrganizationsID)
+       .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
+
+        modelBuilder.Entity<Asset>()
+       .HasOne(o => o.Organization)
+       .WithMany() // many Organizations can point to one User
+       .HasForeignKey(o => o.OrganizationID)
+       .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
+
+        modelBuilder.Entity<Vendor>()
+       .HasOne(o => o.User)
+       .WithMany() // many Organizations can point to one User
+       .HasForeignKey(o => o.UserID)
+       .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
+
+        modelBuilder.Entity<VendorProcurementDetail>()
+       .HasOne(o => o.Vendor)
+       .WithMany() // many Organizations can point to one User
+       .HasForeignKey(o => o.VendorID)
+       .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
+
+       modelBuilder.Entity<OrganizationsAssetMaintanence>()
+       .HasOne(o => o.Asset)
+       .WithMany() // many Organizations can point to one User
+       .HasForeignKey(o => o.AssetID)
+       .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
+
         modelBuilder.Entity<IdentityRole>().HasData(
             new IdentityRole { Id = "1", Name = "OrganizationOwner", ConcurrencyStamp = Guid.NewGuid().ToString(), NormalizedName = "ORGANIZATIONOWNER" },
             new IdentityRole { Id = "2", Name = "OrganizationEmployee", ConcurrencyStamp = Guid.NewGuid().ToString(), NormalizedName = "ORGANIZATIONEMPLOYEE" },

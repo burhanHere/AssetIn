@@ -141,7 +141,7 @@
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .delete-confirmation-container button:first-of-type {
