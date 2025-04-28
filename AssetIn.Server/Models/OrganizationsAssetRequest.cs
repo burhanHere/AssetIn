@@ -16,6 +16,8 @@ public class OrganizationsAssetRequest
     [Required]
     public int RequestStatus { get; set; }
     [Required]
+    public DateTime RequestProcessedDate { get; set; }
+    [Required]
     public string UserID { get; set; }
     [ForeignKey("UserID")]
     public User User { get; set; }

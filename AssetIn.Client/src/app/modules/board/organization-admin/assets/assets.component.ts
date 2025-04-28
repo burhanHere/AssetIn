@@ -10,12 +10,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class AssetsComponent implements OnInit {
   private AssetManagementService: AssetManagementService = inject(AssetManagementService);
   private organizationId: number;
+  private assetToDelete: any;
   public isLoading: boolean;
   public showAlert: boolean;
   public alertMessage: string;
   public alertTitle: string;
-  public assetList: any;
+  public assetList: any[];
   public showDeleteAssetAlert: boolean;
+
 
   constructor() {
     const temp = sessionStorage.getItem('targetOrganizationID');
@@ -24,8 +26,9 @@ export class AssetsComponent implements OnInit {
     this.showAlert = false;
     this.alertMessage = '';
     this.alertTitle = '';
-    this.assetList = null;
+    this.assetList = [];
     this.showDeleteAssetAlert = false;
+    this.assetToDelete = {};
   }
 
   ngOnInit(): void {
@@ -37,7 +40,10 @@ export class AssetsComponent implements OnInit {
     this.AssetManagementService.GetAllAsset(this.organizationId).subscribe(
       (responce: any) => {
         this.isLoading = false;
+        this.assetList = [];
         this.assetList = responce.responseData;
+        console.log('getAssetList: ' + this.assetList.length);
+        console.log(this.assetList);
       },
       (error: HttpErrorResponse) => {
         this.isLoading = false;
@@ -52,14 +58,20 @@ export class AssetsComponent implements OnInit {
 
   }
 
-  viewAssetDetails(targetAssetId: number): void {
+  public viewAssetDetails(targetAssetId: number): void {
     alert('viewAssetDetails: ' + targetAssetId)
   }
 
-  deleteAsset(targetAssetId: number): void {
-    this.showDeleteAssetAlert = false;
+  public showDeleteAssetConfirmation(targetAsset:any)
+  {
+    this.showDeleteAssetAlert = !this.showDeleteAssetAlert;
+    this.assetToDelete = targetAsset;
+  }
+
+  public deleteAsset(): void {
     this.isLoading = true;
-    this.AssetManagementService.DeleteAsset(targetAssetId).subscribe(
+    this.showDeleteAssetAlert = false;
+    this.AssetManagementService.DeleteAsset(this.assetToDelete.assetlD).subscribe(
       (responce: any) => {
         this.isLoading = false;
       },

@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace AssetIn.Server.Data.Migrations
+namespace AssetIn.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250426170010_AddedNewAssetStatusInSeeding")]
-    partial class AddedNewAssetStatusInSeeding
+    [Migration("20250427134615_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -153,8 +153,7 @@ namespace AssetIn.Server.Data.Migrations
 
                     b.HasKey("OrganizationID");
 
-                    b.HasIndex("UserID")
-                        .IsUnique();
+                    b.HasIndex("UserID");
 
                     b.ToTable("Organizations");
                 });
@@ -522,6 +521,8 @@ namespace AssetIn.Server.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
+                    b.HasIndex("OrganizationId");
+
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
@@ -646,28 +647,28 @@ namespace AssetIn.Server.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "061a2e04-55c1-4ffc-9847-f6608d374ca2",
+                            ConcurrencyStamp = "74f5fb96-7608-4b73-82f3-f7db85c458cd",
                             Name = "OrganizationOwner",
                             NormalizedName = "ORGANIZATIONOWNER"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "8d68cf56-db52-47fe-bcb3-5422fcd5e15c",
+                            ConcurrencyStamp = "c98197cb-f550-4e6c-98c9-7e3bf8193bb7",
                             Name = "OrganizationEmployee",
                             NormalizedName = "ORGANIZATIONEMPLOYEE"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "cdbaee74-ce44-4775-9db0-2294ef87d03f",
+                            ConcurrencyStamp = "bb713802-4341-497f-b757-565131b44d1f",
                             Name = "OrganizationAssetManager",
                             NormalizedName = "ORGANIZATIONASSETMANAGER"
                         },
                         new
                         {
                             Id = "4",
-                            ConcurrencyStamp = "66b60031-9684-430c-b130-1c34768aed65",
+                            ConcurrencyStamp = "b3c4036e-e6c8-4a31-ab16-42db2d425a08",
                             Name = "Vendor",
                             NormalizedName = "VENDOR"
                         });
@@ -817,8 +818,8 @@ namespace AssetIn.Server.Data.Migrations
             modelBuilder.Entity("AssetIn.Server.Models.Organization", b =>
                 {
                     b.HasOne("AssetIn.Server.Models.User", "User")
-                        .WithOne("Organization")
-                        .HasForeignKey("AssetIn.Server.Models.Organization", "UserID")
+                        .WithMany()
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -918,6 +919,15 @@ namespace AssetIn.Server.Data.Migrations
                     b.Navigation("Organization");
                 });
 
+            modelBuilder.Entity("AssetIn.Server.Models.User", b =>
+                {
+                    b.HasOne("AssetIn.Server.Models.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId");
+
+                    b.Navigation("Organization");
+                });
+
             modelBuilder.Entity("AssetIn.Server.Models.Vendor", b =>
                 {
                     b.HasOne("AssetIn.Server.Models.User", "User")
@@ -988,12 +998,6 @@ namespace AssetIn.Server.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AssetIn.Server.Models.User", b =>
-                {
-                    b.Navigation("Organization")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

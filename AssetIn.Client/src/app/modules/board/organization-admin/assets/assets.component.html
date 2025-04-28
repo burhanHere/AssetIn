@@ -14,6 +14,7 @@
       <table>
         <thead>
           <tr>
+            <th>Asset ID</th>
             <th>Asset Name</th>
             <th>Barcode</th>
             <th>Serial Number</th>
@@ -33,6 +34,7 @@
           }@else {
           @for (asset of assetList; track $index) {
           <tr>
+            <td (click)="viewAssetDetails(asset.assetlD)">{{ asset.assetlD }}</td>
             <td (click)="viewAssetDetails(asset.assetlD)">{{ asset.assetName }}</td>
             <td (click)="viewAssetDetails(asset.assetlD)">{{ asset.barcode }}</td>
             <td (click)="viewAssetDetails(asset.assetlD)">{{ asset.serialNumber }}</td>
@@ -52,7 +54,7 @@
             </td>
             <td>
               <img src="icons/delete-red.png" alt="Delete" class="delete-asset"
-                (click)="showDeleteAssetAlert=!showDeleteAssetAlert" />
+                (click)="showDeleteAssetConfirmation(asset)" />
               @if(showDeleteAssetAlert)
               {
               <div>
@@ -62,7 +64,7 @@
                     <div>
                       <h3>Are you sure you want to delete this asset? </h3>
                     </div>
-                    <button (click)="deleteAsset(asset.assetlD)">yes</button>
+                    <button (click)="deleteAsset()">yes</button>
                     <button (click)="showDeleteAssetAlert=!showDeleteAssetAlert">No</button>
                   </div>
                 </div>

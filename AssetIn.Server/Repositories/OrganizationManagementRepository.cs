@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using AssetIn.Server.Data;
 using AssetIn.Server.DTOs;
 using AssetIn.Server.Models;
@@ -101,11 +102,142 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
     {
         var requiredOrganization = await _applicationDbContext.Organizations
             .FirstAsync(x => x.OrganizationID == OrganizationID && x.UserID == userId);
+        if (requiredOrganization == null && !requiredOrganization.ActiveOrganization)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "Organization not found." }
+            };
+        }
+
+        // for organziation Employee count and pending requests count
+        HashSet<string> organizationEmployeeIds = [.. _applicationDbContext.Users.Where(x => (x.OrganizationId == OrganizationID || x.Id == userId) && x.Status).Select(x => x.Id)];
+        int organizationEmployeeCount = organizationEmployeeIds.Count;
+        int organizationAssetPendingRequestsCount = await _applicationDbContext.OrganizationsAssetRequests.Where(
+            x => organizationEmployeeIds.Contains(x.UserID) && x.RequestStatus == 2
+        ).CountAsync();
+
+        // for organziation organizationAssetWorth, organziationAssignedAssetCount, rganziationUnderMaintanenceAssetCount,organziationAssetCount,organizationAssetRatioByAssetType,chartsData,recentlyUpdatedAssetsList,recentActivitiesList
+        var organizationAssetTypes = await _applicationDbContext.OrganizationsAssetTypes
+            .Where(x => x.OrganizationsID == OrganizationID)
+            .ToListAsync();
+        var organizationAssets = await _applicationDbContext.Assets
+            .Where(x => x.OrganizationID == OrganizationID)
+            .ToListAsync();
+        decimal organizationAssetWorth = organizationAssets.Sum(x => x.CostPrice);
+        int organziationAssignedAssetCount = organizationAssets.Count(x => x.AssetStatusID == 1);
+        int organziationUnderMaintanenceAssetCount = organizationAssets.Count(x => x.AssetStatusID == 3);
+        int organziationAssetCount = organizationAssets.Count;
+        List<object> organizationAssetRatioByAssetType = [];
+        foreach (var item in organizationAssetTypes)
+        {
+            organizationAssetRatioByAssetType.Add(
+                new
+                {
+                    AssetTypeId = item.OrganizationsAssetTypeID,
+                    AssetTypeName = item.OrganizationsAssetTypeName,
+                    AssetRatioInType = organizationAssets.Count(x => x.AssetTypeID == item.OrganizationsAssetTypeID) / (organziationAssetCount * 1.0) * 100,
+                }
+            );
+        }
+
+        Dictionary<int, List<decimal>> chartsData = Enumerable.Range(DateTime.UtcNow.Year - 1, 2).ToDictionary(
+          year => year,
+          year => Enumerable.Range(1, 12)
+              .Select(month => organizationAssets.Where(x => x.PurchaseDate.Month == month && x.PurchaseDate.Year == year).Sum(x => x.CostPrice)
+              ).ToList()
+            );
+
+        Dictionary<int, string> assetStatuses = await _applicationDbContext.OrganizationsAssetStatuses
+            .ToDictionaryAsync(status =>
+             status.OrganizationsAssetStatusID,
+             status => status.OrganizationsAssetStatusName
+             );
+
+        List<object> recentlyUpdatedAssetsList = [.. organizationAssets.Take(10).Select(x => (object)new
+        {
+            AssetlD = x.AssetlD,
+            Barcode = x.Barcode,
+            UpdatedDate = x.UpdatedDate,
+            assetStatus = assetStatuses[x.AssetStatusID],
+        })];
+
+        List<dynamic> organizationsAssetMaintenance = _applicationDbContext.OrganizationsAssetMaintanences
+        .Take(8)
+        .Select(x => (object)new
+        {
+            Type = "Maintenance",
+            Date = (x.RetunDate == DateTime.MinValue) ? x.SentDate : x.RetunDate,
+            x.OrganizationsAssetMaintanenceID,
+            x.Problem,
+            x.MaintanenceResult,
+            x.AssetID
+        }).ToList();
+
+        List<dynamic> organizationsAssetRequest = _applicationDbContext.OrganizationsAssetRequests
+            .Take(8)
+            .Select(x => (object)new
+            {
+                Type = "Request",
+                Date = x.RequestDate,
+                x.OrganizationsAssetRequestID,
+                x.Title,
+                x.Description,
+                x.RequestStatus,
+                x.UserID
+            }).ToList();
+
+        List<dynamic> organizationsAssetAssignReturn = _applicationDbContext.OrganizationsAssetAssignReturns
+            .Take(8)
+            .Select(x => (object)new
+            {
+                Type = "Assign/Return",
+                Date = x.AssignedAt,
+                x.ID,
+                x.Notes,
+                x.AssignedToUserID,
+                x.AssignedByUserID,
+                x.AssetID
+            }).ToList();
+
+        List<dynamic> organizationsAssetRetirement = _applicationDbContext.OrganizationsAssetRetirements
+            .Take(8)
+            .Select(x => (object)new
+            {
+                Type = "Retirement",
+                Date = x.RetirementDate,
+                x.OrganizationsAssetRetirementID,
+                x.RetirementReason,
+                x.Condition,
+                x.AssetID
+            }).ToList();
+
+        // Merge all the data
+        List<dynamic> recentActivitiesList = [.. organizationsAssetMaintenance
+     .Concat(organizationsAssetRequest)
+     .Concat(organizationsAssetAssignReturn)
+     .Concat(organizationsAssetRetirement)
+     .OrderBy(x => x.Date)];
+
+
 
         return new ApiResponse
         {
             Status = StatusCodes.Status200OK,
-            ResponseData = requiredOrganization,
+            ResponseData = new
+            {
+                organizationAssetWorth = organizationAssetWorth,
+                organziationAssignedAssetCount = organziationAssignedAssetCount,
+                organziationUnderMaintanenceAssetCount = organziationUnderMaintanenceAssetCount,
+                organziationAssetCount = organziationAssetCount,
+                organizationAssetRatioByAssetType = organizationAssetRatioByAssetType,
+                chartsData = chartsData,
+                recentlyUpdatedAssetsList = recentlyUpdatedAssetsList,
+                recentActivitiesList = recentActivitiesList,
+                organizationEmployeeCount = organizationEmployeeCount,
+                organizationAssetPendingRequestsCount = organizationAssetPendingRequestsCount
+            },
         };
     }
 

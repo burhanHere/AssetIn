@@ -1,85 +1,86 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace AssetIn.Server.Data.Migrations
+namespace AssetIn.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedBarcodeColumnInAssetTable : Migration
+    public partial class AddedAssetRequestProcessDateColumnInAssetRequestTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "Barcode",
-                table: "Assets",
-                type: "longtext",
-                nullable: false)
-                .Annotation("MySql:CharSet", "utf8mb4");
+            migrationBuilder.AddColumn<DateTime>(
+                name: "RequestProcessedDate",
+                table: "OrganizationsAssetRequests",
+                type: "datetime(6)",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.UpdateData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
                 keyValue: "1",
                 column: "ConcurrencyStamp",
-                value: "6244f5ba-197e-4777-b01c-2a3b49114549");
+                value: "0d7d80ae-5550-4430-9f67-097bbce5c0e3");
 
             migrationBuilder.UpdateData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
                 keyValue: "2",
                 column: "ConcurrencyStamp",
-                value: "b1d505c7-4137-43e8-aac8-0fe395cea464");
+                value: "989b717a-deaa-48f6-b458-0c838947257d");
 
             migrationBuilder.UpdateData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
                 keyValue: "3",
                 column: "ConcurrencyStamp",
-                value: "49fd5171-f217-46ba-b834-d1be697ce597");
+                value: "5323207a-327b-47cd-8710-f0c0c3d21a77");
 
             migrationBuilder.UpdateData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
                 keyValue: "4",
                 column: "ConcurrencyStamp",
-                value: "665c4599-d7ec-4678-82d8-5d0e0de6a3a5");
+                value: "b1513f78-a3be-4bfe-96c9-976ca5712a14");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Barcode",
-                table: "Assets");
+                name: "RequestProcessedDate",
+                table: "OrganizationsAssetRequests");
 
             migrationBuilder.UpdateData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
                 keyValue: "1",
                 column: "ConcurrencyStamp",
-                value: "c99b489a-b203-498b-a312-1d6886ce712f");
+                value: "74f5fb96-7608-4b73-82f3-f7db85c458cd");
 
             migrationBuilder.UpdateData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
                 keyValue: "2",
                 column: "ConcurrencyStamp",
-                value: "407c905f-8cfc-45b8-88cd-8d3accdeb92a");
+                value: "c98197cb-f550-4e6c-98c9-7e3bf8193bb7");
 
             migrationBuilder.UpdateData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
                 keyValue: "3",
                 column: "ConcurrencyStamp",
-                value: "f1025f75-923c-4ab4-ad5b-7c9b36f809f8");
+                value: "bb713802-4341-497f-b757-565131b44d1f");
 
             migrationBuilder.UpdateData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
                 keyValue: "4",
                 column: "ConcurrencyStamp",
-                value: "30ac464a-2f3c-42d1-b1e8-2b2191c75386");
+                value: "b3c4036e-e6c8-4a31-ab16-42db2d425a08");
         }
     }
 }

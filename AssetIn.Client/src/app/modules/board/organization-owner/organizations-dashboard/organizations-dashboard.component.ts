@@ -70,12 +70,12 @@ export class OrganizationsDashboardComponent implements OnInit {
         organizationName: this.createOrganizationForm.controls["organizationName"].value,
         description: this.createOrganizationForm.controls["organizationDescription"].value,
       }
+      this.createOrganizationForm.reset();
       this.organizationManagementService.CreateOrganization(newOrganizationData).subscribe(
         (responce: any) => {
           this.isLoading = false;
         },
         (error: HttpErrorResponse) => {
-          this.showNewOrganizationCreationForm = true;
           this.isLoading = false;
           this.showAlert = true;
           this.alertMessage = error.error.responseData[0] || 'Error';

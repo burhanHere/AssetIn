@@ -34,7 +34,6 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
 
         Asset newAssetModel = new()
         {
-            AssetlD = newAsset.AssetlD,
             AssetName = newAsset.AssetName,
             Description = newAsset.Description,
             SerialNumber = newAsset.SerialNumber,
@@ -206,7 +205,10 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
         var allAssets = await (from asset in _applicationDbContext.Assets
                                join status in _applicationDbContext.OrganizationsAssetStatuses
                                on asset.AssetStatusID equals status.OrganizationsAssetStatusID
-                               where asset.OrganizationID == organizationID && !asset.DeletedByOrganization
+                               where
+                               asset.OrganizationID == organizationID &&
+                               asset.DeletedByOrganization == false
+                               orderby asset.CreatedDate descending
                                select new
                                {
                                    AssetlD = asset.AssetlD,
@@ -215,6 +217,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
                                    SerialNumber = asset.SerialNumber,
                                    CreatedDate = asset.CreatedDate,
                                    UpdatedDate = asset.UpdatedDate,
+                                   DeletedByOrganization = asset.DeletedByOrganization,
                                    AssetStatus = status.OrganizationsAssetStatusName,
                                }).ToListAsync();
         return new ApiResponse
