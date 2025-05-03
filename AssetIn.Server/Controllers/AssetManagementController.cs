@@ -1,5 +1,6 @@
 using AssetIn.Server.Data;
 using AssetIn.Server.DTOs;
+using AssetIn.Server.Helpers;
 using AssetIn.Server.Models;
 using AssetIn.Server.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -30,16 +31,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             });
         }
         var result = await _assestManagementRepository.CreateAsset(newAsset, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status400BadRequest)
-        {
-            return BadRequest(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpPatch(template: "UpdateAsset")]
@@ -58,20 +50,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             });
         }
         var result = await _assestManagementRepository.UpdateAsset(newAsset, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status404NotFound)
-        {
-            return NotFound(result);
-        }
-        else if (result.Status == StatusCodes.Status400BadRequest)
-        {
-            return BadRequest(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpDelete(template: "DeleteAsset")]
@@ -90,20 +69,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             });
         }
         var result = await _assestManagementRepository.DeleteAsset(assetID, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status404NotFound)
-        {
-            return NotFound(result);
-        }
-        else if (result.Status == StatusCodes.Status400BadRequest)
-        {
-            return BadRequest(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpGet(template: "GetAllAsset")]
@@ -122,16 +88,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             });
         }
         var result = await _assestManagementRepository.GetAllAsset(organizationID, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status404NotFound)
-        {
-            return NotFound(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpGet(template: "GetAsset")]
@@ -150,12 +107,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             });
         }
         var result = await _assestManagementRepository.GetAsset(assetID, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpPost(template: "CreateNewAssetCatagory")]
@@ -174,16 +126,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             });
         }
         var result = await _assestManagementRepository.CreateNewAssetCatagory(newCatagory, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status400BadRequest)
-        {
-            return BadRequest(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpDelete(template: "DeleteAssetCatagory")]
@@ -203,16 +146,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
         }
 
         var result = await _assestManagementRepository.DeleteAssetCatagory(catagoryID, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status400BadRequest)
-        {
-            return BadRequest(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpPatch(template: "UpdateAssetCatagory")]
@@ -231,16 +165,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             });
         }
         var result = await _assestManagementRepository.UpdateAssetCatagory(assetCatagory, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status400BadRequest)
-        {
-            return BadRequest(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpGet(template: "GetAllAssetCatagory")]
@@ -259,16 +184,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             });
         }
         var result = await _assestManagementRepository.GetAllAssetCatagory(organizationID, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status404NotFound)
-        {
-            return NotFound(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpPost(template: "CreateNewAssetType")]
@@ -287,16 +203,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             });
         }
         var result = await _assestManagementRepository.CreateNewAssetType(assetType, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status400BadRequest)
-        {
-            return BadRequest(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpDelete(template: "DeleteAssetType")]
@@ -315,16 +222,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             });
         }
         var result = await _assestManagementRepository.DeleteAssetType(AssetTypeID, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status400BadRequest)
-        {
-            return BadRequest(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpPatch(template: "UpdateAssetType")]
@@ -343,16 +241,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             });
         }
         var result = await _assestManagementRepository.UpdateAssetType(assetType, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status400BadRequest)
-        {
-            return BadRequest(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpGet(template: "GetAllAssetType")]
@@ -371,13 +260,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             });
         }
         var result = await _assestManagementRepository.GetAllAssetType(organizationID, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpGet(template: "GetAllAssetStatus")]
@@ -396,11 +279,6 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             });
         }
         var result = await _assestManagementRepository.GetAllAssetStatus(organizationID, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        //    (result.Status == StatusCodes.Status404NotFound)
-        return NotFound(result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 }

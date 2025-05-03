@@ -101,16 +101,15 @@ public class EmailService(IConfiguration configuration)
          <body>
          <div class=""container"">
          <div class=""header"">
-         <h1>Your Asset Manager (YAM)</h1>
+         <h1>AssetIn</h1>
          </div>
          <div class=""content"">
-         <h2>Hello,</h2>
          <p>{message}</p>
          <p>Thank you for using AssetIn!</p>
          <a href=""https://www.AssetIn.com"" class=""button"">Visit Our Website</a>
          </div>
          <div class=""footer"">
-         <p>&copy; 2024 Your Asset Manager (YAM). All rights reserved.</p>
+         <p>&copy; 2025 AssetIn. All rights reserved.</p>
          </div>
          </div>
          </body>

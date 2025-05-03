@@ -40,6 +40,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
        .HasForeignKey(o => o.UserID)
        .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
 
+        modelBuilder.Entity<OrganizationsAssetRequest>()
+        .HasOne(o => o.Organization)
+        .WithMany() // many Organizations can point to one User
+        .HasForeignKey(o => o.OrganizationID)
+        .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
+
         modelBuilder.Entity<OrganizationsDomain>()
        .HasOne(o => o.Organization)
        .WithMany() // many Organizations can point to one User
@@ -76,11 +82,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
        .HasForeignKey(o => o.VendorID)
        .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
 
-       modelBuilder.Entity<OrganizationsAssetMaintanence>()
-       .HasOne(o => o.Asset)
-       .WithMany() // many Organizations can point to one User
-       .HasForeignKey(o => o.AssetID)
-       .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
+        modelBuilder.Entity<OrganizationsAssetMaintanence>()
+        .HasOne(o => o.Asset)
+        .WithMany() // many Organizations can point to one User
+        .HasForeignKey(o => o.AssetID)
+        .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
 
         modelBuilder.Entity<IdentityRole>().HasData(
             new IdentityRole { Id = "1", Name = "OrganizationOwner", ConcurrencyStamp = Guid.NewGuid().ToString(), NormalizedName = "ORGANIZATIONOWNER" },

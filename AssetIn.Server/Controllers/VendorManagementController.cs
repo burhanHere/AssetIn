@@ -1,5 +1,6 @@
 using AssetIn.Server.Data;
 using AssetIn.Server.DTOs;
+using AssetIn.Server.Helpers;
 using AssetIn.Server.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,12 +30,7 @@ public class VendorManagementController(ApplicationDbContext applicationDbContex
         }
 
         ApiResponse result = await _vendorManagementRepository.GetVendorInfo(userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        // not found
-        return NotFound(result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpPost("CreateVendorInfo")]
@@ -53,20 +49,7 @@ public class VendorManagementController(ApplicationDbContext applicationDbContex
         }
 
         ApiResponse result = await _vendorManagementRepository.CreateVendorInfo(newVendorInfo, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status400BadRequest)
-        {
-            return BadRequest(result);
-        }
-        else if (result.Status == StatusCodes.Status409Conflict)
-        {
-            return Conflict(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpPatch("UpdateVendorInfo")]
@@ -85,20 +68,7 @@ public class VendorManagementController(ApplicationDbContext applicationDbContex
         }
 
         ApiResponse result = await _vendorManagementRepository.UpdateVendorInfo(newVendorInfo, userId);
-        if (result.Status == StatusCodes.Status200OK)
-        {
-            return Ok(result);
-        }
-        else if (result.Status == StatusCodes.Status400BadRequest)
-        {
-            return BadRequest(result);
-        }
-        else if (result.Status == StatusCodes.Status404NotFound)
-        {
-            return NotFound(result);
-        }
-        // (result.Status == StatusCodes.Status403Forbidden)
-        return StatusCode(StatusCodes.Status403Forbidden, result);
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
 }
