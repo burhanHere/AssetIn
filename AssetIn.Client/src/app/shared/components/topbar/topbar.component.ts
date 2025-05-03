@@ -13,6 +13,7 @@ export class TopbarComponent {
 
   public LogoutUser(): void {
     sessionStorage.removeItem('auth-jwt');
+    sessionStorage.removeItem('targetOrganizationID');
     this.router.navigateByUrl('auth')
   }
 

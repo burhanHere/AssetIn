@@ -1,5 +1,6 @@
 using AssetIn.Server.Data;
 using AssetIn.Server.DTOs;
+using AssetIn.Server.Helpers;
 using AssetIn.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -28,13 +29,7 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
             });
         }
         ApiResponse result = await _organizationManagementRepository.CreateOrganization(createOrganizationDTO, userId);
-        return result.Status switch
-        {
-            StatusCodes.Status200OK => Ok(result),
-            StatusCodes.Status404NotFound => NotFound(result),
-            StatusCodes.Status400BadRequest => BadRequest(result),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error occurred."),
-        };
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpPatch(template: "UpdateOrganization")]
@@ -52,13 +47,7 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
             });
         }
         ApiResponse result = await _organizationManagementRepository.UpdateOrganization(updateOrganizationDTO, userId);
-        return result.Status switch
-        {
-            StatusCodes.Status200OK => Ok(result),
-            StatusCodes.Status404NotFound => NotFound(result),
-            StatusCodes.Status400BadRequest => BadRequest(result),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error occurred."),
-        };
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpDelete(template: "DeleteOrganization")]
@@ -76,13 +65,7 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
             });
         }
         ApiResponse result = await _organizationManagementRepository.DeleteOrganization(organizationId, userId);
-        return result.Status switch
-        {
-            StatusCodes.Status200OK => Ok(result),
-            StatusCodes.Status409Conflict => Conflict(result),
-            StatusCodes.Status400BadRequest => BadRequest(result),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error occurred."),
-        };
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpGet(template: "GetOrganizationInfoForOrganizationDashboard")]
@@ -100,12 +83,7 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
             });
         }
         ApiResponse result = await _organizationManagementRepository.GetOrganizationInfoForOrganizationDashboard(OrganizationID, userId);
-        return result.Status switch
-        {
-            StatusCodes.Status200OK => Ok(result),
-            StatusCodes.Status404NotFound => NotFound(result),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error occurred."),
-        };
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 
     [HttpGet(template: "GetOrganizationsListForOrganizationsDashboard")]
@@ -123,11 +101,6 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
             });
         }
         ApiResponse result = await _organizationManagementRepository.GetOrganizationsListForOrganizationsDashboard(userID);
-        return result.Status switch
-        {
-            StatusCodes.Status200OK => Ok(result),
-            StatusCodes.Status404NotFound => NotFound(result),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error occurred."),
-        };
+        return HelperFunctions.ResponseFormatter(this, result);
     }
 }

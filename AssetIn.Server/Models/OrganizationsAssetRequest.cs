@@ -23,6 +23,10 @@ public class OrganizationsAssetRequest
     public DateTime? RequestCompletedDate { get; set; }
     [Required]
     public string UserID { get; set; }
+    [Required]
+    public int OrganizationID { get; set; }
+    [ForeignKey("OrganizationID")]
+    public Organization Organization { get; set; }
     [ForeignKey("UserID")]
     public User User { get; set; }
 }

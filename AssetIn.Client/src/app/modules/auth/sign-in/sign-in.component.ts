@@ -44,11 +44,11 @@ export class SignInComponent {
             this.router.navigateByUrl('board/mainBoard/organizationOwner');
           }
           else if (userClaims['Role'].includes('OrganizationAssetManager')) {
-            sessionStorage.setItem('organizationId', userClaims['OrganizationId']);
+            sessionStorage.setItem('targetOrganizationID', userClaims['OrganizationId']);
             this.router.navigateByUrl('board/mainBoard/organizationAdmin');
           }
           else if (userClaims['Role'].includes('OrganizationEmployee')) {
-            sessionStorage.setItem('organizationId', userClaims['OrganizationId']);
+            sessionStorage.setItem('targetOrganizationID', userClaims['OrganizationId']);
             this.router.navigateByUrl('board/mainBoard/organizationEmployee');
           }
           else if (userClaims['Role'] === 'Vendor') {

@@ -5,7 +5,7 @@ namespace AssetIn.Server.Controllers;
 
 [ApiController]
 [Route("AssetIn.Server/[controller]")]
-[Authorize(Policy ="OrganizationOwnerOrganizationAssetManagerPolicy")]
+[Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerPolicy")]
 public class EmployeeManagementController : ControllerBase
 {
 }

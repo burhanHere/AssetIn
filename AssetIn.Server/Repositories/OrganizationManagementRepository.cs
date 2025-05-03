@@ -199,7 +199,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
         }
 
         // for organziation Employee count and pending requests count
-        HashSet<string> organizationEmployeeIds = [.. _applicationDbContext.Users.Where(x => (x.OrganizationId == OrganizationID || x.Id == userId) && x.Status).Select(x => x.Id)];
+        HashSet<string> organizationEmployeeIds = [.. _applicationDbContext.Users.Where(x => (x.OrganizationId == OrganizationID && x.Id == userId) && x.Status).Select(x => x.Id)];
         int organizationEmployeeCount = organizationEmployeeIds.Count;
         int organizationAssetPendingRequestsCount = await _applicationDbContext.OrganizationsAssetRequests.Where(
             x => organizationEmployeeIds.Contains(x.UserID) && x.RequestStatus == 2
@@ -252,7 +252,8 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
             assetStatus = assetStatuses[x.AssetStatusID],
         })];
 
-        List<dynamic> organizationsAssetMaintenance = _applicationDbContext.OrganizationsAssetMaintanences
+        List<int> organizationAssetsIds = [.. organizationAssets.Select(x => x.AssetlD)];
+        List<dynamic> organizationsAssetMaintenance = _applicationDbContext.OrganizationsAssetMaintanences.Where(x => organizationAssetsIds.Contains(x.AssetID))
         .Take(8)
         .Select(x => (object)new
         {
@@ -264,7 +265,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
             x.AssetID
         }).ToList();
 
-        List<dynamic> organizationsAssetRequest = _applicationDbContext.OrganizationsAssetRequests
+        List<dynamic> organizationsAssetRequest = _applicationDbContext.OrganizationsAssetRequests.Where(x => organizationEmployeeIds.Contains(x.UserID) && x.OrganizationID == OrganizationID)
             .Take(8)
             .Select(x => (object)new
             {
@@ -277,7 +278,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
                 x.UserID
             }).ToList();
 
-        List<dynamic> organizationsAssetAssignReturn = _applicationDbContext.OrganizationsAssetAssignReturns
+        List<dynamic> organizationsAssetAssignReturn = _applicationDbContext.OrganizationsAssetAssignReturns.Where(x => organizationAssetsIds.Contains(x.AssetID))
             .Take(8)
             .Select(x => (object)new
             {
@@ -290,7 +291,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
                 x.AssetID
             }).ToList();
 
-        List<dynamic> organizationsAssetRetirement = _applicationDbContext.OrganizationsAssetRetirements
+        List<dynamic> organizationsAssetRetirement = _applicationDbContext.OrganizationsAssetRetirements.Where(x => organizationAssetsIds.Contains(x.AssetID))
             .Take(8)
             .Select(x => (object)new
             {
@@ -348,7 +349,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
         }
 
         var requiredOrganizations = await _applicationDbContext.Organizations
-            .Where(x => x.UserID == userId)
+            .Where(x => x.UserID == userId && x.ActiveOrganization)
             .ToListAsync();
         List<object> requiresOrganizationDataList = [];
         int tempOrganizationAssetsCount = 0;
