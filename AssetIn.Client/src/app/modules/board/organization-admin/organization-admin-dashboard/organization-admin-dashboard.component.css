@@ -1,0 +1,385 @@
+.main-div {
+  background-color: #f0f1f3;
+  height: 100%;
+}
+.dashboard-stats-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px 20px 0px 20px;
+  gap: 20px;
+  width: 75vw;
+  height: max-content;
+  /* border: 1px solid green; */
+}
+
+.dashboard-stats-container-left {
+  width: 90%;
+  gap: 30px;
+  background-color: white;
+  height: max-content;
+  /* border: 1px solid red; */
+}
+
+.info-card_Chart-Container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 25%;
+  height: 30%;
+  margin: 2%;
+}
+
+.metric-box {
+  background: linear-gradient(to right, #55bfe7, #6595d6);
+  color: white;
+  border-radius: 12px;
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.metric-box span {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  max-height: 100%;
+}
+
+.metric-box h2 {
+  font-size: 10px; /* Adjust as needed */
+  font-weight: normal;
+  margin: 0;
+}
+
+.metric-box p {
+  font-size: 16px; /* Adjust as needed */
+  font-weight: bold;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.metric-box img {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.line-chart-container {
+  width: 78%;
+}
+
+.doughnut-chart-and-lables {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  width: 35%;
+  max-width: 290px;
+  margin: 0;
+  text-align: center;
+}
+
+.doughnut-chart-labels {
+  display: flex;
+  justify-content: space-around; /* Equal spacing between two blocks */
+  width: 100%;
+  padding-top: 10px;
+  font-family: sans-serif;
+  font-size: small;
+  color: #333;
+}
+
+.doughnut-chart-labels > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.doughnut-chart-labels p {
+  margin: 0;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.fixed {
+  background-color: #d2468f;
+}
+
+.variable {
+  background-color: #f6b84b;
+}
+
+.chart-container-doughnut {
+  width: 60%;
+  height: 60%;
+  /* border: 1px solid green; */
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background-color: #fff;
+  height: 30px; /* reduce container height */
+  padding: 0; /* remove all vertical padding */
+  /* border: 1px solid red; */
+}
+
+.summary-item-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%; /* stretch to summary height */
+  line-height: 1; /* prevent tall lines */
+  font-size: 12px;
+  /* border: 1px solid black; */
+}
+
+.summary-item-container img {
+  width: 18px;
+  height: 18px;
+  display: block; /* removes extra inline spacing */
+}
+
+.summary-item-container p {
+  display: flex;
+  padding-left: 5px;
+}
+
+.summary-item {
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1; /* prevents vertical padding from font */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  margin-right: 5px;
+  /* width: max-content; */
+  align-items: center; /* vertically center text */
+}
+
+.purple {
+  color: #8b5cf6;
+}
+
+.yellow {
+  color: #f59e0b;
+}
+
+.pink {
+  color: #ec4899;
+}
+
+.insights-container {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 20px;
+  gap: 20px;
+  /* height: 37vh; */
+}
+
+.activities {
+  font-family: Arial, sans-serif;
+  width: 40%;
+  padding-top: 3px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: white;
+  justify-content: center;
+  /* border: 1px solid red; */
+}
+
+.activities div h2 {
+  font-size: medium;
+  /* border: 1px solid red; */
+}
+
+.activity-table-container {
+  display: grid;
+  justify-items: space-around;
+  align-content: center;
+  width: 100%;
+  /* border: 1px solid green; */
+}
+
+.activity-date {
+  font-size: 12px;
+}
+
+.activity-icon img {
+  width: 30px;
+  height: 30px;
+}
+
+.activity-detals {
+  font-size: 15px;
+  color: #333;
+  margin: 0;
+}
+
+.activity-detals p {
+  font-size: 10px;
+  color: #333;
+  margin: 0;
+}
+
+.show-more {
+  background: none;
+  border: none;
+  justify-items: center;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.show-less {
+  background: none;
+  border: none;
+  align-items: center;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.show-more:hover {
+  text-decoration: underline;
+}
+
+.asset-list {
+  font-family: Arial, sans-serif;
+  width: 50%;
+  padding-top: 3px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: white;
+  justify-content: center;
+}
+
+.asset-list h2 {
+  font-size: medium;
+}
+
+.actions {
+  margin-bottom: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  height: 7%;
+}
+
+.actions img{
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+.btn {
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  width: auto
+}
+
+.add {
+  background-color: #999999;
+  color: white;
+}
+
+.export {
+  background-color: #7ac6ec;
+  color: white;
+}
+.btn:hover {
+  opacity: 0.8;
+}
+
+.asset-list table {
+  width: 100%;
+  background-color: white;
+  border-radius: 8px;
+  border-collapse: collapse;
+  overflow: hidden;
+}
+
+.asset-list table th {
+  text-align: center;
+  padding: 0.75rem;
+}
+
+.asset-list table thead {
+  color: white;
+  background-color: #0d3d4f;
+  font-size: 15px;
+}
+
+.asset-list table td {
+  padding: 0.25rem;
+  text-align: center;
+  font-size: 10px;
+}
+
+.asset-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 6.5pc;
+  height: 1.5pc;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.available {
+  background-color: #7ac6ec;
+}
+
+.assigned {
+  background-color: #da498d94;
+}
+
+.retired {
+  background-color: #96928c;
+}
+
+.out-of-order {
+  background-color: #f4ba47;
+}
+
+.lost {
+  background-color: #f35f5f;
+}
+
+.under-maintenance {
+  background-color: #b7f95c;
+}
+
