@@ -18,7 +18,7 @@
             <span>
               <h2>Pending Asset Requests</h2>
               <p>
-                {{ organizationData.organizationAssetPendingRequestsCount }}
+                {{ organizationData?.organizationAssetPendingRequestsCount }}
               </p>
             </span>
 
@@ -27,7 +27,7 @@
           <div class="metric-box">
             <span>
               <h2>Asset Assigned</h2>
-              <p>{{ organizationData.organziationAssignedAssetCount }}</p>
+              <p>{{ organizationData?.organziationAssignedAssetCount }}</p>
             </span>
             <img src="icons/assignedAsset.png" alt="Asset Request" />
           </div>
@@ -35,7 +35,7 @@
             <span>
               <h2>Asset Under Maintenance</h2>
               <p>
-                {{ organizationData.organziationUnderMaintanenceAssetCount }}
+                {{ organizationData?.organziationUnderMaintanenceAssetCount }}
               </p>
             </span>
             <img src="icons/Arrow Rotate Left 01.png" alt="Asset Request" />
@@ -54,21 +54,21 @@
           <img class="purple" src="icons/employee-star.png" />
           <p>
             <span class="summary-item purple">Employees:</span>
-            {{ organizationData.organizationEmployeeCount }}
+            {{ organizationData?.organizationEmployeeCount }}
           </p>
         </div>
         <div class="summary-item-container">
           <img class="pink" src="icons/asset-star.png" class="icon-img" />
           <p>
             <span class="summary-item yellow">Assets:</span>
-            {{ organizationData.organziationAssetCount }}
+            {{ organizationData?.organziationAssetCount }}
           </p>
         </div>
         <div class="summary-item-container">
           <img class="pink" src="icons/asset_worth.png" />
           <p>
             <span class="summary-item pink">Asset Worth:</span
-            >{{ organizationData.organizationAssetWorth | currency : "USD" }}
+            >{{ organizationData?.organizationAssetWorth | currency : "USD" }}
           </p>
         </div>
       </div>
@@ -79,14 +79,14 @@
         <div>
           <p>
             {{
-              organizationData.organizationAssetRatioByAssetType[0]
-                .assetRatioInType | percent
+              organizationData?.organizationAssetRatioByAssetType[0]
+                .assetRatioInType + "%"
             }}
           </p>
           <p>
             <span class="dot fixed"></span>
             {{
-              organizationData.organizationAssetRatioByAssetType[0]
+              organizationData?.organizationAssetRatioByAssetType[0]
                 .assetTypeName
             }}
           </p>
@@ -94,14 +94,14 @@
         <div>
           <p>
             {{
-              organizationData.organizationAssetRatioByAssetType[1]
-                .assetRatioInType | percent
+              organizationData?.organizationAssetRatioByAssetType[1]
+                .assetRatioInType + "%"
             }}
           </p>
           <p>
             <span class="dot variable"></span>
             {{
-              organizationData.organizationAssetRatioByAssetType[1]
+              organizationData?.organizationAssetRatioByAssetType[1]
                 .assetTypeName
             }}
           </p>
@@ -123,19 +123,21 @@
       <div class="activity-table-container">
         <table class="activity-table">
           <tbody>
-            @for (activity of organizationData.recentActivitiesList; track
-            activity) {
+            @for (activity of organizationData?.recentActivitiesList; track
+            $index) {
             <tr>
-              <td class="activity-date">{{ activity.date | date: "MM-dd-yyyy" }}</td>
+              <td class="activity-date">
+                {{ activity.date | date : "MM-dd-yyyy" }}
+              </td>
               <td class="activity-icon">
                 @if (activity.type === 'Retirement') {
-                  <img src="icons/returned.png" alt="Retirement Icon" />
+                <img src="icons/returned.png" alt="Retirement Icon" />
                 } @else if (activity.type === 'Assign/Return') {
-                  <img src="icons/assigned.png" alt="Assign/Return Icon" />
+                <img src="icons/assigned.png" alt="Assign/Return Icon" />
                 } @else if (activity.type === 'Request') {
-                  <img src="icons/request.png" alt="Request Icon" />
+                <img src="icons/request.png" alt="Request Icon" />
                 } @else {
-                  <img src="icons/maintenance.png" alt="Default Icon" />
+                <img src="icons/maintenance.png" alt="Default Icon" />
                 }
               </td>
               <td class="activity-detals">
@@ -154,9 +156,9 @@
       </div>
     </div>
 
-  <!-- Asset List -->
+    <!-- Asset List -->
 
-  <div class="asset-list">
+    <div class="asset-list">
       <h2>Asset List</h2>
       <div class="actions">
         <button class="btn add">
@@ -178,21 +180,24 @@
           </tr>
         </thead>
         <tbody>
-          @for (asset of organizationData.recentlyUpdatedAssetsList; track
+          @for (asset of organizationData?.recentlyUpdatedAssetsList; track
           asset.id) {
           <tr>
             <td>{{ asset.assetlD }}</td>
             <td>{{ asset.barcode }}</td>
-            <td>{{ asset.updatedDate  | date: "MM-dd-yyyy" }}</td>
+            <td>{{ asset.updatedDate | date : "MM-dd-yyyy" }}</td>
             <td>
-              <span class="asset-status" [ngClass]="{
-                'available': asset.assetStatus === 'Available',
-                'assigned': asset.assetStatus === 'Assigned',
-                'retired': asset.assetStatus === 'Retired',
-                'out-of-order': asset.assetStatus === 'Out Of Order',
-                'lost': asset.assetStatus === 'Lost',
-                'under-maintenance': asset.assetStatus === 'Under Maintenance'
-              }">
+              <span
+                class="asset-status"
+                [ngClass]="{
+                  available: asset.assetStatus === 'Available',
+                  assigned: asset.assetStatus === 'Assigned',
+                  retired: asset.assetStatus === 'Retired',
+                  'out-of-order': asset.assetStatus === 'Out Of Order',
+                  lost: asset.assetStatus === 'Lost',
+                  'under-maintenance': asset.assetStatus === 'Under Maintenance'
+                }"
+              >
                 {{ asset.assetStatus }}
               </span>
             </td>

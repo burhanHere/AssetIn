@@ -211,7 +211,8 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
         }
 
         // for organziation Employee count and pending requests count
-        HashSet<string> organizationEmployeeIds = [.. _applicationDbContext.Users.Where(x => (x.OrganizationId == OrganizationID && x.Id == userId) && x.Status).Select(x => x.Id)];
+        HashSet<string> organizationEmployeeIds = [.. _applicationDbContext.Users.Where(x => (x.OrganizationId == OrganizationID) && x.Status).Select(x => x.Id)];
+        organizationEmployeeIds.Add(requiredOrganization.UserID);
         int organizationEmployeeCount = organizationEmployeeIds.Count;
         int organizationAssetPendingRequestsCount = await _applicationDbContext.OrganizationsAssetRequests.Where(
             x => organizationEmployeeIds.Contains(x.UserID) && x.RequestStatus == 2

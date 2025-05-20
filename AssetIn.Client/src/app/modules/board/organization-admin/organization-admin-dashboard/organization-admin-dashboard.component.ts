@@ -11,12 +11,23 @@ import {
   LinearScale,
   Title,
   Tooltip,
+  Filler,
   Legend,
   DoughnutController,
   ArcElement,
 } from 'chart.js';
 
-import { FormsModule } from '@angular/forms';
+Chart.register(
+  LineController,
+  LineElement,
+  PointElement,
+  LinearScale,
+  Title,
+  CategoryScale,
+  Filler,
+  Legend,
+  Tooltip
+);
 
 @Component({
   selector: 'app-organization-admin-dashboard',
@@ -66,16 +77,15 @@ export class OrganizationAdminDashboardComponent implements OnInit {
     if (this.organizationId === 0) {
       this.router.navigateByUrl('**');
     } else {
-
       this.isLoading = true;
       this.organizationManagementService
         .GetOrganizationInfoForOrganizationDashboard(this.organizationId)
         .subscribe(
           (responce: any) => {
-            console.log(responce.responseData);// comment it or remove it after use
+            console.log(responce.responseData); // comment it or remove it after use
             this.isLoading = false;
             this.organizationData = responce.responseData;
-
+            console.log(this.organizationData); // comment it or remove it after use
             // Initialize charts after data is received
             this.createChart(this.organizationData.chartsData);
             this.createDoughnutChart();
@@ -91,9 +101,9 @@ export class OrganizationAdminDashboardComponent implements OnInit {
     }
   }
 
-  public createChart(chartdata:any): void {
-    debugger;
+  public createChart(chartdata: any): void {
     console.log(chartdata);
+    const years = Object.keys(chartdata);
     this.chart = new Chart('MyChart', {
       type: 'line', // line chart
 
@@ -114,22 +124,24 @@ export class OrganizationAdminDashboardComponent implements OnInit {
         ],
         datasets: [
           {
-            label: chartdata[0].key,
-            data: chartdata[0].value,
+            label: years[1],
+            data: chartdata[years[1]],
             borderColor: '#f59e0b',
             tension: 0.3,
             fill: 'origin', // Fills the area under the line
-            backgroundColor: 'rgba(245, 158, 11, 0.4)', // Add fill color with opacity
-            pointRadius: 0,
+            backgroundColor: 'rgba(233, 118, 11, 0.65)', // Add fill color with opacity
+            pointRadius: 0, // <-- This enables hover detection
+            pointHoverRadius: 20, // <-- Enlarges point on hover
           },
           {
-           label: chartdata[1].key,
-            data: chartdata[1].value,
+            label: years[0],
+            data: chartdata[years[0]],
             borderColor: '#8b5cf6',
             tension: 0.3,
             fill: 'origin', // Fills the area under the line
             backgroundColor: 'rgba(139, 92, 246, 0.4)', // Add fill color with opacity
-            pointRadius: 0,
+            pointRadius: 0, // <-- This enables hover detection
+            pointHoverRadius: 20, // <-- Enlarges point on hover
           },
         ],
       },
@@ -152,7 +164,12 @@ export class OrganizationAdminDashboardComponent implements OnInit {
         labels: ['Fixed Assets', 'Variable Assets'],
         datasets: [
           {
-            data: [100, 0],
+            data: [
+              this.organizationData?.organizationAssetRatioByAssetType[0]
+                .assetRatioInType,
+              this.organizationData?.organizationAssetRatioByAssetType[1]
+                .assetRatioInType,
+            ],
             backgroundColor: ['#D2468F', '#F6B84B'],
             borderWidth: 0,
           },
@@ -178,54 +195,54 @@ export class OrganizationAdminDashboardComponent implements OnInit {
     });
   }
 
-
   public exportOrganizationData(): void {
-      if (!this.organizationData || typeof this.organizationData !== 'object') {
-        this.alertTitle = 'No Data';
-        this.alertMessage = 'No organization data available to export.';
-        this.showAlert = true;
-        return;
-      }
-
-      // Ensure data is in array form
-      const dataArray = Array.isArray(this.organizationData)
-        ? this.organizationData
-        : [this.organizationData];
-
-      // Get CSV headers from object keys
-      const keys = Object.keys(dataArray[0]);
-      const csvRows: string[] = [];
-
-      // Add headers
-      csvRows.push(keys.join(','));
-
-      // Add rows
-      for (const row of dataArray) {
-        const values = keys.map(key => {
-          let val = row[key];
-          if (val === null || val === undefined) val = '';
-          if (typeof val === 'string') {
-            val = val.replace(/"/g, '""'); // Escape double quotes
-            return `"${val}"`;
-          }
-          return val;
-        });
-        csvRows.push(values.join(','));
-      }
-
-      // Create CSV blob and trigger download
-      const csvContent = csvRows.join('\n');
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = window.URL.createObjectURL(blob);
-
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `organization_${this.organizationId}_data.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url); // Clean up
+    if (!this.organizationData || typeof this.organizationData !== 'object') {
+      this.alertTitle = 'No Data';
+      this.alertMessage = 'No organization data available to export.';
+      this.showAlert = true;
+      return;
     }
 
+    // Ensure data is in array form
+    const dataArray = Array.isArray(this.organizationData)
+      ? this.organizationData
+      : [this.organizationData];
 
+    // Get CSV headers from object keys
+    const keys = Object.keys(dataArray[0]);
+    const csvRows: string[] = [];
+
+    // Add headers
+    csvRows.push(keys.join(','));
+
+    // Add rows
+    for (const row of dataArray) {
+      const values = keys.map((key) => {
+        let val = row[key];
+        if (val === null || val === undefined) val = '';
+        if (typeof val === 'string') {
+          val = val.replace(/"/g, '""'); // Escape double quotes
+          return `"${val}"`;
+        }
+        return val;
+      });
+      csvRows.push(values.join(','));
+    }
+
+    // Create CSV blob and trigger download
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute(
+      'download',
+      `organization_${this.organizationId}_data.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url); // Clean up
+  }
 }
