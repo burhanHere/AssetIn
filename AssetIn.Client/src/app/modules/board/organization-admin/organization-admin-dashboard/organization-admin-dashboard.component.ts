@@ -77,7 +77,7 @@ export class OrganizationAdminDashboardComponent implements OnInit {
             this.organizationData = responce.responseData;
 
             // Initialize charts after data is received
-            this.createChart();
+            this.createChart(this.organizationData.chartsData);
             this.createDoughnutChart();
           },
           (error: HttpErrorResponse) => {
@@ -91,9 +91,11 @@ export class OrganizationAdminDashboardComponent implements OnInit {
     }
   }
 
-  public createChart(): void {
+  public createChart(chartdata:any): void {
+    debugger;
+    console.log(chartdata);
     this.chart = new Chart('MyChart', {
-      type: 'line', // Still a line chart
+      type: 'line', // line chart
 
       data: {
         labels: [
@@ -112,11 +114,8 @@ export class OrganizationAdminDashboardComponent implements OnInit {
         ],
         datasets: [
           {
-            label: '2024',
-            data: [
-              388.92, 0, 3695.19, 789.27, 398.07, 2911.98, 1371.88, 1367.44,
-              1939.43, 400.37, 2893.25, 0,
-            ],
+            label: chartdata[0].key,
+            data: chartdata[0].value,
             borderColor: '#f59e0b',
             tension: 0.3,
             fill: 'origin', // Fills the area under the line
@@ -124,11 +123,8 @@ export class OrganizationAdminDashboardComponent implements OnInit {
             pointRadius: 0,
           },
           {
-            label: '2025',
-            data: [
-              384.36, 785.47, 974.4, 978.16, 1362.92, 2325.5, 380.57, 790.05,
-              1552.67, 3308.77, 1940.39, 3102.47,
-            ],
+           label: chartdata[1].key,
+            data: chartdata[1].value,
             borderColor: '#8b5cf6',
             tension: 0.3,
             fill: 'origin', // Fills the area under the line
@@ -190,19 +186,19 @@ export class OrganizationAdminDashboardComponent implements OnInit {
         this.showAlert = true;
         return;
       }
-    
+
       // Ensure data is in array form
       const dataArray = Array.isArray(this.organizationData)
         ? this.organizationData
         : [this.organizationData];
-    
+
       // Get CSV headers from object keys
       const keys = Object.keys(dataArray[0]);
       const csvRows: string[] = [];
-    
+
       // Add headers
       csvRows.push(keys.join(','));
-    
+
       // Add rows
       for (const row of dataArray) {
         const values = keys.map(key => {
@@ -216,12 +212,12 @@ export class OrganizationAdminDashboardComponent implements OnInit {
         });
         csvRows.push(values.join(','));
       }
-    
+
       // Create CSV blob and trigger download
       const csvContent = csvRows.join('\n');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = window.URL.createObjectURL(blob);
-    
+
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `organization_${this.organizationId}_data.csv`);
@@ -230,6 +226,6 @@ export class OrganizationAdminDashboardComponent implements OnInit {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url); // Clean up
     }
-    
-  
+
+
 }
