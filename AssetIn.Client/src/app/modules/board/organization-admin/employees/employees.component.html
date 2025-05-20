@@ -1,1 +1,188 @@
-<p>employees works!</p>
+<div style="background-color: #f0f1f3">
+  <div class="main-container">Employee List</div>
+  <div class="employee-list">
+    <div class="card" (click)="onAddNewEmployee()">
+      <img src="icons/add_new_emp.png" alt="add_user" class="add_new_user" />
+      <h3 style="font-weight: bold; margin: 0">Add New</h3>
+      <!-- <p style="margin: 0">Employee</p> -->
+    </div>
+     @if (showForm) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div
+        class="modal-content"
+        style="width: 500px"
+        (click)="$event.stopPropagation()"
+      >
+        <button class="close-button" (click)="openCloseNewEmployeeForm()">
+          ×
+        </button>
+        <div class="employee-form-container">
+          <h2>Add New Employee</h2>
+          <form [formGroup]="employeeForm">
+            <div class="user-data">
+              <label for="userName">User Name:</label>
+              <input
+                id="userName"
+                formControlName="userName"
+                type="text"
+                placeholder="Enter name"
+              />
+              @if (employeeForm.controls['userName'].touched &&
+              employeeForm.controls['userName'].errors?.['required']) {
+              <div class="input-error">User Name is required.</div>
+              }
+            </div>
+
+            <div class="user-data">
+              <label for="email">Email:</label>
+
+              <input
+                id="email"
+                formControlName="email"
+                type="email"
+                placeholder="john.doe@example.com"
+              />
+              @if (employeeForm.controls['email'].touched) { @if
+              (employeeForm.controls['email'].errors?.['required']) {
+              <div class="input-error">Email is required.</div>
+              } @if (employeeForm.controls['email'].errors?.['email']) {
+              <div class="input-error">Enter a valid email address.</div>
+              } }
+            </div>
+
+            <div class="user-data">
+              <label for="phone">Phone #:</label>
+
+              <input
+                id="phone"
+                formControlName="phone"
+                type="text"
+                placeholder="+92-xxx-xxxxxxx"
+              />
+              @if (employeeForm.controls['phone'].touched &&
+              employeeForm.controls['phone'].errors?.['required']) {
+              <div class="input-error">Phone number is required.</div>
+              }
+            </div>
+
+            <div class="user-data">
+              <label for="gender">Gender:</label>
+              <select id="gender" formControlName="gender">
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+              @if (employeeForm.controls['gender'].touched &&
+              employeeForm.controls['gender'].errors?.['required']) {
+              <div class="input-error">required.</div>
+              }
+            </div>
+
+            <div class="user-data">
+              <label for="dateOfBirth">Date of Birth:</label>
+              <input
+                id="dateOfBirth"
+                formControlName="dateOfBirth"
+                type="date"
+              />
+              @if (employeeForm.controls['dateOfBirth'].touched &&
+              employeeForm.controls['dateOfBirth'].errors?.['required']) {
+              <div class="input-error">Date of Birth is required.</div>
+              }
+            </div>
+
+            <div class="user-data">
+              <label for="role">Role:</label>
+              <select id="role" formControlName="role">
+                <option value="">Select Role</option>
+                <option value="Asset manager">Asset Manager</option>
+                <option value="Employee">Employee</option>
+              </select>
+              @if (employeeForm.controls['role'].touched &&
+              employeeForm.controls['role'].errors?.['required']) {
+              <div class="input-error">Role is required.</div>
+              }
+            </div>
+
+            <button type="submit" (click)="onSubmit()">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    }
+     @for (emp of employees; track emp.name) {
+    <div class="card" (click)="selectEmployee(emp)">
+      <img
+        [src]="emp.image ? emp.image : 'avatar.png'"
+        alt="{{ emp.name }}"
+        class="avatar"
+      />
+      <div style="text-align: center; line-height: 1.1">
+        <h3 style="font-weight: bold; margin: 0">{{ emp.name }}</h3>
+        <p style="margin: 0">{{ emp.role }}</p>
+      </div>
+    </div>
+    } @if (selectedEmployee) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="close-button" (click)="closeModal()">×</button>
+
+        <div class="profileContent">
+          <div class="profile">
+            <img
+              [src]="
+                selectedEmployee.image ? selectedEmployee.image : 'icons/emp_avatar.png'
+              "
+            />
+          </div>
+
+          <div class="userSummary">
+            <div class="user-data">
+              <span class="lable">User Name:</span>
+              <span class="info-details">{{ selectedEmployee.name }}</span>
+            </div>
+            <div class="user-data">
+              <span class="lable">Email:</span>
+              <span class="info-details">{{ selectedEmployee.email }}</span>
+            </div>
+            <div class="user-data">
+              <span class="lable">Phone #:</span>
+              <span class="info-details">{{ selectedEmployee.phone }}</span>
+            </div>
+            <div class="user-data">
+              <span class="lable">Gender:</span>
+              <span class="info-details">{{ selectedEmployee.gender }}</span>
+            </div>
+            <div class="user-data">
+              <span class="lable">Date of Birth:</span>
+              <span class="info-details">{{
+                selectedEmployee.dateOfBirth
+              }}</span>
+            </div>
+
+            <div class="role-action">
+              <span class="lable" style="width: 165px">Role:</span>
+              <span class="info-details">{{ selectedEmployee.role }}</span>
+              <button class="revoke" (click)="revokePrivileges()">
+                Revoke Privileges
+              </button>
+            </div>
+
+            <div class="account-status">
+              <span class="lable">Account Status:</span>
+              <label class="toggle-wrapper">
+                <input
+                  type="checkbox"
+                  [checked]="isToggled"
+                  (change)="onToggle($event)"
+                />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</div>
