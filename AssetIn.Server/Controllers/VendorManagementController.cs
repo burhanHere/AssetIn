@@ -25,7 +25,7 @@ public class VendorManagementController(ApplicationDbContext applicationDbContex
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
 
@@ -44,7 +44,7 @@ public class VendorManagementController(ApplicationDbContext applicationDbContex
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
 
@@ -63,7 +63,7 @@ public class VendorManagementController(ApplicationDbContext applicationDbContex
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
 

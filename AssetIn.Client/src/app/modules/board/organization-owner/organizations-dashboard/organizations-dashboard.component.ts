@@ -4,14 +4,17 @@ import { OrganizationManagementService } from '../../../../core/services/organiz
 import { Organization } from '../../../../core/models/organization';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { domainSuffixValidator } from '../../../../shared/validators/domain-siffix.validator';
 
 @Component({
   selector: 'app-organizations-dashboard',
   templateUrl: './organizations-dashboard.component.html',
-  styleUrl: './organizations-dashboard.component.css'
+  styleUrl: './organizations-dashboard.component.css',
 })
 export class OrganizationsDashboardComponent implements OnInit {
-  private organizationManagementService: OrganizationManagementService = inject(OrganizationManagementService);
+  private organizationManagementService: OrganizationManagementService = inject(
+    OrganizationManagementService
+  );
   private router: Router = inject(Router);
   public createOrganizationForm: FormGroup;
   public showNewOrganizationCreationForm: boolean;
@@ -26,6 +29,10 @@ export class OrganizationsDashboardComponent implements OnInit {
     this.createOrganizationForm = new FormGroup({
       organizationName: new FormControl('', [Validators.required]),
       organizationDescription: new FormControl('', [Validators.required]),
+      organizationDomain: new FormControl('', [
+        Validators.required,
+        domainSuffixValidator(), //contine here
+      ]),
     });
     this.showNewOrganizationCreationForm = false;
     this.organizations = [];
@@ -45,23 +52,27 @@ export class OrganizationsDashboardComponent implements OnInit {
 
   private getAllOrganization(): void {
     this.isLoading = true;
-    this.organizationManagementService.GetOrganizationsListForOrganizationsDashboard().subscribe(
-      (responce: any) => {
-        this.isLoading = false;
-        this.organizations = responce.responseData;
-      },
-      (error: HttpErrorResponse) => {
-        this.isLoading = false;
-        this.showAlert = true;
-        this.alertTitle = error.error.responseData[0] || 'Error';
-        this.alertMessage = error.error.responseData[1] || 'An error occurred.';
-      }
-    );
+    this.organizationManagementService
+      .GetOrganizationsListForOrganizationsDashboard()
+      .subscribe(
+        (responce: any) => {
+          this.isLoading = false;
+          this.organizations = responce.responseData;
+        },
+        (error: HttpErrorResponse) => {
+          this.isLoading = false;
+          this.showAlert = true;
+          this.alertTitle = error.error.responseData[0] || 'Error';
+          this.alertMessage =
+            error.error.responseData[1] || 'An error occurred.';
+        }
+      );
   }
 
   public openCloseNewOrganizationForm(): void {
     this.createOrganizationForm.reset();
-    this.showNewOrganizationCreationForm = !this.showNewOrganizationCreationForm;
+    this.showNewOrganizationCreationForm =
+      !this.showNewOrganizationCreationForm;
   }
 
   public createOrganization(): void {
@@ -70,23 +81,31 @@ export class OrganizationsDashboardComponent implements OnInit {
       this.showNewOrganizationCreationForm = false;
       const newOrganizationData: Organization = {
         organzationId: 0,
-        organizationName: this.createOrganizationForm.controls["organizationName"].value,
-        description: this.createOrganizationForm.controls["organizationDescription"].value,
-      }
+        organizationName:
+          this.createOrganizationForm.controls['organizationName'].value,
+        description:
+          this.createOrganizationForm.controls['organizationDescription'].value,
+        organizationDomain:
+          this.createOrganizationForm.controls['organizationDomain'].value,
+      };
       this.createOrganizationForm.reset();
-      this.organizationManagementService.CreateOrganization(newOrganizationData).subscribe(
-        (responce: any) => {
-          this.isLoading = false;
-        },
-        (error: HttpErrorResponse) => {
-          this.isLoading = false;
-          this.showAlert = true;
-          this.alertMessage = error.error.responseData[0] || 'Error';
-          this.alertTitle = error.error.responseData[1] || 'An error occurred.';
-        }, () => {
-          this.getAllOrganization();
-        }
-      );
+      this.organizationManagementService
+        .CreateOrganization(newOrganizationData)
+        .subscribe(
+          (responce: any) => {
+            this.isLoading = false;
+          },
+          (error: HttpErrorResponse) => {
+            this.isLoading = false;
+            this.showAlert = true;
+            this.alertMessage = error.error.responseData[0] || 'Error';
+            this.alertTitle =
+              error.error.responseData[1] || 'An error occurred.';
+          },
+          () => {
+            this.getAllOrganization();
+          }
+        );
     } else {
       this.showFormError = true;
       this.isLoading = false;
@@ -95,6 +114,9 @@ export class OrganizationsDashboardComponent implements OnInit {
 
   public openTargetOrganizationDashboard(targetOrganization: any): void {
     this.router.navigateByUrl('/board/mainBoard/organizationAdmin');
-    sessionStorage.setItem('targetOrganizationID', targetOrganization.organizationID);
+    sessionStorage.setItem(
+      'targetOrganizationID',
+      targetOrganization.organizationID
+    );
   }
 }

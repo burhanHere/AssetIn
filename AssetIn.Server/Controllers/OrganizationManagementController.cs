@@ -25,7 +25,7 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         ApiResponse result = await _organizationManagementRepository.CreateOrganization(createOrganizationDTO, userId);
@@ -43,7 +43,7 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         ApiResponse result = await _organizationManagementRepository.UpdateOrganization(updateOrganizationDTO, userId);
@@ -61,7 +61,7 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         ApiResponse result = await _organizationManagementRepository.DeleteOrganization(organizationId, userId);
@@ -79,7 +79,7 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         ApiResponse result = await _organizationManagementRepository.GetOrganizationInfoForOrganizationDashboard(OrganizationID, userId);
@@ -97,7 +97,7 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         ApiResponse result = await _organizationManagementRepository.GetOrganizationsListForOrganizationsDashboard(userID);

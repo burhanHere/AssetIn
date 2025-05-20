@@ -1,10 +1,11 @@
-@if(isLoading)
-{
+@if(isLoading) {
 <app-page-loader></app-page-loader>
-}
-
-@if (showAlert) {
-<app-alert-card [title]="alertTitle" [message]="alertMessage" (closeCard)="showAlert = $event"></app-alert-card>
+} @if (showAlert) {
+<app-alert-card
+  [title]="alertTitle"
+  [message]="alertMessage"
+  (closeCard)="showAlert = $event"
+></app-alert-card>
 }
 
 <div class="main-div">
@@ -13,21 +14,26 @@
       <img src="./icons/add new organization.png" class="button-logo" />
       Add New Organization
     </button>
-    @if(showNewOrganizationCreationForm)
-    {
+    @if(showNewOrganizationCreationForm) {
     <div>
       <div class="blur-overlay"></div>
       <div class="gradient-border-wrapper">
         <div class="new-organization-form-container">
           <div>
             <h3>Create New Organization</h3>
-            <button class="close-button" (click)="openCloseNewOrganizationForm()">X</button>
+            <button
+              class="close-button"
+              (click)="openCloseNewOrganizationForm()"
+            >
+              X
+            </button>
           </div>
           <form [formGroup]="createOrganizationForm">
             <div class="input-group">
               <label for="organizationName">Organization Name</label>
               <input type="text" formControlName="organizationName" />
-              @if (createOrganizationForm.controls["organizationName"].touched &&
+              @if (createOrganizationForm.controls["organizationName"].touched
+              &&
               createOrganizationForm.controls["organizationName"].errors?.['required'])
               {
               <div class="input-error">This field is required.</div>
@@ -37,15 +43,36 @@
             <div class="input-group">
               <label for="organizationDescription">Description</label>
               <textarea formControlName="organizationDescription"></textarea>
-              @if (createOrganizationForm.controls["organizationDescription"].touched &&
+              @if
+              (createOrganizationForm.controls["organizationDescription"].touched
+              &&
               createOrganizationForm.controls["organizationDescription"].errors?.['required'])
               {
               <div class="input-error">This field is required.</div>
               }
             </div>
+
+            <div class="input-group">
+              <label for="organizationDomain">Organization Domain</label>
+              <span style="color: rgb(105, 97, 97)"
+                >Example: &#64;domain.com</span
+              >
+              <input type="text" formControlName="organizationDomain" />
+              @if (createOrganizationForm.controls["organizationDomain"].touched
+              &&
+              createOrganizationForm.controls["organizationDomain"].errors?.['required'])
+              {
+              <div class="input-error">This field is required.</div>
+              }@else if
+              (createOrganizationForm.controls["organizationDomain"].touched &&
+              createOrganizationForm.controls["organizationDomain"].errors?.['domainSuffixInvalid'])
+              {
+              <div class="input-error">Enter a valid domain.</div>
+              }
+            </div>
+
             <button type="submit" (click)="createOrganization()">Submit</button>
-            @if (showFormError)
-            {
+            @if (showFormError) {
             <div class="input-error">Please complete the form carefully</div>
             }
           </form>
@@ -59,18 +86,28 @@
     @for (org of organizations; track $index){
     <div class="card" (click)="openTargetOrganizationDashboard(org)">
       <div class="card-heading">
-        <img [src]="org.organizationLogo===''?'./icons/Organizations.png':org.organizationLogo" alt="logo" width="50px"
-          height="50px" />
+        <img
+          [src]="
+            org.organizationLogo === ''
+              ? './icons/Organizations.png'
+              : org.organizationLogo
+          "
+          alt="logo"
+          width="50px"
+          height="50px"
+        />
         <h3>{{ org.organizationName }}</h3>
       </div>
-      <ul style="
+      <ul
+        style="
           font-size: small;
           gap: 10%;
           row-gap: 10px;
           display: grid;
-          justify-items:left;
+          justify-items: left;
           align-content: center;
-        ">
+        "
+      >
         <li style="color: #69247c; width: max-content">
           <b>Employees:</b> {{ org.organizationEmployeeCount }}
         </li>
@@ -78,7 +115,7 @@
           <b>Assets:</b>{{ org.organizationAssetCount }}
         </li>
         <li style="color: #da498d; width: max-content">
-          <b>Asset Worth:</b> {{ org.organizationAssetWorth | currency  }}
+          <b>Asset Worth:</b> {{ org.organizationAssetWorth | currency }}
         </li>
       </ul>
     </div>

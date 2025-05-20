@@ -17,7 +17,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<OrganizationsAssetStatus> OrganizationsAssetStatuses { get; set; }
     public DbSet<OrganizationsAssetRequestStatus> OrganizationsAssetRequestStatuses { get; set; }
     public DbSet<OrganizationsAssetType> OrganizationsAssetTypes { get; set; }
-    public DbSet<OrganizationsDomain> OrganizationsDomains { get; set; }
     public DbSet<Vendor> Vendors { get; set; }
     public DbSet<VendorProcurementDetail> VendorProcurementDetails { get; set; }
 
@@ -45,12 +44,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         .WithMany() // many Organizations can point to one User
         .HasForeignKey(o => o.OrganizationID)
         .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
-
-        modelBuilder.Entity<OrganizationsDomain>()
-       .HasOne(o => o.Organization)
-       .WithMany() // many Organizations can point to one User
-       .HasForeignKey(o => o.OrganizationsID)
-       .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
 
         modelBuilder.Entity<OrganizationsAssetType>()
        .HasOne(o => o.Organization)
