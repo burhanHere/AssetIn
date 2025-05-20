@@ -1,0 +1,333 @@
+/* === Main container layout and typography === */
+.main-container {
+  display: flex;
+  font-weight: bold;
+  padding: 20px;
+  font-size: large;
+}
+
+/* === Employee list grid layout === */
+.employee-list {
+  display: grid;
+  grid-template-columns: repeat(4, 0fr); /* Grid with 5 columns */
+  gap: 20px;
+  justify-content: center; /* Center cards horizontally */
+  padding: 20px;
+}
+
+/* === Individual employee card styling === */
+.card {
+  width: 160px;
+  height: 190px;
+  border-radius: 16px;
+  text-align: center;
+  padding: 12px;
+  background: #fff;
+  transition: 0.3s ease;
+  border: 3px solid transparent;
+  background-clip: padding-box, border-box;
+  background-origin: border-box;
+  background-image: linear-gradient(white, white), /* Inner */
+    linear-gradient(360deg, #7ac6ec, #cf42d7); /* Gradient border */
+}
+
+/* === Card hover animation === */
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* === Employee avatar image inside card === */
+.avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+/* === Image in the "Add New User" card === */
+.add_new_user {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+/* === Card styling for "Add New User" button === */
+.card.add-new {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #555;
+  cursor: pointer;
+  border-style: dashed;
+}
+
+/* === Plus icon inside Add New card === */
+.add-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+/* === Full screen modal backdrop === */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px); /* Blur effect */
+}
+
+/* === Modal popup content styling === */
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  width: 400px;
+  position: relative;
+  border: 3px solid transparent;
+  height: 400px;
+  background-clip: padding-box, border-box;
+  background-origin: border-box;
+  background-image: linear-gradient(white, white),
+    linear-gradient(360deg, #7ac6ec, #cf42d7);
+}
+
+/* === Close "X" button for modal === */
+.close-button {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+/* === Content container for user profile in modal === */
+.profileContent {
+  display: grid;
+}
+
+/* === Profile image styling === */
+.profile img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto 20px;
+}
+
+/* === Summary info section below profile picture === */
+.userSummary {
+  align-items: center;
+  width: 350px;
+  height: 250px;
+}
+
+/* === Row for each user data field === */
+.user-data {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+/* === Label text inside user-data row === */
+.lable {
+  font-weight: bold;
+  width: 120px;
+}
+
+/* === User data value box === */
+.info-details {
+  border: 1px solid transparent;
+  width: 70%;
+  height: 20px;
+  background-color: #f1f3f6;
+  padding: 0px 10px;
+  align-items: center;
+}
+
+/* === Container for user role and revoke button === */
+.role-action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* === Revoke button styling === */
+.role-action .revoke {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 4px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 10px;
+  width: 90px;
+}
+
+/* === Toggle switch wrapper === */
+.toggle-wrapper {
+  display: inline-block;
+  position: relative;
+  width: 60px;
+  height: 30px;
+}
+
+/* === Hide the default checkbox === */
+.toggle-wrapper input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* === Track of the toggle switch === */
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 30px;
+  transition: background-color 0.4s;
+}
+
+/* === Circle (knob) of the toggle switch === */
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 24px;
+  width: 24px;
+  left: 3px;
+  top: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.4s;
+}
+
+/* === Toggle ON state background === */
+input:checked + .slider {
+  background-color: #4CAF50;
+}
+
+/* === Toggle ON state knob position === */
+input:checked + .slider::before {
+  transform: translateX(30px);
+}
+
+/* === Employee form wrapper === */
+.employee-form-container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  height: 300px;
+  width: 500px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === Form header text === */
+.employee-form-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+/* === Container for form fields === */
+.employee-form-container form {
+  gap: 16px;
+}
+
+/* === Label styling inside form === */
+.employee-form-container label {
+  font-weight: bold;
+  width: 100px;
+}
+
+/* === Input and dropdown styling === */
+.employee-form-container input[type="text"],
+.employee-form-container input[type="email"],
+.employee-form-container input[type="date"],
+.employee-form-container select {
+  padding: 1px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+  width: 50%;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+/* === Highlight input focus === */
+.employee-form-container input:focus,
+.employee-form-container select:focus {
+  border-color: #6a11cb;
+  outline: none;
+}
+
+/* === Row layout for role + revoke section === */
+.role-revoke-row {
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* === Input row for role selection === */
+.role-field {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* === Checkbox container for revoke privilege === */
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* === Label next to the revoke checkbox === */
+.revoke-label {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: #444;
+}
+
+/* === Style for checkbox itself === */
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
+/* === Submit button style === */
+.employee-form-container button[type="submit"] {
+  background: linear-gradient(90deg, #CF42D7, #7AC6EC);
+  align-items: center;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  opacity: 0.9;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+/* === Hover effect for submit button === */
+.employee-form-container button[type="submit"]:hover {
+  background: linear-gradient(90deg,#ba31c1, #5bb2de);
+}
+
+/* === Style for input error message === */
+.input-error {
+  color: #e74c3c;
+  font-size: 12px;
+}
