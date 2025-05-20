@@ -4,6 +4,7 @@ using AssetIn.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetIn.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250519175136_AddedGenderDateOfBorthCOlumnUnUserTableAndOrganizationDomainColumnInOrganizationTable")]
+    partial class AddedGenderDateOfBorthCOlumnUnUserTableAndOrganizationDomainColumnInOrganizationTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -446,6 +449,28 @@ namespace AssetIn.Server.Migrations
                     b.ToTable("OrganizationsAssetTypes");
                 });
 
+            modelBuilder.Entity("AssetIn.Server.Models.OrganizationsDomain", b =>
+                {
+                    b.Property<int>("OrganizationsDomainID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("OrganizationsDomainID"));
+
+                    b.Property<string>("Domain")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("OrganizationsID")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrganizationsDomainID");
+
+                    b.HasIndex("OrganizationsID");
+
+                    b.ToTable("OrganizationsDomains");
+                });
+
             modelBuilder.Entity("AssetIn.Server.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -649,28 +674,28 @@ namespace AssetIn.Server.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "12c502cd-72e9-492f-99c3-932929411310",
+                            ConcurrencyStamp = "e06d90c7-b81c-48ab-b876-f4b38d939545",
                             Name = "OrganizationOwner",
                             NormalizedName = "ORGANIZATIONOWNER"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "e0f6836b-2686-4fb3-82c7-ce1a6cd1ff30",
+                            ConcurrencyStamp = "12920abb-7cd9-4796-a87e-f4f63e28440b",
                             Name = "OrganizationEmployee",
                             NormalizedName = "ORGANIZATIONEMPLOYEE"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "3faf3175-389a-4124-9c52-e3492ea5aba1",
+                            ConcurrencyStamp = "c5a722b6-4621-4ac7-9561-8be8b5fc59d3",
                             Name = "OrganizationAssetManager",
                             NormalizedName = "ORGANIZATIONASSETMANAGER"
                         },
                         new
                         {
                             Id = "4",
-                            ConcurrencyStamp = "46203bc0-b1d8-4bc1-aeba-28ba330a8e83",
+                            ConcurrencyStamp = "cbd66708-7d30-4576-ba02-e1ad4b714efa",
                             Name = "Vendor",
                             NormalizedName = "VENDOR"
                         });
@@ -908,6 +933,17 @@ namespace AssetIn.Server.Migrations
                 });
 
             modelBuilder.Entity("AssetIn.Server.Models.OrganizationsAssetType", b =>
+                {
+                    b.HasOne("AssetIn.Server.Models.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationsID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("AssetIn.Server.Models.OrganizationsDomain", b =>
                 {
                     b.HasOne("AssetIn.Server.Models.Organization", "Organization")
                         .WithMany()

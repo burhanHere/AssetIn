@@ -28,12 +28,24 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
                 }
             };
         }
+        // domain uniqueness
+        var domainIsNotUnique = await _applicationDbContext.Organizations.AnyAsync(x => x.OrganizationDomain == createOrganizationDTO.OrganizationDomain);
+        if (domainIsNotUnique)
+        {
+            return new()
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Error", "The domain is already in use. Please choose a unique domain." }
+            };
+        }
+
 
         // Create the new organization
         Organization organization = new()
         {
             OrganizationName = createOrganizationDTO.OrganizationName,
             Description = createOrganizationDTO.Description,
+            OrganizationDomain = createOrganizationDTO.OrganizationDomain,
             OrganizationLogo = "",
             CreatedDate = DateTime.UtcNow,
             ActiveOrganization = true,

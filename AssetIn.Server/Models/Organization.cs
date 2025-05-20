@@ -11,6 +11,7 @@ public class Organization
     public string Description { get; set; }
     public DateTime CreatedDate { get; set; }
     public bool ActiveOrganization { get; set; }
+    public string OrganizationDomain { get; set; }
     [Required]
     public string UserID { get; set; }
     [ForeignKey("UserID")]

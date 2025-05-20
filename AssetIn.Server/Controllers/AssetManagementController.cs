@@ -27,7 +27,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         var result = await _assestManagementRepository.CreateAsset(newAsset, userId);
@@ -46,7 +46,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         var result = await _assestManagementRepository.UpdateAsset(newAsset, userId);
@@ -65,7 +65,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         var result = await _assestManagementRepository.DeleteAsset(assetID, userId);
@@ -84,7 +84,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         var result = await _assestManagementRepository.GetAllAsset(organizationID, userId);
@@ -103,7 +103,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         var result = await _assestManagementRepository.GetAsset(assetID, userId);
@@ -122,7 +122,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         var result = await _assestManagementRepository.CreateNewAssetCatagory(newCatagory, userId);
@@ -141,7 +141,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
 
@@ -161,7 +161,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         var result = await _assestManagementRepository.UpdateAssetCatagory(assetCatagory, userId);
@@ -180,7 +180,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         var result = await _assestManagementRepository.GetAllAssetCatagory(organizationID, userId);
@@ -199,7 +199,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         var result = await _assestManagementRepository.CreateNewAssetType(assetType, userId);
@@ -218,7 +218,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         var result = await _assestManagementRepository.DeleteAssetType(AssetTypeID, userId);
@@ -237,7 +237,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         var result = await _assestManagementRepository.UpdateAssetType(assetType, userId);
@@ -256,7 +256,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         var result = await _assestManagementRepository.GetAllAssetType(organizationID, userId);
@@ -275,7 +275,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
             return Unauthorized(new ApiResponse
             {
                 Status = StatusCodes.Status401Unauthorized,
-                ResponseData = new List<string> { "User not found in token." }
+                ResponseData = new List<string> { "User data not found in token." }
             });
         }
         var result = await _assestManagementRepository.GetAllAssetStatus(organizationID, userId);
