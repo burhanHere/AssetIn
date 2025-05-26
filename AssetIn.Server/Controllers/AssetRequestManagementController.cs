@@ -37,9 +37,9 @@ public class AssetRequestManagementController(ApplicationDbContext applicationDb
         return HelperFunctions.ResponseFormatter(this, result);
     }
 
-    [HttpGet("GetAllAssetRequestEmployeeList")]
+    [HttpGet("GetAllAssetRequestEmployeeListStatsAndDesignatedAssets")]
     [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerOrganizationEmployeePolicy")]
-    public async Task<IActionResult> GetAllAssetRequestEmployeeList(int organizationId)
+    public async Task<IActionResult> GetAllAssetRequestEmployeeListStatsAndDesignatedAssets(int organizationId)
     {
         var userId = User.FindFirst("UserId")?.Value;
 
@@ -53,7 +53,7 @@ public class AssetRequestManagementController(ApplicationDbContext applicationDb
             });
         }
 
-        var result = await _assetRequestManagementRepository.GetAllAssetRequestEmployeeList(organizationId, userId);
+        var result = await _assetRequestManagementRepository.GetAllAssetRequestEmployeeListStatsAndDesignatedAssets(organizationId, userId);
         return HelperFunctions.ResponseFormatter(this, result);
     }
 
