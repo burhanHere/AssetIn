@@ -1,1 +1,153 @@
-<p>my-asset-requests works!</p>
+<div class="main-div">
+  <div class="request-summary-container">
+    <h3>Your All Requests</h3>
+
+    <div class="request-summary-grid">
+      <div
+        class="request-card"
+        (click)="filterRequests('All')"
+        [class.active]="activeFilter === 'All'"
+      >
+        <img src="icons/totalReq.png" alt="Total Requests" />
+        <div class="request-info">
+          <div class="count">{{ countRequests("All") }}</div>
+          <div class="label">Total Requests</div>
+        </div>
+      </div>
+
+      <div
+        class="request-card"
+        (click)="filterRequests('Pending')"
+        [class.active]="activeFilter === 'Pending'"
+      >
+        <img src="icons/pendingReq.png" alt="Pending Requests" />
+        <div class="request-info">
+          <div class="count">{{ countRequests("Pending") }}</div>
+          <div class="label">Pending Requests</div>
+        </div>
+      </div>
+
+      <div
+        class="request-card"
+        (click)="filterRequests('Fulfilled')"
+        [class.active]="activeFilter === 'Fulfilled'"
+      >
+        <img src="icons/fullfilledReq.png" alt="Fulfilled Requests" />
+        <div class="request-info">
+          <div class="count">{{ countRequests("Fulfilled") }}</div>
+          <div class="label">Fulfilled Requests</div>
+        </div>
+      </div>
+
+      <div
+        class="request-card"
+        (click)="filterRequests('Declined')"
+        [class.active]="activeFilter === 'Declined'"
+      >
+        <img src="icons/declinedReq.png" alt="Declined Requests" />
+        <div class="request-info">
+          <div class="count">{{ countRequests("Declined") }}</div>
+          <div class="label">Declined Requests</div>
+        </div>
+      </div>
+
+      <div
+        class="request-card"
+        (click)="filterRequests('Cancel')"
+        [class.active]="activeFilter === 'Cancel'"
+      >
+        <img src="icons/cancelReq.png" alt="Cancel Requests" />
+        <div class="request-info">
+          <div class="count">{{ countRequests("Cancel") }}</div>
+          <div class="label">Cancel Requests</div>
+        </div>
+      </div>
+
+      <div class="request-card add-new" (click)="createNewRequest()">
+        <img src="icons/newReq.png" alt="New Request" />
+        <div class="label bold">New Request</div>
+      </div>
+    </div>
+  </div>
+  <div style="display: flex">
+    <div class="request-history-container">
+      <div class="request-table-wrapper">
+        <!-- Table Header -->
+        <table class="request-table">
+          <thead>
+            <tr>
+              <th>Request ID</th>
+              <th>Requisitioner ID</th>
+              <th>Request Description</th>
+              <th>Request Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+        </table>
+
+        <!-- Scrollable Table Body -->
+        <div class="scrollable-tbody">
+          <table class="request-table">
+            <tbody>
+              @for (request of filteredRequests; track request.requestId) {
+              <tr>
+                <td>{{ request.requestId }}</td>
+                <td>{{ request.requisitionerId }}</td>
+                <td>
+                  <div class="description">
+                    <div class="title">
+                      <strong>{{ request.title }}</strong>
+                    </div>
+                    <div class="text">{{ request.description }}</div>
+                  </div>
+                </td>
+                <td>{{ request.date | date : "dd/MM/yyyy" }}</td>
+                <td>
+                  <div style="display: flex">
+                    <span
+                      class="status-badge"
+                      [ngClass]="request.status.toLowerCase()"
+                    >
+                      {{ request.status }}
+                    </span>
+                    @if (request.status === 'Pending') {
+                    <button
+                      (click)="cancelRequest(request)"
+                      class="cancel-button"
+                      title="Cancel Request"
+                    >
+                      <img
+                        src="icons/cancelReq.png"
+                        alt="Cancel"
+                        class="button-icon"
+                      />
+                    </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h3>Designated Asset</h3>
+
+      @for (asset of assets; track asset.name) {
+      <div class="card">
+        <img
+          [src]="asset.imageUrl ? asset.imageUrl : 'icons/AssetAvatar.png'"
+          alt="{{ asset.name }}"
+        />
+        <div class="details">
+          <div class="name">{{ asset.name }}</div>
+          <div class="category">{{ asset.category }}</div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</div>
