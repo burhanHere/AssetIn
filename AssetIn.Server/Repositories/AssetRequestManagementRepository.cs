@@ -84,7 +84,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
         };
     }
 
-    public async Task<ApiResponse> GetAllAssetRequestEmployeeList(int organizationId, string userId)
+    public async Task<ApiResponse> GetAllAssetRequestEmployeeListStatsAndDesignatedAssets(int organizationId, string userId)
     {
         var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
         if (validUser == null)
@@ -142,11 +142,46 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
              RequestStatus = AssetRequestStatuses.OrganizationsAssetRequestStatusName,
              CompletionStatus = assetRequests.CompletionStatus
          }).ToListAsync();
+        /*'1', 'Accepted'
+        '2', 'Pending'
+        '3', 'Declined'
+        '4', 'Fulfilled'
+        '5', 'Canceled'
+        */
+        int totalRequests = requiredAssetRequests.Count;
+        int pendingRequests = requiredAssetRequests.Count(x => x.RequestStatus == "Pending");
+        int acceptedRequests = requiredAssetRequests.Count(x => x.RequestStatus == "Accepted");
+        int declinedRequests = requiredAssetRequests.Count(x => x.RequestStatus == "Declined");
+        int fulfilledRequests = requiredAssetRequests.Count(x => x.RequestStatus == "Fulfilled");
+        int canceledRequests = requiredAssetRequests.Count(x => x.RequestStatus == "Canceled");
+
+        var designatedAssetsAssetdetails = await (
+        from assign in _applicationDbContext.OrganizationsAssetAssignReturns
+        join asset in _applicationDbContext.Assets
+            on assign.AssetID equals asset.AssetlD
+        where assign.AssignedToUserID == validUser.Id && assign.ReturnedAt == DateTime.MinValue
+        select new
+        {
+            AssetID = asset.AssetlD,
+            AssetName = asset.AssetName,
+            AerialNumber = asset.SerialNumber,
+        }
+        ).ToListAsync();
 
         return new()
         {
             Status = StatusCodes.Status200OK,
-            ResponseData = requiredAssetRequests
+            ResponseData = new
+            {
+                requiredAssetRequests = requiredAssetRequests,
+                designatedAssetsAssetdetails = designatedAssetsAssetdetails,
+                totalRequests = totalRequests,
+                pendingRequests = pendingRequests,
+                acceptedRequests = acceptedRequests,
+                declinedRequests = declinedRequests,
+                fulfilledRequests = fulfilledRequests,
+                canceledRequests = canceledRequests,
+            }
         };
     }
 
@@ -359,7 +394,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
         }
         else // Cancled
         {
-            if (statusId == 5 && targetAssetRequest.RequestStatus != 4)
+            if (statusId == 5 && targetAssetRequest.RequestStatus == 2)
             {
                 //this action can only be performed by an employee
                 // asset request can be cancil until current status is not updated to fullfiled
