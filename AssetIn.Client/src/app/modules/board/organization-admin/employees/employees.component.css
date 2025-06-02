@@ -27,8 +27,8 @@
   border: 3px solid transparent;
   background-clip: padding-box, border-box;
   background-origin: border-box;
-  background-image: linear-gradient(white, white), /* Inner */
-    linear-gradient(360deg, #7ac6ec, #cf42d7); /* Gradient border */
+  background-image: linear-gradient(white, white),
+    /* Inner */ linear-gradient(360deg, #7ac6ec, #cf42d7); /* Gradient border */
 }
 
 /* === Card hover animation === */
@@ -214,7 +214,7 @@
 
 /* === Toggle ON state background === */
 input:checked + .slider {
-  background-color: #4CAF50;
+  background-color: #4caf50;
 }
 
 /* === Toggle ON state knob position === */
@@ -309,7 +309,7 @@ input[type="checkbox"] {
 
 /* === Submit button style === */
 .employee-form-container button[type="submit"] {
-  background: linear-gradient(90deg, #CF42D7, #7AC6EC);
+  background: linear-gradient(90deg, #cf42d7, #7ac6ec);
   align-items: center;
   color: #fff;
   border: none;
@@ -323,7 +323,7 @@ input[type="checkbox"] {
 
 /* === Hover effect for submit button === */
 .employee-form-container button[type="submit"]:hover {
-  background: linear-gradient(90deg,#ba31c1, #5bb2de);
+  background: linear-gradient(90deg, #ba31c1, #5bb2de);
 }
 
 /* === Style for input error message === */
