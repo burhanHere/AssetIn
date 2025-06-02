@@ -1,3 +1,13 @@
+@if(isLoading) {
+<app-page-loader></app-page-loader>
+} @if (showAlert) {
+<app-alert-card
+  [title]="alertTitle"
+  [message]="alertMessage"
+  (closeCard)="showAlert = $event"
+></app-alert-card>
+}
+
 <div style="background-color: #f0f1f3">
   <div class="main-container">Employee List</div>
   <div class="employee-list">
@@ -6,7 +16,7 @@
       <h3 style="font-weight: bold; margin: 0">Add New</h3>
       <!-- <p style="margin: 0">Employee</p> -->
     </div>
-     @if (showForm) {
+    @if (showForm) {
     <div class="modal-backdrop" (click)="closeModal()">
       <div
         class="modal-content"
@@ -19,107 +29,123 @@
         <div class="employee-form-container">
           <h2>Add New Employee</h2>
           <form [formGroup]="employeeForm">
-            <div class="user-data">
-              <label for="userName">User Name:</label>
-              <input
-                id="userName"
-                formControlName="userName"
-                type="text"
-                placeholder="Enter name"
-              />
+            <div class="user-data-container">
+              <div class="user-data">
+                <label for="userName">User Name:</label>
+                <input
+                  id="userName"
+                  formControlName="userName"
+                  type="text"
+                  placeholder="Enter name"
+                  pattern="^[a-zA-Z0-9 ]*$"
+                />
+              </div>
               @if (employeeForm.controls['userName'].touched &&
               employeeForm.controls['userName'].errors?.['required']) {
               <div class="input-error">User Name is required.</div>
+              } @if (employeeForm.controls['userName'].touched &&
+              employeeForm.controls['userName'].errors?.['pattern']) {
+              <div class="input-error">Special characters are not allowed.</div>
               }
             </div>
+            <div class="user-data-container">
+              <div class="user-data">
+                <label for="email">Email:</label>
 
-            <div class="user-data">
-              <label for="email">Email:</label>
-
-              <input
-                id="email"
-                formControlName="email"
-                type="email"
-                placeholder="john.doe@example.com"
-              />
-              @if (employeeForm.controls['email'].touched) { @if
+                <input
+                  id="email"
+                  formControlName="email"
+                  type="email"
+                  placeholder="john.doe@example.com"
+                  [value]="
+                    this.employeeForm.controls['userName'].value +
+                    this.organizationDomain
+                  "
+                  [readonly]="true"
+                />
+              </div>
+              <!-- @if (employeeForm.controls['email'].touched) { @if
               (employeeForm.controls['email'].errors?.['required']) {
               <div class="input-error">Email is required.</div>
               } @if (employeeForm.controls['email'].errors?.['email']) {
               <div class="input-error">Enter a valid email address.</div>
-              } }
+              } } -->
             </div>
+            <div class="user-data-container">
+              <div class="user-data">
+                <label for="phone">Phone #:</label>
 
-            <div class="user-data">
-              <label for="phone">Phone #:</label>
-
-              <input
-                id="phone"
-                formControlName="phone"
-                type="text"
-                placeholder="+92-xxx-xxxxxxx"
-              />
+                <input
+                  id="phone"
+                  formControlName="phone"
+                  type="text"
+                  placeholder="+92-xxx-xxxxxxx"
+                />
+              </div>
               @if (employeeForm.controls['phone'].touched &&
               employeeForm.controls['phone'].errors?.['required']) {
               <div class="input-error">Phone number is required.</div>
               }
             </div>
-
-            <div class="user-data">
-              <label for="gender">Gender:</label>
-              <select id="gender" formControlName="gender">
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
+            <div class="user-data-container">
+              <div class="user-data">
+                <label for="gender">Gender:</label>
+                <select id="gender" formControlName="gender">
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
               @if (employeeForm.controls['gender'].touched &&
               employeeForm.controls['gender'].errors?.['required']) {
               <div class="input-error">required.</div>
               }
             </div>
-
-            <div class="user-data">
-              <label for="dateOfBirth">Date of Birth:</label>
-              <input
-                id="dateOfBirth"
-                formControlName="dateOfBirth"
-                type="date"
-              />
+            <div class="user-data-container">
+              <div class="user-data">
+                <label for="dateOfBirth">Date of Birth:</label>
+                <input
+                  id="dateOfBirth"
+                  formControlName="dateOfBirth"
+                  type="date"
+                />
+              </div>
               @if (employeeForm.controls['dateOfBirth'].touched &&
               employeeForm.controls['dateOfBirth'].errors?.['required']) {
               <div class="input-error">Date of Birth is required.</div>
               }
             </div>
-
-            <div class="user-data">
-              <label for="role">Role:</label>
-              <select id="role" formControlName="role">
-                <option value="">Select Role</option>
-                <option value="Asset manager">Asset Manager</option>
-                <option value="Employee">Employee</option>
-              </select>
+            <div class="user-data-container">
+              <div class="user-data">
+                <label for="role">Role:</label>
+                <select id="role" formControlName="role">
+                  <option value="">Select Role</option>
+                  <option value="Asset manager">Asset Manager</option>
+                  <option value="Employee">Employee</option>
+                </select>
+              </div>
               @if (employeeForm.controls['role'].touched &&
               employeeForm.controls['role'].errors?.['required']) {
               <div class="input-error">Role is required.</div>
               }
             </div>
-
-            <button type="submit" (click)="onSubmit()">Submit</button>
+            <div class="button-container">
+              <button type="submit" (click)="onSubmit()">Submit</button>
+            </div>
           </form>
         </div>
       </div>
     </div>
-    }
-     @for (emp of employees; track emp.name) {
+    } @for (emp of employees; track emp.name) {
     <div class="card" (click)="selectEmployee(emp)">
       <img
-        [src]="emp.image ? emp.image : 'avatar.png'"
+        [src]="emp.image ? emp.image : 'icons/emp_avatar.png'"
         alt="{{ emp.name }}"
         class="avatar"
       />
       <div style="text-align: center; line-height: 1.1">
-        <h3 style="font-weight: bold; margin: 0">{{ emp.name }}</h3>
-        <p style="margin: 0">{{ emp.role }}</p>
+        <h5 style="font-weight: bold; margin: 0">{{ emp.userName }}</h5>
+        <p style="margin: 0; font-size: small">{{ emp.roleName }}</p>
       </div>
     </div>
     } @if (selectedEmployee) {
@@ -131,43 +157,57 @@
           <div class="profile">
             <img
               [src]="
-                selectedEmployee.image ? selectedEmployee.image : 'icons/emp_avatar.png'
+                selectedEmployee.profilePicturePath
+                  ? selectedEmployee.profilePicturePath
+                  : 'icons/emp_avatar.png'
               "
             />
           </div>
 
           <div class="userSummary">
-            <div class="user-data">
-              <span class="lable">User Name:</span>
-              <span class="info-details">{{ selectedEmployee.name }}</span>
-            </div>
-            <div class="user-data">
+
+              <div class="user-data" style="height: 35px;" >
+                <span class="lable">User Name:</span>
+                <span class="info-details">{{
+                  selectedEmployee.userName
+                }}</span>
+              </div>
+
+            <div class="user-data" style="height: 35px;">
               <span class="lable">Email:</span>
               <span class="info-details">{{ selectedEmployee.email }}</span>
             </div>
-            <div class="user-data">
+            <div class="user-data" style="height: 35px;">
               <span class="lable">Phone #:</span>
               <span class="info-details">{{ selectedEmployee.phone }}</span>
             </div>
-            <div class="user-data">
+            <div class="user-data" style="height: 35px;">
               <span class="lable">Gender:</span>
               <span class="info-details">{{ selectedEmployee.gender }}</span>
             </div>
-            <div class="user-data">
+            <div class="user-data" style="height: 35px;">
               <span class="lable">Date of Birth:</span>
               <span class="info-details">{{
                 selectedEmployee.dateOfBirth
               }}</span>
             </div>
 
-            <div class="role-action">
+            <div class="role-action" style="height: 35px;">
               <span class="lable" style="width: 165px">Role:</span>
-              <span class="info-details">{{ selectedEmployee.role }}</span>
-              <button class="revoke" (click)="revokePrivileges()">
+              <span class="info-details">{{ selectedEmployee.roleName }}</span>
+              @if(selectedEmployee.roleName !== 'OrganizationOwner'){
+              @if(selectedEmployee.roleName === 'OrganizationEmployee') {
+              <button class="Grant" (click)="revokeGrantPrivileges('Grant')">
+                Grant Privileges
+              </button>
+              }@else{
+              <button class="revoke" (click)="revokeGrantPrivileges('Revoke')">
                 Revoke Privileges
               </button>
+              } }
             </div>
 
+            @if(selectedEmployee.roleName !== 'OrganizationOwner'){
             <div class="account-status">
               <span class="lable">Account Status:</span>
               <label class="toggle-wrapper">
@@ -179,6 +219,7 @@
                 <span class="slider"></span>
               </label>
             </div>
+            }
           </div>
         </div>
       </div>

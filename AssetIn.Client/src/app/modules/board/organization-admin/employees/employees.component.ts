@@ -1,10 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   FormGroup,
   Validators,
   FormControl,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { EmployeeManagementService } from '../../../../core/services/EmployeeManagement/employee-management.service';
+import { lockUnlockUser } from '../../../../core/models/lockUnlockUser';
+import { NewEmployee } from '../../../../core/models/newEmployee';
 
 @Component({
   selector: 'app-employee-list',
@@ -12,6 +21,10 @@ import {
   styleUrls: ['./employees.component.css'],
 })
 export class EmployeesComponent implements OnInit {
+  private employeeManagementService: EmployeeManagementService = inject(
+    EmployeeManagementService
+  );
+  private organizationId: number;
   public selectedEmployee: any = null;
   public showErrorMessage: boolean;
   public showForm: boolean;
@@ -20,145 +33,186 @@ export class EmployeesComponent implements OnInit {
   public errorMessage: string;
   public savedData: any = null;
   public isToggled: boolean = false;
+  public employees: any[];
+  public isLoading: boolean;
+  public showAlert: boolean;
+  public alertMessage: string;
+  public alertTitle: string;
+  public organizationDomain: string;
+
+
 
   constructor() {
+    // this.organizationDomain =
+    //   sessionStorage.getItem('targetOrganizationDomain') || '';
+    this.organizationDomain = '@domain.com';
     this.employeeForm = new FormGroup({
       userName: new FormControl('', [Validators.required]),
-      email: new FormControl('', [Validators.required, Validators.email]),
+      email: new FormControl(''),
       phone: new FormControl('', [Validators.required]),
       gender: new FormControl('', [Validators.required]),
       dateOfBirth: new FormControl('', [Validators.required]),
       role: new FormControl('', [Validators.required]),
     });
 
+
     this.showErrorMessage = false;
     this.showForm = false;
     this.submitted = false;
     this.errorMessage = '';
+    this.employees = [];
+    this.organizationId =
+      Number(sessionStorage.getItem('targetOrganizationID')) || 0;
+    this.isLoading = false;
+    this.showAlert = false;
+    this.alertMessage = '';
+    this.alertTitle = '';
   }
 
-  employees = [
-    {
-      name: 'James Jutt',
-      role: 'Organizational Owner',
-      email: 'georgr.butt@123.com',
-      phone: '+92-xxx-xxxxxxx',
-      gender: 'Male',
-      dateOfBirth: '24/1/1995',
-      active: true,
-      image: 'icons/emp_avatar.png',
-    },
-    {
-      name: 'Julli Gujar',
-      role: 'IT Administrator',
-      email: 'georgr.butt@123.com',
-      phone: '+92-xxx-xxxxxxx',
-      gender: 'Female',
-      dateOfBirth: '24/1/1995',
-      active: true,
-      image: 'icons/emp_avatar.png',
-    },
-    {
-      name: 'George Butt',
-      role: 'Asset Manager',
-      email: 'georgr.butt@123.com',
-      phone: '+92-xxx-xxxxxxx',
-      gender: 'Male',
-      dateOfBirth: '24/1/1995',
-      active: true,
-      image: 'icons/emp_avatar.png',
-    },
-    {
-      name: 'Chaudhary Marco',
-      role: 'Employee',
-      email: 'georgr.butt@123.com',
-      phone: '+92-xxx-xxxxxxx',
-      gender: 'Male',
-      dateOfBirth: '24/1/1995',
-      active: false,
-      image: 'icons/emp_avatar.png',
-    },
-    {
-      name: 'Arthur Bhati',
-      role: 'Organizational Owner',
-      email: 'georgr.butt@123.com',
-      phone: '+92-xxx-xxxxxxx',
-      gender: 'Male',
-      dateOfBirth: '24/1/1995',
-      active: true,
-      image: 'icons/emp_avatar.png',
-    },
-    {
-      name: 'Amelia Malik',
-      role: 'Asset Manager',
-      email: 'georgr.butt@123.com',
-      phone: '+92-xxx-xxxxxxx',
-      gender: 'Female',
-      dateOfBirth: '24/1/1995',
-      active: true,
-      image: 'icons/emp_avatar.png',
-    },
-    {
-      name: 'Mian Thomas',
-      role: 'Manager',
-      email: 'georgr.butt@123.com',
-      phone: '+92-xxx-xxxxxxx',
-      gender: 'Male',
-      dateOfBirth: '24/1/1995',
-      active: false,
-      image: 'icons/emp_avatar.png',
-    },
-  ];
-
-
   ngOnInit(): void {
-    // Initialization logic can go here
+    this.getallEmployees();
+  }
+
+  public getallEmployees(): void {
+    this.isLoading = true;
+    this.showAlert = false;
+    this.employeeManagementService
+      .GetEmployeeList(this.organizationId)
+      .subscribe(
+        (response) => {
+          this.employees = response.responseData;
+          this.isLoading = false;
+          console.log('Employees:', this.employees);
+        },
+        (error) => {
+          this.alertMessage = error.error.responseData[1];
+          this.alertTitle = error.error.responseData[0];
+          this.showAlert = true;
+          this.isLoading = false;
+        }
+      );
   }
 
   public selectEmployee(employee: any): void {
     this.selectedEmployee = employee;
-    this.isToggled = employee.active;
+    this.isToggled = employee.status;
   }
 
   public closeModal(): void {
     this.selectedEmployee = null;
   }
 
+  public revokeGrantPrivileges(task: string): void {
+    this.isLoading = true;
+    const userData: lockUnlockUser = {
+      targetOrganizationId: this.organizationId,
+      targetUserId: this.selectedEmployee.id,
+    };
 
-  public revokePrivileges(): void {
+    if (task === 'Grant') {
+      this.employeeManagementService
+        .GrantAssetManagerPreviliges(userData)
+        .subscribe(
+          (response) => {
+            debugger;
+            this.alertTitle = response.responseData[0];
+            this.alertMessage = response.responseData[1];
+            this.showAlert = true;
+            this.isLoading = false;
+          },
+          (error) => {
+            this.alertTitle = error.error.responseData[0];
+            this.alertMessage = error.error.responseData[1];
+            this.showAlert = true;
+            this.isLoading = false;
+          },
+          () => {
+            debugger;
+            this.getallEmployees();
+            this.closeModal();
+          }
+        );
+    } else if (task === 'Revoke') {
+      this.employeeManagementService
+        .RevokeAssetManagerPreviliges(userData)
+        .subscribe(
+          (response) => {
+            this.alertTitle = response.responseData[0];
+            this.alertMessage = response.responseData[1];
+            this.showAlert = true;
+            this.isLoading = false;
+          },
+          (error) => {
+            this.alertTitle = error.error.responseData[0];
+            this.alertMessage = error.error.responseData[1];
+            this.showAlert = true;
+            this.isLoading = false;
+          },
+          () => {
+            debugger;
+            this.getallEmployees();
+            this.closeModal();
+          }
+        );
+      return;
+    }
+  }
+
+  public onToggle(event: Event): void {
+    this.isLoading = true;
+    const userData: lockUnlockUser = {
+      targetOrganizationId: this.organizationId,
+      targetUserId: this.selectedEmployee.id,
+    };
+
+    const checkbox = event.target as HTMLInputElement;
+    this.isToggled = checkbox.checked;
+
     if (this.selectedEmployee) {
-      this.selectedEmployee.revokePrivileges =
-        !this.selectedEmployee.revokePrivileges;
-    }
-    if (this.selectedEmployee.revokePrivileges) {
-      alert(
-        `${this.selectedEmployee.userName}'s privileges have been revoked.`
-      );
-    } else {
-      alert(
-        `${this.selectedEmployee.userName}'s privileges have been restored.`
-      );
+      this.selectedEmployee.active = this.isToggled;
+      if (this.isToggled) {
+        this.employeeManagementService.UnlockUserAcount(userData).subscribe(
+          (response) => {
+            this.alertTitle = response.responseData[0];
+            this.alertMessage = response.responseData[1];
+            this.isLoading = false;
+          },
+          (error) => {
+            debugger;
+            this.alertTitle = error.error.responseData[0];
+            this.alertMessage = error.error.responseData[1];
+            this.showAlert = true;
+            this.isLoading = false;
+          },
+          () => {
+            this.getallEmployees();
+            this.showAlert = true;
+          }
+        );
+      } else {
+        this.employeeManagementService.LockUserAcount(userData).subscribe(
+          (response) => {
+            this.alertTitle = response.responseData[0];
+            this.alertMessage = response.responseData[1];
+            this.isLoading = false;
+          },
+          (error) => {
+            debugger;
+            this.alertTitle = error.error.responseData[0];
+            this.alertMessage = error.error.responseData[1];
+            this.showAlert = true;
+            this.isLoading = false;
+          },
+          () => {
+            this.getallEmployees();
+            this.showAlert = true;
+          }
+        );
+      }
     }
   }
-
-
-
- public onToggle(event: Event): void {
-  const checkbox = event.target as HTMLInputElement;
-  this.isToggled = checkbox.checked;
-
-  if (this.selectedEmployee) {
-    this.selectedEmployee.active = this.isToggled;
-    console.log(
-      `${this.selectedEmployee.name} account status: ${this.isToggled ? 'Active' : 'Inactive'}`
-    );
-  }
-}
-
-
 
   public onAddNewEmployee() {
-    debugger;
     this.showForm = true;
   }
 
@@ -168,17 +222,39 @@ export class EmployeesComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    debugger;
+    this.isLoading = true;
     if (this.employeeForm.valid) {
-      const newEmployee = this.employeeForm.value;
+      this.showForm = false;
+      const newUserData: NewEmployee = {
+        organizationId: this.organizationId,
+        userName: this.employeeForm.controls['userName'].value,
+        phoneNumber: this.employeeForm.controls['phone'].value,
+        gender: this.employeeForm.controls['gender'].value,
+        dateOfBirth: this.employeeForm.controls['dateOfBirth'].value,
+      };
+      this.employeeForm.reset();
 
-      console.log('Employee Submitted:', newEmployee);
-      this.openCloseNewEmployeeForm();
+      this.employeeManagementService.CreateEmployee(newUserData).subscribe(
+        (response) => {
+          debugger;
+          this.isLoading = false;
+        },
+        (error) => {
+          debugger;
+          this.alertTitle = error.error.responseData[0];
+          this.alertMessage = error.error.responseData[1];
+          this.showAlert = true;
+          this.isLoading = false;
+        },
+        () => {
+          this.getallEmployees();
+        }
+      );
+    } else {
+      this.showErrorMessage = true;
+      alert('Please Fill the form!!!');
+      this.isLoading = false;
+      this.employeeForm.markAllAsTouched();
     }
-    else {
-         this.showErrorMessage = true;
-        alert("Please Fill the form!!!")
-    }
-
   }
 }
