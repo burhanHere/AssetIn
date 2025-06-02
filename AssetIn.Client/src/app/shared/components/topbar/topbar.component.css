@@ -9,35 +9,70 @@
   padding-bottom: 1vh;
 }
 
-
 .searchBoxDiv {
   width: 40vw;
   position: relative;
   background-color: rgb(211, 216, 219);
   border-radius: 5px;
   align-items: center;
-}
-
-.searchBoxDiv input {
-  width: inherit;
   height: 6vh;
-  border: none;
-  background-color: transparent;
-  padding-left: 3%;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  padding-right: 1%;
+  padding-left: 1%;
+  cursor: pointer;
 }
 
-.searchBoxDiv button {
-  border: 0px;
+.searchBoxDiv p {
+  width: 100%;
+  font-weight: bold;
+  text-align: left;
+  color: rgb(129, 122, 122);
+}
+
+.searchBoxDiv img {
   width: 20px;
   height: 20px;
   background-color: transparent;
-  background-image: url(../../../../../public/icons/SearchIcon.png);
-  background-size: cover;
+}
+
+/* === Full screen modal backdrop === */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px); /* Blur effect */
+  padding: 24px;
+}
+
+/* === Modal popup content styling === */
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  position: relative;
+  border: 3px solid transparent;
+  height: 520px;
+  width: 100%;
+  background-clip: padding-box, border-box;
+  background-origin: border-box;
+  background-image: linear-gradient(white, white),
+    linear-gradient(360deg, #7ac6ec, #cf42d7);
+}
+
+/* === Close "X" button for modal === */
+.close-button {
   position: absolute;
-  right: 0px;
-  top: 50%;
-  transform: translateY(-50%);
-  margin-right: 3%;
+  top: 0px;
+  background: none;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
 }
 
 .notificationAndAvatarDiv {
@@ -122,7 +157,6 @@
 .avatarBtn:hover .logoutDiv {
   display: block;
 }
-
 
 /*
 .notificationAndAvatarDiv {
