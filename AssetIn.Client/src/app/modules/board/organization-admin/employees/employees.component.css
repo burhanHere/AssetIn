@@ -47,10 +47,14 @@
 
 /* === Image in the "Add New User" card === */
 .add_new_user {
-  width: 140px;
-  height: 140px;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
-  margin-bottom: 10px;
+  margin-top: 20px;
+  margin-bottom: 25px;
+  /* margin-left: 15px; */
+  /* border: 3px solid black;
+  border-radius: 50%; */
 }
 
 /* === Card styling for "Add New User" button === */
@@ -125,15 +129,18 @@
 /* === Summary info section below profile picture === */
 .userSummary {
   align-items: center;
-  width: 350px;
+  width: 400px;
   height: 250px;
+}
+
+.user-data-container{
+  height: 40px;
 }
 
 /* === Row for each user data field === */
 .user-data {
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
   width: 100%;
 }
 
@@ -158,11 +165,23 @@
   display: flex;
   align-items: center;
   gap: 10px;
+
 }
 
 /* === Revoke button styling === */
 .role-action .revoke {
   background-color: red;
+  color: white;
+  border: none;
+  padding: 4px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 10px;
+  width: 90px;
+}
+
+.Grant{
+  background-color: green;
   color: white;
   border: none;
   padding: 4px;
@@ -178,6 +197,7 @@
   position: relative;
   width: 60px;
   height: 30px;
+  margin-left: 10px;
 }
 
 /* === Hide the default checkbox === */
@@ -189,6 +209,7 @@
 
 /* === Track of the toggle switch === */
 .slider {
+  /* margin-left: 5px; */
   position: absolute;
   top: 0;
   left: 0;
@@ -214,7 +235,7 @@
 
 /* === Toggle ON state background === */
 input:checked + .slider {
-  background-color: #4caf50;
+  background-image: linear-gradient(360deg, #7ac6ec, #cf42d7)
 }
 
 /* === Toggle ON state knob position === */
@@ -230,6 +251,7 @@ input:checked + .slider::before {
   width: 500px;
   align-items: center;
   justify-content: center;
+
 }
 
 /* === Form header text === */
@@ -248,7 +270,7 @@ input:checked + .slider::before {
 /* === Label styling inside form === */
 .employee-form-container label {
   font-weight: bold;
-  width: 100px;
+  width: 120px;
 }
 
 /* === Input and dropdown styling === */
@@ -259,11 +281,13 @@ input:checked + .slider::before {
   padding: 1px 12px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 5px;
   background: #f9f9f9;
-  width: 50%;
+  width: 80%;
+  height: 100%;
   outline: none;
   transition: border-color 0.3s;
+  /* border: 1px solid red; */
 }
 
 /* === Highlight input focus === */
@@ -273,39 +297,6 @@ input:checked + .slider::before {
   outline: none;
 }
 
-/* === Row layout for role + revoke section === */
-.role-revoke-row {
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* === Input row for role selection === */
-.role-field {
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-/* === Checkbox container for revoke privilege === */
-.checkbox-group {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-/* === Label next to the revoke checkbox === */
-.revoke-label {
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  color: #444;
-}
-
-/* === Style for checkbox itself === */
-input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-}
 
 /* === Submit button style === */
 .employee-form-container button[type="submit"] {
@@ -319,6 +310,12 @@ input[type="checkbox"] {
   opacity: 0.9;
   cursor: pointer;
   transition: background 0.3s;
+  text-align: right;
+}
+.button-container {
+
+  text-align:right;
+  margin-top: 10px; /* Adds a bit of spacing above the button */
 }
 
 /* === Hover effect for submit button === */
@@ -330,4 +327,5 @@ input[type="checkbox"] {
 .input-error {
   color: #e74c3c;
   font-size: 12px;
-}
+  margin-left: 110px;
+  }

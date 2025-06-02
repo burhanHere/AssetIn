@@ -34,5 +34,22 @@ export const ApiUrls = {
     DeleteAssetType: '/AssetManagement/DeleteAssetType',
     UpdateAssetType: '/AssetManagement/UpdateAssetType',
     GetAllAssetType: '/AssetManagement/GetAllAssetType',
+  },
+  EmployeeManagement:{
+   GetEmployeeList: '/EmployeeManagement/GetEmployeeList',
+   CreateEmployee: '/EmployeeManagement/CreateEmployee',
+   LockUserAccount: '/EmployeeManagement/LockUserAccount',
+   UnlockUserAccount:'/EmployeeManagement/UnlockUserAccount',
+   RevokeAssetManagerPreviliges: '/EmployeeManagement/RevokeAssetManagerPreviliges',
+   GrantAssetManagerPreviliges: '/EmployeeManagement/GrantAssetManagerPreviliges',
+  },
+  AssetRequestManagement:{
+   CreateAssetRequest: '/AssetRequestManagement/CreateAssetRequest',
+   GetAllAssetRequestAdminList: '/AssetRequestManagement/GetAllAssetRequestAdminList',
+   GetAllAssetRequestEmployeeListStatsAndDesignatedAssets: '/AssetRequestManagement/GetAllAssetRequestEmployeeListStatsAndDesignatedAssets',
+   UpdateAssetRequestStatusToAccepted: '/AssetRequestManagement/UpdateAssetRequestStatusToAccepted',
+   UpdateAssetRequestStatusToDeclined: '/AssetRequestManagement/UpdateAssetRequestStatusToDeclined',
+   UpdateAssetRequestStatusToFulfilled: '/AssetRequestManagement/UpdateAssetRequestStatusToFulfilled',
+   UpdateAssetRequestStatusToCanceled: '/AssetRequestManagement/UpdateAssetRequestStatusToCanceled',
   }
 };

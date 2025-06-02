@@ -278,7 +278,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
             x.AssetID
         }).ToList();
 
-        List<dynamic> organizationsAssetRequest = _applicationDbContext.OrganizationsAssetRequests.Where(x => organizationEmployeeIds.Contains(x.UserID) && x.OrganizationID == OrganizationID)
+        List<dynamic> organizationsAssetRequest = _applicationDbContext.OrganizationsAssetRequests.Where(x => organizationEmployeeIds.Contains(x.UserID))
             .Take(8)
             .Select(x => (object)new
             {

@@ -76,7 +76,7 @@
 }
 
 .scrollable-tbody {
-  max-height: 340px; /* Adjust based on your layout */
+  max-height: 310px; /* Adjust based on your layout */
   overflow-y: auto;
 }
 
@@ -205,7 +205,7 @@
 
 .container {
   max-width: 500px;
-  max-height: 350px;        /* Add fixed height for scroll to activate */
+  max-height: 315px;        /* Add fixed height for scroll to activate */
   margin: 20px auto;
   font-family: Arial, sans-serif;
   background-color: white;
@@ -282,4 +282,100 @@ h3 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Overlay behind the modal */
+.asset-form-popup {
+ position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(8px); /* Main blur effect */
+  background-color: rgba(255, 255, 255, 0.2); /* Soft white overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+}
+
+/* Modal container */
+.asset-form-popup form {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 400px;
+  position: relative;
+  /* height: 380px; */
+  border: 1px solid red;
+}
+
+/* Close button */
+.asset-form-popup .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.asset-form-popup label {
+  font-weight: bold;
+}
+
+/* === Input & Textarea Styling for New Asset Request Popup === */
+.asset-form-popup input[type="text"],
+.asset-form-popup textarea {
+  width: 100%;
+  padding: 10px 0px;
+  font-size: 16px;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+/* === Focused input effect === */
+.asset-form-popup input[type="text"]:focus,
+.asset-form-popup textarea:focus {
+  border-color: #7ac6ec;
+  background-color: #ffffff;
+}
+
+/* === Textarea specifics === */
+.asset-form-popup textarea {
+  resize: vertical;
+  min-height: 120px;
+  max-height: 200px;
+  line-height: 1.5;
+}
+
+
+/* Error message */
+.input-error {
+  color: red;
+  font-size: 12px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+/* Submit button */
+.forward-btn {
+  background: linear-gradient(to right,  #7ac6ec, #cf42d7);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.forward-btn .arrow {
+  margin-left: 6px;
 }

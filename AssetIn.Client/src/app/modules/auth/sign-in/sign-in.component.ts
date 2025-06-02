@@ -49,6 +49,7 @@ export class SignInComponent {
           }
           else if (userClaims['Role'].includes('OrganizationEmployee')) {
             sessionStorage.setItem('targetOrganizationID', userClaims['OrganizationId']);
+            sessionStorage.setItem('targetOrganizationID', userClaims['OrganizationId']);
             this.router.navigateByUrl('board/mainBoard/organizationEmployee');
           }
           else if (userClaims['Role'] === 'Vendor') {
