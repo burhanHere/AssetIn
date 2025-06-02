@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { ApiUrls } from '../../constants/api-urls';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../models/apiResponse';
-import { newAsset } from '../../models/newAssetRequest';
+import { NewAssetRequest } from '../../models/newAssetRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class AssetRequestManagementService {
   private httpCient: HttpClient = inject(HttpClient);
   private apiUrls: any = ApiUrls;
 
-  public CreateAssetRequest(assetRequest: newAsset): Observable<ApiResponse> {
+  public CreateAssetRequest(assetRequest: NewAssetRequest): Observable<ApiResponse> {
     return this.httpCient.post<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetRequestManagement.CreateAssetRequest, assetRequest);
   }
 

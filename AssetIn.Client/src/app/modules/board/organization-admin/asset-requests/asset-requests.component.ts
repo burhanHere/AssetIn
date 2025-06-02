@@ -9,7 +9,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 export class AssetRequestsComponent implements OnInit {
   public activeFilter: string;
   public requests: Array<any>;
-  public selectedRequest: Array<any>;
+  public selectedRequest:Array<any>;
   public filteredRequests: Array<any>;
   public assignAssetForm: FormGroup;
   public isLoading: boolean;
@@ -26,65 +26,64 @@ export class AssetRequestsComponent implements OnInit {
     });
     this.activeFilter = 'All';
     this.requests = [
-      {
-        requestId: 1001,
-        requisitionerId: 5001,
-        title: 'Laptop Upgrade',
-        description:
-          'Request for a high-performance laptop for development tasks.',
-        date: new Date('2024-12-12'),
-        status: 'Pending',
-      },
-      {
-        requestId: 1002,
-        requisitionerId: 5002,
-        title: 'External Monitor',
-        description: 'Need a second monitor for financial analysis.',
-        date: new Date('2024-12-12'),
-        status: 'Pending',
-      },
-      {
-        requestId: 1003,
-        requisitionerId: 5003,
-        title: 'Ergonomic Chair',
-        description: 'Need a comfortable chair for long working hours.',
-        date: new Date('2024-12-12'),
-        status: 'Fulfilled',
-      },
-      {
-        requestId: 1004,
-        requisitionerId: 5004,
-        title: 'Tablet for Fieldwork',
-        description: 'Require a 4G-enabled tablet for on-site data collection.',
-        date: new Date('2024-12-12'),
-        status: 'Fulfilled',
-      },
-      {
-        requestId: 1005,
-        requisitionerId: 5005,
-        title: 'Keyboard Replacement',
-        description: 'Current keyboard is not functioning properly.',
-        date: new Date('2024-12-12'),
-        status: 'Cancel',
-      },
-      {
-        requestId: 1004,
-        requisitionerId: 5004,
-        title: 'Tablet for Fieldwork',
-        description: 'Require a 4G-enabled tablet for on-site data collection.',
-        date: new Date('2024-12-12'),
-        status: 'Fulfilled',
-      },
-      {
-        requestId: 1005,
-        requisitionerId: 5005,
-        title: 'Keyboard Replacement',
-        description: 'Current keyboard is not functioning properly.',
-        date: new Date('2024-12-12'),
-        status: 'Declined',
-      },
-    ];
-    this.selectedRequest = [];
+  {
+    requestId: 1001,
+    requisitionerId: 5001,
+    title: 'Laptop Upgrade',
+    description: 'Request for a high-performance laptop for development tasks.',
+    date: new Date('2024-12-12'),
+    status: 'Pending'
+  },
+  {
+    requestId: 1002,
+    requisitionerId: 5002,
+    title: 'External Monitor',
+    description: 'Need a second monitor for financial analysis.',
+    date: new Date('2024-12-12'),
+    status: 'Pending'
+  },
+  {
+    requestId: 1003,
+    requisitionerId: 5003,
+    title: 'Ergonomic Chair',
+    description: 'Need a comfortable chair for long working hours.',
+    date: new Date('2024-12-12'),
+    status: 'Fulfilled'
+  },
+  {
+    requestId: 1004,
+    requisitionerId: 5004,
+    title: 'Tablet for Fieldwork',
+    description: 'Require a 4G-enabled tablet for on-site data collection.',
+    date: new Date('2024-12-12'),
+    status: 'Fulfilled'
+  },
+  {
+    requestId: 1005,
+    requisitionerId: 5005,
+    title: 'Keyboard Replacement',
+    description: 'Current keyboard is not functioning properly.',
+    date: new Date('2024-12-12'),
+    status: 'Declined'
+  },
+   {
+    requestId: 1004,
+    requisitionerId: 5004,
+    title: 'Tablet for Fieldwork',
+    description: 'Require a 4G-enabled tablet for on-site data collection.',
+    date: new Date('2024-12-12'),
+    status: 'Fulfilled'
+  },
+  {
+    requestId: 1005,
+    requisitionerId: 5005,
+    title: 'Keyboard Replacement',
+    description: 'Current keyboard is not functioning properly.',
+    date: new Date('2024-12-12'),
+    status: 'Declined'
+  }
+];
+    this.selectedRequest=[];
     this.filteredRequests = [...this.requests];
     this.showAssignAssetModal = false;
     this.isLoading = false;
@@ -97,6 +96,7 @@ export class AssetRequestsComponent implements OnInit {
     { id: 'asset1', name: 'Dell XPS 15' },
     { id: 'asset2', name: 'LG Ultrawide Monitor' },
   ];
+
 
   ngOnInit(): void {}
   public filterRequests(status: string): void {
@@ -144,7 +144,7 @@ export class AssetRequestsComponent implements OnInit {
   onSubmit() {
     if (this.assignAssetForm.valid) {
       console.log(this.assignAssetForm.value);
-      this.closeAssignAssetModal();
+       this.closeAssignAssetModal();
       // Handle request fulfillment here
     } else {
       this.assignAssetForm.markAllAsTouched();
