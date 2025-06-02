@@ -67,6 +67,59 @@
         <img src="icons/newReq.png" alt="New Request" />
         <div class="label bold">New Request</div>
       </div>
+      
+      @if (showNewAssetRequestForm) {
+      <div class="asset-form-popup">
+        <form formGroup="newAssetRequestForm" (ngSubmit)="onSubmit()">
+          <button
+            type="button"
+            class="close-btn"
+            (click)="showNewAssetRequestForm = false"
+          >
+            ×
+          </button>
+          <h3>New Asset Request</h3>
+
+          <div>
+            <label for="subject">Subject</label>
+            <input
+              id="subject"
+              type="text"
+              formControlName="subject"
+              placeholder="Add a subject"
+            />
+            @if (newAssetRequestForm.controls['subject'].touched &&
+            newAssetRequestForm.controls['subject'].errors?.['required']) {
+            <div class="input-error">Subject is required.</div>
+            }
+          </div>
+
+          <div>
+            <label for="notes">Notes</label>
+            <textarea
+              id="notes"
+              formControlName="notes"
+              placeholder="Explain your requirement..."
+            ></textarea>
+            @if (newAssetRequestForm.controls['notes'].touched &&
+            newAssetRequestForm.controls['notes'].errors?.['required']) {
+            <div class="input-error">Notes are required.</div>
+            } @if (newAssetRequestForm.controls['notes'].touched &&
+            newAssetRequestForm.controls['notes'].errors?.['minlength']) {
+            <div class="input-error">
+              Notes should be at least 10 characters long.
+            </div>
+            }
+          </div>
+          <div style="text-align: right;">
+
+            <button type="submit" class="forward-btn">
+              Forward Request <span class="arrow">➜</span>
+            </button>
+          </div>
+        </form>
+      </div>
+      }
     </div>
   </div>
   <div style="display: flex">
@@ -112,7 +165,7 @@
                     </span>
                     @if (request.status === 'Pending') {
                     <button
-                      (click)="cancelRequest(request)"
+                      (click)="cancelRequest(request.organizationsAssetRequestID)"
                       class="cancel-button"
                       title="Cancel Request"
                     >
