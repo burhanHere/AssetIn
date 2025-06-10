@@ -163,9 +163,9 @@ export class OrganizationAdminDashboardComponent implements OnInit {
           {
             data: [
               this.organizationData?.organizationAssetRatioByAssetType[0]
-                .assetRatioInType,
+                ?.assetRatioInType,
               this.organizationData?.organizationAssetRatioByAssetType[1]
-                .assetRatioInType,
+                ?.assetRatioInType,
             ],
             backgroundColor: ['#D2468F', '#F6B84B'],
             borderWidth: 0,
