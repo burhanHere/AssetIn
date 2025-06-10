@@ -40,6 +40,9 @@ public class AuthenticationRepository(ApplicationDbContext applicationDbContext,
       Email = userSignUpDTO.Email,
       UserName = userSignUpDTO.UserName,
       SecurityStamp = Guid.NewGuid().ToString(),
+      Gender = userSignUpDTO.Gender!,
+      DateOfBirth = userSignUpDTO.DateOfBirth,
+      ProfilePicturePath = ""
     };
 
     var createNewUser = await _userManager.CreateAsync(newUser, userSignUpDTO.Password!);
