@@ -75,6 +75,8 @@ public class EmployeeManagementRepository(UserManager<User> userManager, Applica
             Id = user.Id,
             UserName = user.UserName,
             RoleName = userIdRole.RoleName,
+            Email = user.Email,
+            PhoneNumber = user.PhoneNumber,
             ProfilePicturePath = user.ProfilePicturePath,
             Gender = user.Gender,
             DateOfBirth = user.DateOfBirth,

@@ -43,6 +43,7 @@ public class Asset
     public int AssetCatagoryID { get; set; }
     [Required]
     public int AssetTypeID { get; set; }
+    public string? ProfilePicturePath { get; set; }
 
     [ForeignKey("OrganizationID")]
     public Organization Organization { get; set; }

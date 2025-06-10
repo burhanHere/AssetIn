@@ -138,6 +138,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
          {
              AssetRequestID = assetRequests.OrganizationsAssetRequestID,
              Title = assetRequests.Title,
+             Description = assetRequests.Description,
              RequestDate = assetRequests.RequestDate,
              RequestStatus = AssetRequestStatuses.OrganizationsAssetRequestStatusName,
              CompletionStatus = assetRequests.CompletionStatus
@@ -159,12 +160,13 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
         from assign in _applicationDbContext.OrganizationsAssetAssignReturns
         join asset in _applicationDbContext.Assets
             on assign.AssetID equals asset.AssetlD
-        where assign.AssignedToUserID == validUser.Id && assign.ReturnedAt == DateTime.MinValue
+        where assign.AssignedToUserID == validUser.Id && asset.AssetStatusID == 1
         select new
         {
             AssetID = asset.AssetlD,
+            ProfilePicturePath = asset.ProfilePicturePath,
             AssetName = asset.AssetName,
-            AerialNumber = asset.SerialNumber,
+            SerialNumber = asset.SerialNumber,
         }
         ).ToListAsync();
 
