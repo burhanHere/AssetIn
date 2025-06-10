@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { AssetManagementService } from '../../../../core/services/AssetManagement/asset-management.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HelperFunctionService } from '../../../../core/services/HelperFunction/helper-function.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-assets',
@@ -9,6 +10,7 @@ import { HelperFunctionService } from '../../../../core/services/HelperFunction/
   styleUrl: './assets.component.css'
 })
 export class AssetsComponent implements OnInit {
+  private router: Router = inject(Router);
   private AssetManagementService: AssetManagementService = inject(AssetManagementService);
   private helperFunctionService: HelperFunctionService = inject(HelperFunctionService);
   private organizationId: number;
@@ -84,4 +86,9 @@ export class AssetsComponent implements OnInit {
       }
     );
   }
+
+  public NvgToAddUpdateAsset(): void {
+    this.router.navigateByUrl('/board/mainBoard/organizationAdmin/addUpdateAsset');
+  }
+
 }

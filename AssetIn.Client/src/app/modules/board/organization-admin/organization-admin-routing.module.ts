@@ -7,6 +7,7 @@ import { EmployeesComponent } from './employees/employees.component';
 import { AssetRequestsComponent } from './asset-requests/asset-requests.component';
 import { VendorsComponent } from './vendors/vendors.component';
 import { SettingsComponent } from './settings/settings.component';
+import { AddUpdateAssetComponent } from './add-update-asset/add-update-asset.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,11 @@ const routes: Routes = [
       path: 'organizationAssets',
       component: AssetsComponent,
       title: 'Assets'
+    },
+    {
+      path: 'addUpdateAsset',
+      component: AddUpdateAssetComponent,
+      title: 'Add Update Asset'
     },
     {
       path: 'organizationEmployees',

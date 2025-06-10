@@ -12,6 +12,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { PageLoaderComponent } from '../../../shared/components/page-loader/page-loader.component';
 import { AlertCardComponent } from '../../../shared/components/alert-card/alert-card.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AddUpdateAssetComponent } from './add-update-asset/add-update-asset.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     EmployeesComponent,
     AssetRequestsComponent,
     VendorsComponent,
-    SettingsComponent
+    SettingsComponent,
+    AddUpdateAssetComponent
   ],
   imports: [
     CommonModule,
