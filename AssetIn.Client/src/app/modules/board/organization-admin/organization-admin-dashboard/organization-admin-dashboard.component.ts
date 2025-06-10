@@ -82,10 +82,8 @@ export class OrganizationAdminDashboardComponent implements OnInit {
         .GetOrganizationInfoForOrganizationDashboard(this.organizationId)
         .subscribe(
           (responce: any) => {
-            console.log(responce.responseData); // comment it or remove it after use
             this.isLoading = false;
             this.organizationData = responce.responseData;
-            console.log(this.organizationData); // comment it or remove it after use
             // Initialize charts after data is received
             this.createChart(this.organizationData.chartsData);
             this.createDoughnutChart();
@@ -102,7 +100,6 @@ export class OrganizationAdminDashboardComponent implements OnInit {
   }
 
   public createChart(chartdata: any): void {
-    console.log(chartdata);
     const years = Object.keys(chartdata);
     this.chart = new Chart('MyChart', {
       type: 'line', // line chart

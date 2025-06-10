@@ -10,7 +10,7 @@
       >
         <img src="icons/totalReq.png" alt="Total Requests" />
         <div class="request-info">
-          <div class="count">{{ countRequests("All") }}</div>
+          <div class="count">{{ dashboardData?.totalRequests }}</div>
           <div class="label">Total Requests</div>
         </div>
       </div>
@@ -22,7 +22,7 @@
       >
         <img src="icons/pendingReq.png" alt="Pending Requests" />
         <div class="request-info">
-          <div class="count">{{ countRequests("Pending") }}</div>
+          <div class="count">{{ dashboardData?.pendingRequests }}</div>
           <div class="label">Pending Requests</div>
         </div>
       </div>
@@ -34,8 +34,20 @@
       >
         <img src="icons/fullfilledReq.png" alt="Fulfilled Requests" />
         <div class="request-info">
-          <div class="count">{{ countRequests("Fulfilled") }}</div>
+          <div class="count">{{ dashboardData?.fulfilledRequests }}</div>
           <div class="label">Fulfilled Requests</div>
+        </div>
+      </div>
+
+      <div
+        class="request-card"
+        (click)="filterRequests('Accepted')"
+        [class.active]="activeFilter === 'Accepted'"
+      >
+        <img src="icons/fullfilledReq.png" alt="Accepted Requests" />
+        <div class="request-info">
+          <div class="count">{{ dashboardData?.acceptedRequests }}</div>
+          <div class="label">Accepted Requests</div>
         </div>
       </div>
 
@@ -46,7 +58,7 @@
       >
         <img src="icons/declinedReq.png" alt="Declined Requests" />
         <div class="request-info">
-          <div class="count">{{ countRequests("Declined") }}</div>
+          <div class="count">{{ dashboardData?.declinedRequests }}</div>
           <div class="label">Declined Requests</div>
         </div>
       </div>
@@ -58,7 +70,7 @@
       >
         <img src="icons/cancelReq.png" alt="Cancel Requests" />
         <div class="request-info">
-          <div class="count">{{ countRequests("Cancel") }}</div>
+          <div class="count">{{ dashboardData?.canceledRequests }}</div>
           <div class="label">Cancel Requests</div>
         </div>
       </div>
@@ -67,10 +79,10 @@
         <img src="icons/newReq.png" alt="New Request" />
         <div class="label bold">New Request</div>
       </div>
-      
+
       @if (showNewAssetRequestForm) {
       <div class="asset-form-popup">
-        <form formGroup="newAssetRequestForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="newAssetRequestForm" (ngSubmit)="onSubmit()">
           <button
             type="button"
             class="close-btn"
@@ -111,8 +123,7 @@
             </div>
             }
           </div>
-          <div style="text-align: right;">
-
+          <div style="text-align: right">
             <button type="submit" class="forward-btn">
               Forward Request <span class="arrow">➜</span>
             </button>
@@ -130,7 +141,6 @@
           <thead>
             <tr>
               <th>Request ID</th>
-              <th>Requisitioner ID</th>
               <th>Request Description</th>
               <th>Request Date</th>
               <th>Status</th>
@@ -142,10 +152,10 @@
         <div class="scrollable-tbody">
           <table class="request-table">
             <tbody>
-              @for (request of filteredRequests; track request.requestId) {
+              @for (request of dashboardData?.requiredAssetRequests; track
+              request.requestId) {
               <tr>
-                <td>{{ request.requestId }}</td>
-                <td>{{ request.requisitionerId }}</td>
+                <td>{{ request.assetRequestID }}</td>
                 <td>
                   <div class="description">
                     <div class="title">
@@ -154,18 +164,18 @@
                     <div class="text">{{ request.description }}</div>
                   </div>
                 </td>
-                <td>{{ request.date | date : "dd/MM/yyyy" }}</td>
+                <td>{{ request.requestDate | date : "dd/MM/yyyy" }}</td>
                 <td>
                   <div style="display: flex">
                     <span
                       class="status-badge"
-                      [ngClass]="request.status.toLowerCase()"
+                      [ngClass]="request.requestStatus.toLowerCase()"
                     >
-                      {{ request.status }}
+                      {{ request.requestStatus }}
                     </span>
-                    @if (request.status === 'Pending') {
+                    @if (request.requestStatus === 'Pending') {
                     <button
-                      (click)="cancelRequest(request.organizationsAssetRequestID)"
+                      (click)="cancelRequest(request.assetRequestID)"
                       class="cancel-button"
                       title="Cancel Request"
                     >
@@ -189,18 +199,33 @@
     <div class="container">
       <h3>Designated Asset</h3>
 
-      @for (asset of assets; track asset.name) {
+      @for (asset of dashboardData?.designatedAssetsAssetdetails; track
+      asset.name) {
       <div class="card">
         <img
-          [src]="asset.imageUrl ? asset.imageUrl : 'icons/AssetAvatar.png'"
-          alt="{{ asset.name }}"
+          [src]="
+            asset.profilePicturePath
+              ? asset.profilePicturePath
+              : 'icons/AssetAvatar.png'
+          "
+          alt="{{ asset.assetName }}"
         />
         <div class="details">
-          <div class="name">{{ asset.name }}</div>
-          <div class="category">{{ asset.category }}</div>
+          <div class="name">{{ asset.assetName }}</div>
+          <div class="category">{{ asset.serialNumber }}</div>
         </div>
       </div>
       }
     </div>
   </div>
 </div>
+
+@if(isLoading) {
+<app-page-loader></app-page-loader>
+} @if (showAlert) {
+<app-alert-card
+  [title]="alertTitle"
+  [message]="alertMessage"
+  (closeCard)="showAlert = $event"
+></app-alert-card>
+}

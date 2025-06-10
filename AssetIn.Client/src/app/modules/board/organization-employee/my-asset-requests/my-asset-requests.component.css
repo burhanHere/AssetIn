@@ -8,13 +8,13 @@
 }
 
 .request-summary-container {
-  margin: 20px 0 0 20px;
+  margin: 20px 0 0 5px;
 }
 
 .request-summary-grid {
   display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
+  gap: 7px;
+  /* flex-wrap: wrap; */
   align-items: center;
 }
 
@@ -95,7 +95,7 @@
   background-color: #fff;
   border-radius: 8px;
   overflow: hidden;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   table-layout: fixed; /* Keep fixed layout */
 }
 
@@ -113,7 +113,6 @@
   background-color: #063f51;
   color: white;
   white-space: nowrap; /* Prevent header text from wrapping */
-
 }
 
 .request-table tbody tr {
@@ -124,29 +123,26 @@
   transform: scale(1.01);
 }
 
-/* Custom widths to control spacing */
 .request-table th:nth-child(1),
 .request-table td:nth-child(1) {
   text-align: center;
-  width: 10%; /* Request ID */
+  width: 10%;
 }
 
 .request-table th:nth-child(2),
 .request-table td:nth-child(2) {
-  text-align: center;
-  width: 12%; /* Requisitioner ID */
+  width: 50%;
 }
-
+/*
 .request-table th:nth-child(3),
 .request-table td:nth-child(3) {
-  width: 34%; /* Request Description */
-}
-
-
-.request-table td:nth-child(4) {
-  text-align: center;
   width: 15%;
-}
+  text-align: center;
+} */
+
+/* .request-table td:nth-child(4) {
+  width: 15%;
+} */
 
 .description .title {
   font-weight: 400;
@@ -176,13 +172,17 @@
   background-color: #d7fbe3;
   color: #207744;
 }
+.status-badge.accepted {
+  background-color: #458a5cab;
+  color: #0d301c;
+}
 
 .status-badge.declined {
   background-color: #f8d3d3;
   color: #b00020;
 }
 
-.status-badge.cancel {
+.status-badge.canceled {
   background-color: rgb(254, 254, 172);
   color: #e1a43c;
 }
@@ -204,14 +204,14 @@
 }
 
 .container {
-  max-width: 500px;
-  max-height: 315px;        /* Add fixed height for scroll to activate */
-  margin: 20px auto;
+  width: 25%;
+  max-height: 315px; /* Add fixed height for scroll to activate */
+  margin: 20px 20px 0px 0px;
   font-family: Arial, sans-serif;
   background-color: white;
   padding: 15px;
-  overflow-y: auto;          /* Enables vertical scroll */
-  scrollbar-width: thin;     /* For Firefox */
+  overflow-y: auto; /* Enables vertical scroll */
+  scrollbar-width: thin; /* For Firefox */
 }
 
 /* Optional: Webkit scrollbar styling for Chrome/Edge */
@@ -249,7 +249,6 @@ h3 {
   transform: scale(1.03);
 }
 
-
 .card img {
   height: 40px;
   width: 40px;
@@ -286,7 +285,7 @@ h3 {
 
 /* Overlay behind the modal */
 .asset-form-popup {
- position: fixed;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
@@ -297,7 +296,6 @@ h3 {
   justify-content: center;
   align-items: center;
   z-index: 1000;
-
 }
 
 /* Modal container */
@@ -324,19 +322,22 @@ h3 {
 
 .asset-form-popup label {
   font-weight: bold;
+  margin-bottom: 7px;
 }
 
 /* === Input & Textarea Styling for New Asset Request Popup === */
 .asset-form-popup input[type="text"],
 .asset-form-popup textarea {
+  margin-bottom: 10px;
   width: 100%;
-  padding: 10px 0px;
+  height: 30px;
+  padding-left: 10px;
   font-size: 16px;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   background-color: #f9f9f9;
   color: #333;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 5px;
   outline: none;
   transition: border-color 0.3s, background-color 0.3s;
 }
@@ -356,7 +357,6 @@ h3 {
   line-height: 1.5;
 }
 
-
 /* Error message */
 .input-error {
   color: red;
@@ -367,7 +367,7 @@ h3 {
 
 /* Submit button */
 .forward-btn {
-  background: linear-gradient(to right,  #7ac6ec, #cf42d7);
+  background: linear-gradient(to right, #7ac6ec, #cf42d7);
   color: white;
   border: none;
   padding: 10px 16px;

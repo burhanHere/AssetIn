@@ -133,8 +133,10 @@
   height: 250px;
 }
 
-.user-data-container{
+.user-data-container {
   height: 40px;
+  margin-bottom: 10px;
+  /* border: 1px solid green; */
 }
 
 /* === Row for each user data field === */
@@ -165,11 +167,10 @@
   display: flex;
   align-items: center;
   gap: 10px;
-
 }
 
 /* === Revoke button styling === */
-.role-action .revoke {
+.role-action .Revoke {
   background-color: red;
   color: white;
   border: none;
@@ -180,7 +181,7 @@
   width: 90px;
 }
 
-.Grant{
+.Grant {
   background-color: green;
   color: white;
   border: none;
@@ -235,7 +236,7 @@
 
 /* === Toggle ON state background === */
 input:checked + .slider {
-  background-image: linear-gradient(360deg, #7ac6ec, #cf42d7)
+  background-image: linear-gradient(360deg, #7ac6ec, #cf42d7);
 }
 
 /* === Toggle ON state knob position === */
@@ -247,11 +248,11 @@ input:checked + .slider::before {
 .employee-form-container {
   background-color: #ffffff;
   border-radius: 12px;
-  height: 300px;
+  height: max-content;
   width: 500px;
   align-items: center;
   justify-content: center;
-
+  /* border: 1px solid red; */
 }
 
 /* === Form header text === */
@@ -284,7 +285,7 @@ input:checked + .slider::before {
   border-radius: 5px;
   background: #f9f9f9;
   width: 80%;
-  height: 100%;
+  height: 30px;
   outline: none;
   transition: border-color 0.3s;
   /* border: 1px solid red; */
@@ -296,7 +297,6 @@ input:checked + .slider::before {
   border-color: #6a11cb;
   outline: none;
 }
-
 
 /* === Submit button style === */
 .employee-form-container button[type="submit"] {
@@ -313,8 +313,7 @@ input:checked + .slider::before {
   text-align: right;
 }
 .button-container {
-
-  text-align:right;
+  text-align: right;
   margin-top: 10px; /* Adds a bit of spacing above the button */
 }
 
@@ -328,4 +327,5 @@ input:checked + .slider::before {
   color: #e74c3c;
   font-size: 12px;
   margin-left: 110px;
-  }
+  margin-bottom: 30px;
+}

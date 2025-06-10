@@ -43,8 +43,6 @@ export class AssetsComponent implements OnInit {
         this.isLoading = false;
         this.assetList = [];
         this.assetList = responce.responseData;
-        console.log('getAssetList: ' + this.assetList.length);
-        console.log(this.assetList);
       },
       (error: HttpErrorResponse) => {
         this.isLoading = false;
@@ -63,8 +61,7 @@ export class AssetsComponent implements OnInit {
     alert('viewAssetDetails: ' + targetAssetId)
   }
 
-  public showDeleteAssetConfirmation(targetAsset:any)
-  {
+  public showDeleteAssetConfirmation(targetAsset: any) {
     this.showDeleteAssetAlert = !this.showDeleteAssetAlert;
     this.assetToDelete = targetAsset;
   }

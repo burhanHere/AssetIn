@@ -1,13 +1,3 @@
-@if(isLoading) {
-<app-page-loader></app-page-loader>
-} @if (showAlert) {
-<app-alert-card
-  [title]="alertTitle"
-  [message]="alertMessage"
-  (closeCard)="showAlert = $event"
-></app-alert-card>
-}
-
 <div class="main-div">
   <div class="request-summary-container">
     <h3>Your All Requests</h3>
@@ -143,39 +133,57 @@
       </div>
     </div>
     @if (showAssignAssetModal) {
-  <div class="modal">
-    <div class="modal-content">
-      <button class="close-button" (click)="closeAssignAssetModal()">×</button>
-      <h2>Assign Asset</h2>
+    <div class="modal">
+      <div class="modal-content">
+        <button class="close-button" (click)="closeAssignAssetModal()">
+          ×
+        </button>
+        <h2>Assign Asset</h2>
 
-      <form [formGroup]="assignAssetForm" (ngSubmit)="onSubmit()">
-        <label>Category</label>
-        <select formControlName="category">
-          <option value="">Select Category</option>
-          <option value="laptops">Laptops</option>
-          <option value="monitors">Monitors</option>
-        </select>
-        @if (assignAssetForm.controls['category'].touched && assignAssetForm.controls['category'].hasError('required')) {
+        <form [formGroup]="assignAssetForm" (ngSubmit)="onSubmit()">
+          <label>Category</label>
+          <select formControlName="category">
+            <option value="">Select Category</option>
+            <option value="laptops">Laptops</option>
+            <option value="monitors">Monitors</option>
+          </select>
+          @if (assignAssetForm.controls['category'].touched &&
+          assignAssetForm.controls['category'].hasError('required')) {
           <div class="input-error">Category is required.</div>
-        }
-
-        <label>Available Assets</label>
-        <select formControlName="asset">
-          <option value="">Select available assets</option>
-          @for (asset of availableAssets; track asset.id) {
-            <option [value]="asset.id">{{ asset.name }}</option>
           }
-        </select>
-        @if (assignAssetForm.controls['asset'].touched && assignAssetForm.controls['asset'].hasError('required')) {
+
+          <label>Available Assets</label>
+          <select formControlName="asset">
+            <option value="">Select available assets</option>
+            @for (asset of availableAssets; track asset.id) {
+            <option [value]="asset.id">{{ asset.name }}</option>
+            }
+          </select>
+          @if (assignAssetForm.controls['asset'].touched &&
+          assignAssetForm.controls['asset'].hasError('required')) {
           <div class="input-error">Asset selection is required.</div>
-        }
+          }
 
-        <label>Notes</label>
-        <textarea formControlName="notes" placeholder="Add notes..."></textarea>
+          <label>Notes</label>
+          <textarea
+            formControlName="notes"
+            placeholder="Add notes..."
+          ></textarea>
 
-        <button type="submit" class="submit-button">Fulfill Request ➜</button>
-      </form>
+          <button type="submit" class="submit-button">Fulfill Request ➜</button>
+        </form>
+      </div>
     </div>
+    }
   </div>
-}
 </div>
+
+@if(isLoading) {
+<app-page-loader></app-page-loader>
+} @if (showAlert) {
+<app-alert-card
+  [title]="alertTitle"
+  [message]="alertMessage"
+  (closeCard)="showAlert = $event"
+></app-alert-card>
+}

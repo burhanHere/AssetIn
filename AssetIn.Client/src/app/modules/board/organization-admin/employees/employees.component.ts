@@ -48,7 +48,7 @@ export class EmployeesComponent implements OnInit {
     this.organizationDomain = '@domain.com';
     this.employeeForm = new FormGroup({
       userName: new FormControl('', [Validators.required]),
-      email: new FormControl(''),
+      email: new FormControl(this.organizationDomain),
       phone: new FormControl('', [Validators.required]),
       gender: new FormControl('', [Validators.required]),
       dateOfBirth: new FormControl('', [Validators.required]),
@@ -82,7 +82,6 @@ export class EmployeesComponent implements OnInit {
         (response) => {
           this.employees = response.responseData;
           this.isLoading = false;
-          console.log('Employees:', this.employees);
         },
         (error) => {
           this.alertMessage = error.error.responseData[1];
@@ -114,10 +113,9 @@ export class EmployeesComponent implements OnInit {
         .GrantAssetManagerPreviliges(userData)
         .subscribe(
           (response) => {
-            debugger;
+            this.selectedEmployee.roleName = 'OrganizationAssetManager'
             this.alertTitle = response.responseData[0];
             this.alertMessage = response.responseData[1];
-            this.showAlert = true;
             this.isLoading = false;
           },
           (error) => {
@@ -127,9 +125,8 @@ export class EmployeesComponent implements OnInit {
             this.isLoading = false;
           },
           () => {
-            debugger;
             this.getallEmployees();
-            this.closeModal();
+            this.showAlert = true;
           }
         );
     } else if (task === 'Revoke') {
@@ -137,9 +134,9 @@ export class EmployeesComponent implements OnInit {
         .RevokeAssetManagerPreviliges(userData)
         .subscribe(
           (response) => {
+            this.selectedEmployee.roleName = 'OrganizationEmployee'
             this.alertTitle = response.responseData[0];
             this.alertMessage = response.responseData[1];
-            this.showAlert = true;
             this.isLoading = false;
           },
           (error) => {
@@ -149,12 +146,10 @@ export class EmployeesComponent implements OnInit {
             this.isLoading = false;
           },
           () => {
-            debugger;
             this.getallEmployees();
-            this.closeModal();
+            this.showAlert = true;
           }
         );
-      return;
     }
   }
 
@@ -178,7 +173,6 @@ export class EmployeesComponent implements OnInit {
             this.isLoading = false;
           },
           (error) => {
-            debugger;
             this.alertTitle = error.error.responseData[0];
             this.alertMessage = error.error.responseData[1];
             this.showAlert = true;
@@ -197,7 +191,7 @@ export class EmployeesComponent implements OnInit {
             this.isLoading = false;
           },
           (error) => {
-            debugger;
+
             this.alertTitle = error.error.responseData[0];
             this.alertMessage = error.error.responseData[1];
             this.showAlert = true;
@@ -236,11 +230,9 @@ export class EmployeesComponent implements OnInit {
 
       this.employeeManagementService.CreateEmployee(newUserData).subscribe(
         (response) => {
-          debugger;
           this.isLoading = false;
         },
         (error) => {
-          debugger;
           this.alertTitle = error.error.responseData[0];
           this.alertMessage = error.error.responseData[1];
           this.showAlert = true;

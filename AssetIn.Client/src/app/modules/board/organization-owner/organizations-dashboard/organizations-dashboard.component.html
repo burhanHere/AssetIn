@@ -1,13 +1,3 @@
-@if(isLoading) {
-<app-page-loader></app-page-loader>
-} @if (showAlert) {
-<app-alert-card
-  [title]="alertTitle"
-  [message]="alertMessage"
-  (closeCard)="showAlert = $event"
-></app-alert-card>
-}
-
 <div class="main-div">
   <div>
     <button class="add-new-card-btn" (click)="openCloseNewOrganizationForm()">
@@ -122,3 +112,13 @@
     }
   </div>
 </div>
+
+@if(isLoading) {
+<app-page-loader></app-page-loader>
+} @if (showAlert) {
+<app-alert-card
+  [title]="alertTitle"
+  [message]="alertMessage"
+  (closeCard)="showAlert = $event"
+></app-alert-card>
+}

@@ -1,13 +1,3 @@
-@if(isLoading) {
-<app-page-loader></app-page-loader>
-} @if (showAlert) {
-<app-alert-card
-  [title]="alertTitle"
-  [message]="alertMessage"
-  (closeCard)="showAlert = $event"
-></app-alert-card>
-}
-
 <div style="background-color: #f0f1f3">
   <div class="main-container">Employee List</div>
   <div class="employee-list">
@@ -157,7 +147,7 @@
           <div class="profile">
             <img
               [src]="
-                 selectedEmployee.profilePicturePath
+                selectedEmployee.profilePicturePath
                   ? selectedEmployee.profilePicturePath
                   : 'icons/emp_avatar.png'
               "
@@ -165,34 +155,33 @@
           </div>
 
           <div class="userSummary">
+            <div class="user-data" style="height: 35px">
+              <span class="lable">User Name:</span>
+              <span class="info-details">{{ selectedEmployee.userName }}</span>
+            </div>
 
-              <div class="user-data" style="height: 35px;" >
-                <span class="lable">User Name:</span>
-                <span class="info-details">{{
-                  selectedEmployee.userName
-                }}</span>
-              </div>
-
-            <div class="user-data" style="height: 35px;">
+            <div class="user-data" style="height: 35px">
               <span class="lable">Email:</span>
               <span class="info-details">{{ selectedEmployee.email }}</span>
             </div>
-            <div class="user-data" style="height: 35px;">
+            <div class="user-data" style="height: 35px">
               <span class="lable">Phone #:</span>
-              <span class="info-details">{{ selectedEmployee.phone }}</span>
+              <span class="info-details">{{
+                selectedEmployee.phoneNumber
+              }}</span>
             </div>
-            <div class="user-data" style="height: 35px;">
+            <div class="user-data" style="height: 35px">
               <span class="lable">Gender:</span>
               <span class="info-details">{{ selectedEmployee.gender }}</span>
             </div>
-            <div class="user-data" style="height: 35px;">
+            <div class="user-data" style="height: 35px">
               <span class="lable">Date of Birth:</span>
               <span class="info-details">{{
-                selectedEmployee.dateOfBirth
+                selectedEmployee.dateOfBirth | date : "dd/MM/yyyy"
               }}</span>
             </div>
 
-            <div class="role-action" style="height: 35px;">
+            <div class="role-action" style="height: 35px">
               <span class="lable" style="width: 165px">Role:</span>
               <span class="info-details">{{ selectedEmployee.roleName }}</span>
               @if(selectedEmployee.roleName !== 'OrganizationOwner'){
@@ -201,7 +190,7 @@
                 Grant Privileges
               </button>
               }@else{
-              <button class="revoke" (click)="revokeGrantPrivileges('Revoke')">
+              <button class="Revoke" (click)="revokeGrantPrivileges('Revoke')">
                 Revoke Privileges
               </button>
               } }
@@ -227,3 +216,13 @@
     }
   </div>
 </div>
+
+@if(isLoading) {
+<app-page-loader></app-page-loader>
+} @if (showAlert) {
+<app-alert-card
+  [title]="alertTitle"
+  [message]="alertMessage"
+  (closeCard)="showAlert = $event"
+></app-alert-card>
+}

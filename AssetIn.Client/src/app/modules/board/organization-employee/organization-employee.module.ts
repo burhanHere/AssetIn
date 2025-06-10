@@ -5,6 +5,9 @@ import { OrganizationEmployeeRoutingModule } from './organization-employee-routi
 import { MyAssetRequestsComponent } from './my-asset-requests/my-asset-requests.component';
 import { ErrorPageComponent } from '../../../shared/components/error-page/error-page.component';
 import { SettingsComponent } from './settings/settings.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { AlertCardComponent } from '../../../shared/components/alert-card/alert-card.component';
+import { PageLoaderComponent } from '../../../shared/components/page-loader/page-loader.component';
 
 
 @NgModule({
@@ -15,7 +18,10 @@ import { SettingsComponent } from './settings/settings.component';
   imports: [
     CommonModule,
     OrganizationEmployeeRoutingModule,
-    ErrorPageComponent
+    ErrorPageComponent,
+    ReactiveFormsModule,
+    AlertCardComponent,
+    PageLoaderComponent
   ]
 })
 export class OrganizationEmployeeModule { }

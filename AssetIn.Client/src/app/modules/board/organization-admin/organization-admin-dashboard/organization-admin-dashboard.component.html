@@ -1,13 +1,3 @@
-@if(isLoading) {
-<app-page-loader></app-page-loader>
-} @if (showAlert) {
-<app-alert-card
-  [title]="alertTitle"
-  [message]="alertMessage"
-  (closeCard)="showAlert = $event"
-></app-alert-card>
-}
-
 <div class="main-div">
   <div class="dashboard-stats-container">
     <!-- Info Cards -->
@@ -208,3 +198,13 @@
     </div>
   </div>
 </div>
+
+@if(isLoading) {
+<app-page-loader></app-page-loader>
+} @if (showAlert) {
+<app-alert-card
+  [title]="alertTitle"
+  [message]="alertMessage"
+  (closeCard)="showAlert = $event"
+></app-alert-card>
+}
