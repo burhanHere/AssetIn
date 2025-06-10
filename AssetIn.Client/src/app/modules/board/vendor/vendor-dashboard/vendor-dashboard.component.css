@@ -1,0 +1,42 @@
+.main-container {
+  margin: 2vw;
+  padding: 0.125vw 2vw;
+  background: white;
+}
+
+.vendor-info {
+  display: flex;
+  justify-content: space-between;
+  background: white;
+  padding: 2vw;
+  border-radius: 10px;
+}
+
+.vendor-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1vw;
+  width: 60%;
+}
+
+.outer-div {
+  display: flex;
+  gap: 1vw;
+}
+
+.vendor-details label {
+  color: #524C42CC;
+}
+
+.vendor-details input,
+.vendor-details select {
+  padding: 1.5vw;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #e8edf2;
+}
+
+.phone {
+  display: flex;
+  gap: 1vw;
+}
