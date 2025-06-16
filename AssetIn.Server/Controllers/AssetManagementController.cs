@@ -91,6 +91,25 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
         return HelperFunctions.ResponseFormatter(this, result);
     }
 
+    [HttpGet(template: "GetAllAvailableAssetByCatagoryId")]
+    [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerPolicy")]
+    public async Task<IActionResult> GetAllAvailableAssetByCatagoryId(int organizationID, int catagoryID)
+    {
+        var userId = User.FindFirst("UserId")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            // If the username is not found, return an unauthorized response
+            return Unauthorized(new ApiResponse
+            {
+                Status = StatusCodes.Status401Unauthorized,
+                ResponseData = new List<string> { "User data not found in token." }
+            });
+        }
+        var result = await _assestManagementRepository.GetAllAvailableAssetByCatagoryId(organizationID, catagoryID, userId);
+        return HelperFunctions.ResponseFormatter(this, result);
+    }
+
     [HttpGet(template: "GetAsset")]
     [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerPolicy")]
     public async Task<IActionResult> GetAsset(int assetID)

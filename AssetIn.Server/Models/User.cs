@@ -9,6 +9,7 @@ namespace AssetIn.Server.Models
         public string? ProfilePicturePath { get; set; }
         public bool Status { get; set; } = true;
         public DateTime DateOfBirth { get; set; }
+        public DateTime DateOfJoining { get; set; }
         public string Gender { get; set; }
         public int? OrganizationId { get; set; }
         [ForeignKey("OrganizationId")]
