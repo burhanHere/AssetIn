@@ -25,5 +25,7 @@ export class AssetManagementService {
     return this.httpClient.delete<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.DeleteAsset + `?assetID=${targetAssetId}`);
   }
 
-
+  public GetAllAssetCatagory(organizationID: number): Observable<ApiResponse> {
+    return this.httpClient.get<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.GetAllAssetCatagory + `?organizationID=${organizationID}`);
+  }
 }

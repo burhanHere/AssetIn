@@ -68,6 +68,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
          {
              AssetRequestID = assetRequests.OrganizationsAssetRequestID,
              Title = assetRequests.Title,
+             Description= assetRequests.Description,
              RequestDate = assetRequests.RequestDate,
              RequestStatus = AssetRequestStatuses.OrganizationsAssetRequestStatusName,
              RequestProcessedDate = assetRequests.RequestProcessedDate,
@@ -377,6 +378,12 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
                 messageText = "Your asset request has been declined.";
                 targetAssetRequest.RequestProcessedDate = DateTime.UtcNow;
             }
+            else if (statusId == 3 && targetAssetRequest.RequestStatus == 1)
+            {
+                // asset request can be declined only if current status is Pending
+                messageText = "Your asset request has been declined.";
+                targetAssetRequest.RequestProcessedDate = DateTime.UtcNow;
+            }
             else if (statusId == 4 && targetAssetRequest.RequestStatus == 1)
             {
                 // asset request can be fullfiled only if current status is Accepted
@@ -390,7 +397,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
                 return new ApiResponse
                 {
                     Status = StatusCodes.Status400BadRequest,
-                    ResponseData = new List<string> { "Error", "Unable to update asset request status to {requiredWord}." }
+                    ResponseData = new List<string> { "Error", $"Unable to update asset request status to {requiredWord}." }
                 };
             }
         }
