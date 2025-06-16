@@ -351,6 +351,78 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             ResponseData = allAssets
         };
     }
+
+    public async Task<ApiResponse> GetAllAvailableAssetByCatagoryId(int organizationID, int catagoryId, string userId)
+    {
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to get assets." }
+            };
+        }
+
+        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == organizationID);
+        if (targetOrganization == null || !targetOrganization.ActiveOrganization)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to get asset." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to get assets." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != organizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to get assets." }
+                };
+            }
+        }
+
+        var allAssets = await (from asset in _applicationDbContext.Assets
+                               join status in _applicationDbContext.OrganizationsAssetStatuses
+                               on asset.AssetStatusID equals status.OrganizationsAssetStatusID
+                               where
+                               asset.OrganizationID == organizationID &&
+                               asset.DeletedByOrganization == false &&
+                               asset.AssetCatagoryID == catagoryId &&
+                               asset.AssetStatusID == 4 //4 == available
+                               orderby asset.CreatedDate descending
+                               select new
+                               {
+                                   AssetlD = asset.AssetlD,
+                                   AssetName = asset.AssetName,
+                                   Barcode = asset.Barcode,
+                                   SerialNumber = asset.SerialNumber,
+                                   CreatedDate = asset.CreatedDate,
+                                   UpdatedDate = asset.UpdatedDate,
+                                   DeletedByOrganization = asset.DeletedByOrganization,
+                                   AssetStatus = status.OrganizationsAssetStatusName,
+                               }).ToListAsync();
+        return new ApiResponse
+        {
+            Status = StatusCodes.Status200OK,
+            ResponseData = allAssets
+        };
+    }
     public async Task<ApiResponse> GetAsset(int assetID, string userId)
     {
         var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
@@ -410,7 +482,32 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
         return new ApiResponse
         {
             Status = StatusCodes.Status200OK,
-            ResponseData = targetAsset
+            ResponseData = new
+            {
+                AssetlD = targetAsset.AssetlD,
+                AssetName = targetAsset.AssetName,
+                Description = targetAsset.Description,
+                SerialNumber = targetAsset.SerialNumber,
+                Barcode = targetAsset.Barcode,
+                Model = targetAsset.Model,
+                Manufacturer = targetAsset.Manufacturer,
+                CreatedDate = targetAsset.CreatedDate,
+                UpdatedDate = targetAsset.UpdatedDate,
+                PurchaseDate = targetAsset.PurchaseDate,
+                PurchasePrice = targetAsset.PurchasePrice,
+                CostPrice = targetAsset.CostPrice,
+                DeletedByOrganization = targetAsset.DeletedByOrganization,
+                Location = targetAsset.Location,
+                DepreciationRate = targetAsset.DepreciationRate,
+                Problem = targetAsset.Problem,
+                AssetIdentificationNumber = targetAsset.AssetIdentificationNumber,
+                OrganizationID = targetAsset.OrganizationID,
+                AssetStatusID = targetAsset.AssetStatusID,
+                AssetCatagoryID = targetAsset.AssetCatagoryID,
+                AssetTypeID = targetAsset.AssetTypeID,
+                ProfilePicturePath = targetAsset.ProfilePicturePath,
+
+            }
         };
     }
     public async Task<ApiResponse> CreateNewAssetCatagory(AssetCatagoryDTO newCatagory, string userId)
