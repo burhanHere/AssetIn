@@ -1,28 +1,100 @@
 <div class="main-container">
-  <div>
+  <div class="vendor-info">
     <h2>Vendor Info</h2>
-    <div class="vendor-details">
-      <div class="outer-div">
-        <div class="inner-div" style="display: flex; flex-direction: column;">
-          <label>Full Name</label>
-          <input type="text" [value]="vendor.fullName" readonly />
-          
-          <label>Email</label>
-          <input type="email" [value]="vendor.email" readonly />
+    <div style="display: flex; width: 100%;">
+      <div class="vendor-details">
+        <!-- Row 1: Full Name + Email -->
+        <div class="row">
+          <div class="form-group icon-input">
+            <label>Full Name</label>
+            <div class="input-wrapper">
+              <img src="icons/house.png" class="icon-img" alt="User" />
+              <input type="text" [value]="vendor.fullName" readonly />
+            </div>
+          </div>
+
+          <div class="form-group icon-input">
+            <label>Email</label>
+            <div class="input-wrapper">
+              <img src="icons/email.png" class="icon-img" alt="Email" />
+              <input type="email" [value]="vendor.email" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Address + Phone Number -->
+        <div class="row">
+          <div class="form-group icon-input">
+            <label>Address</label>
+            <div class="input-wrapper">
+              <img src="icons/location.png" class="icon-img" alt="Address" />
+              <input type="text" [value]="vendor.address" readonly />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Phone Number</label>
+            <div class="phone">
+              <select [value]="vendor.countryCode">
+                <option value="+92">+92</option>
+              </select>
+              <input type="text" [value]="vendor.phoneNumber" readonly />
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="btn-edit">
+          <div class="input-wrapper">
+            <button>Edit</button>
+            <img src="icons/edit.png" class="icon-img" alt="Edit" />
+          </div>
+        </div>
+      </div>
+      
+      <div class="vendor-img-div">
+        <div class="action-img-div">
+          <button class="btn-action" (click)="onDelete()">
+            <img src="icons/delete-black.png" alt="Delete Image">
+          </button>
+          <button class="btn-action" (click)="onUpload()">
+            <img src="icons/upload.png" alt="Upload Image">
+          </button>
+        </div>
+        <div class="img-div">
+          <img src="icons/vendor-logo.png" alt="Vendor Image">
         </div>
       </div>
 
-      <div class="div-flex">
-        <label>Address</label>
-        <input type="text" [value]="vendor.address" readonly />
-  
-        <label>Phone Number</label>
-        <div class="phone">
-          <select [value]="vendor.countryCode" disabled>
-            <option value="+92">+92</option>
-          </select>
-          <input type="text" [value]="vendor.phoneNumber" readonly />
+    </div>
+
+  </div>
+</div>
+
+<div class="main-container">
+  <div class="products">
+    <div class="products-header">
+      <h2>Products</h2>
+      <button class="add-product" (click)="onAddProduct()">
+        <span>+</span> Add New Product
+      </button>
+    </div>
+
+    <div class="product-cards">
+      @for (product of products; track product.id) {
+        <div class="product-card">
+          <div class="product-image"></div>
+          <div class="product-info">
+            <h3>{{ product.name }}</h3>
+            <p>{{ product.description }}</p>
+            <div class="product-meta">
+              <div>Info <span>Lorem ipsum</span></div>
+              <div>Info <span>Lorem ipsum</span></div>
+              <div>Info <span>Lorem ipsum</span></div>
+            </div>
+          </div>
         </div>
-      </div>
+      }
+    </div>
   </div>
 </div>

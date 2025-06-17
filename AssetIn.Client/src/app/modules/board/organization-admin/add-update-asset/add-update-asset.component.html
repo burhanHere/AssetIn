@@ -134,13 +134,14 @@
                     <img [src]="previewUrl ? previewUrl : 'icons/camera.png'" alt="Image">
                 </button>
                 <div class="preview-wrapper">
-                <img *ngIf="previewUrl; else placeholder"
-                    [src]="previewUrl"
-                    class="preview-img">
-                <ng-template #placeholder>
-                    <!-- your placeholder markup, e.g. grey box -->
-                    <div class="preview-placeholder"></div>
-                </ng-template>
+                @if(previewUrl) {
+                    <img [src]="previewUrl" class="preview-img">
+                } @else {
+                    <ng-template #placeholder>
+                        <!-- your placeholder markup, e.g. grey box -->
+                        <div class="preview-placeholder"></div>
+                    </ng-template>
+                }
                 </div>
             </div>
             <input
