@@ -351,7 +351,6 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             ResponseData = allAssets
         };
     }
-
     public async Task<ApiResponse> GetAllAvailableAssetByCatagoryId(int organizationID, int catagoryId, string userId)
     {
         var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
@@ -1119,6 +1118,220 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
         {
             Status = StatusCodes.Status200OK,
             ResponseData = allStatus
+        };
+    }
+    public async Task<ApiResponse> SendAssetToMaintenance(SendAssetToMaintanenceDTO sendAssetToMaintanenceDTO, string userId)
+    {
+        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == sendAssetToMaintanenceDTO.OrganizationID);
+        if (targetOrganization == null || !targetOrganization.ActiveOrganization)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to send asset to maintenance." }
+            };
+        }
+
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to send asset to maintenance." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to send asset to maintenance." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to send asset to maintenance." }
+                };
+            }
+        }
+
+        Asset? targetAsset = await _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetlD == sendAssetToMaintanenceDTO.AssetID && !x.DeletedByOrganization);
+        if (targetAsset == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "Asset not found." }
+            };
+        }
+        // OrganizationsAssetStatusID = 1, OrganizationsAssetStatusName = "Assigned" },
+        // OrganizationsAssetStatusID = 2, OrganizationsAssetStatusName = "Retired" },
+        // OrganizationsAssetStatusID = 3, OrganizationsAssetStatusName = "Under Maintenance" },
+        // OrganizationsAssetStatusID = 4, OrganizationsAssetStatusName = "Available" },
+        // OrganizationsAssetStatusID = 5, OrganizationsAssetStatusName = "Lost" },
+        // OrganizationsAssetStatusID = 6, OrganizationsAssetStatusName = "Out Of Order" }
+        if (targetAsset.AssetStatusID == 3)
+        {
+            // 3 = undermaintanence 
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Error", "Asset is already under maintenance." }
+            };
+        }
+        else if (targetAsset.AssetStatusID == 2 || targetAsset.AssetStatusID == 5 || targetAsset.AssetStatusID == 1)
+        {
+            // 2 = retired, 5 = lost, 1 = assigned
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Error", "Asset is not available for maintenance." }
+            };
+        }
+
+        targetAsset.AssetStatusID = 3; // 3 = undermaintanence
+        OrganizationsAssetMaintanence newEntry = new()
+        {
+            SentDate = DateTime.Now,
+            RetunDate = DateTime.MinValue,
+            Problem = sendAssetToMaintanenceDTO.Problem,
+            AssetID = sendAssetToMaintanenceDTO.AssetID,
+        };
+        await _applicationDbContext.OrganizationsAssetMaintanences.AddAsync(newEntry);
+        _applicationDbContext.Assets.Update(targetAsset);
+        var result = await _applicationDbContext.SaveChangesAsync();
+        if (result > 0)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string> { "Success", "Asset sent to maintenance successfully." }
+            };
+        }
+        return new ApiResponse
+        {
+            Status = StatusCodes.Status400BadRequest,
+            ResponseData = new List<string> { "Error", "Unable to send asset to maintenance." }
+        };
+    }
+
+    public async Task<ApiResponse> ReturnAssetFromMaintenance(ReturnAssetFromMaintanenceDTO returnAssetFromMaintanenceDTO, string userId)
+    {
+        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == returnAssetFromMaintanenceDTO.OrganizationID);
+        if (targetOrganization == null || !targetOrganization.ActiveOrganization)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to return asset from maintenance." }
+            };
+        }
+
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to return asset from maintenance." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to return asset from maintanence." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to return asset from maintanence." }
+                };
+            }
+        }
+
+        Asset? targetAsset = await _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetlD == returnAssetFromMaintanenceDTO.AssetID && !x.DeletedByOrganization);
+        if (targetAsset == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "Asset not found." }
+            };
+        }
+        // OrganizationsAssetStatusID = 1, OrganizationsAssetStatusName = "Assigned" },
+        // OrganizationsAssetStatusID = 2, OrganizationsAssetStatusName = "Retired" },
+        // OrganizationsAssetStatusID = 3, OrganizationsAssetStatusName = "Under Maintenance" },
+        // OrganizationsAssetStatusID = 4, OrganizationsAssetStatusName = "Available" },
+        // OrganizationsAssetStatusID = 5, OrganizationsAssetStatusName = "Lost" },
+        // OrganizationsAssetStatusID = 6, OrganizationsAssetStatusName = "Out Of Order" }
+        if (targetAsset.AssetStatusID != 3)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Error", "Unable to return asset from maintenance." }
+            };
+        }
+
+        OrganizationsAssetMaintanence? updateEntry = await _applicationDbContext.OrganizationsAssetMaintanences
+            .FirstOrDefaultAsync(x => x.AssetID == returnAssetFromMaintanenceDTO.AssetID && x.RetunDate == DateTime.MinValue);
+        if (updateEntry == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Error", "Unable to return asset from maintenance." }
+            };
+        }
+
+        if (returnAssetFromMaintanenceDTO.IsRepaired)
+        {
+            targetAsset.AssetStatusID = 4; // 4 = available
+        }
+        else
+        {
+
+            targetAsset.AssetStatusID = 6; // 6 = out of order
+        }
+        updateEntry.RetunDate = DateTime.Now;
+        updateEntry.MaintanenceResult = returnAssetFromMaintanenceDTO.MaintanenceResult;
+
+        await _applicationDbContext.OrganizationsAssetMaintanences.AddAsync(updateEntry);
+        _applicationDbContext.Assets.Update(targetAsset);
+        var result = await _applicationDbContext.SaveChangesAsync();
+        if (result > 0)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string> { "Success", "Asset returned from maintenance successfully." }
+            };
+        }
+        return new ApiResponse
+        {
+            Status = StatusCodes.Status400BadRequest,
+            ResponseData = new List<string> { "Error", "Unable to return asset from maintenance." }
         };
     }
 }

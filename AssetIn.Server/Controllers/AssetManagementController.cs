@@ -300,4 +300,69 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
         var result = await _assestManagementRepository.GetAllAssetStatus(organizationID, userId);
         return HelperFunctions.ResponseFormatter(this, result);
     }
+
+    [HttpPatch(template: "SendAssetToMaintenance")]
+    [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerPolicy")]
+    public async Task<IActionResult> SendAssetToMaintenance(SendAssetToMaintanenceDTO sendAssetToMaintanenceDTO)
+    {
+        var userId = User.FindFirst("UserId")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            // If the username is not found, return an unauthorized response
+            return Unauthorized(new ApiResponse
+            {
+                Status = StatusCodes.Status401Unauthorized,
+                ResponseData = new List<string> { "User data not found in token." }
+            });
+        }
+        var result = await _assestManagementRepository.SendAssetToMaintenance(sendAssetToMaintanenceDTO, userId);
+        return HelperFunctions.ResponseFormatter(this, result);
+    }
+
+    [HttpPatch(template: "ReturnAssetFromMaintenance")]
+    [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerPolicy")]
+    public async Task<IActionResult> ReturnAssetFromMaintenance(ReturnAssetFromMaintanenceDTO returnAssetFromMaintanenceDTO)
+    {
+        var userId = User.FindFirst("UserId")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            // If the username is not found, return an unauthorized response
+            return Unauthorized(new ApiResponse
+            {
+                Status = StatusCodes.Status401Unauthorized,
+                ResponseData = new List<string> { "User data not found in token." }
+            });
+        }
+        var result = await _assestManagementRepository.ReturnAssetFromMaintenance(returnAssetFromMaintanenceDTO, userId);
+        return HelperFunctions.ResponseFormatter(this, result);
+    }
+
+    [HttpPatch(template: "CheckOutAsset")]
+    [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerPolicy")]
+    public async Task<IActionResult> CheckOutAsset(CheckOutAssetDTO checkOutAssetDTO)
+    {
+        var userId = User.FindFirst("UserId")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            // If the username is not found, return an unauthorized response
+            return Unauthorized(new ApiResponse
+            {
+                Status = StatusCodes.Status401Unauthorized,
+                ResponseData = new List<string> { "User data not found in token." }
+            });
+        }
+        var result = await _assestManagementRepository.CheckOutAsset(checkOutAssetDTO, userId);
+        return HelperFunctions.ResponseFormatter(this, result);
+    }
+
+
+    // [HttpPatch(template: "CheckInAsset")]
+    // [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerPolicy")]
+
+    // [HttpPatch(template: "RetireAsset")]
+    // [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerPolicy")]
+
 }
