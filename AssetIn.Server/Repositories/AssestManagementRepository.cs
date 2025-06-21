@@ -4,6 +4,7 @@ using AssetIn.Server.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AssetIn.Server.Repositories;
 
@@ -14,7 +15,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
 
     public async Task<ApiResponse> CreateAsset(AssetDTO newAsset, string userId)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -98,7 +99,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
     }
     public async Task<ApiResponse> UpdateAsset(AssetDTO updatedAsset, string userId)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -197,7 +198,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             };
         }
 
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -284,7 +285,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
     }
     public async Task<ApiResponse> GetAllAsset(int organizationID, string userId)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -353,7 +354,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
     }
     public async Task<ApiResponse> GetAllAvailableAssetByCatagoryId(int organizationID, int catagoryId, string userId)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -424,7 +425,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
     }
     public async Task<ApiResponse> GetAsset(int assetID, string userId)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -511,7 +512,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
     }
     public async Task<ApiResponse> CreateNewAssetCatagory(AssetCatagoryDTO newCatagory, string userId)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -590,7 +591,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             };
         }
 
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -682,7 +683,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             };
         }
 
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -746,7 +747,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             };
         }
 
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -799,7 +800,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             };
         }
 
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -879,7 +880,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             };
         }
 
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -962,7 +963,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             };
         }
 
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -1026,7 +1027,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             };
         }
 
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -1079,7 +1080,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             };
         }
 
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -1132,7 +1133,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             };
         }
 
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -1237,7 +1238,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             };
         }
 
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -1332,6 +1333,325 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
         {
             Status = StatusCodes.Status400BadRequest,
             ResponseData = new List<string> { "Error", "Unable to return asset from maintenance." }
+        };
+    }
+
+    public async Task<ApiResponse> CheckOutAsset(CheckOutAssetDTO checkOutAssetDTO, string userId)
+    {
+        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == checkOutAssetDTO.OrganizationID);
+        if (targetOrganization == null || !targetOrganization.ActiveOrganization)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to checkout asset to the user." }
+            };
+        }
+
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to checkout asset to the user." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to checkout asset to the user." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to checkout asset to the user." }
+                };
+            }
+        }
+
+        Asset? assetToAssign = await _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetlD == checkOutAssetDTO.AssetId && !x.DeletedByOrganization);
+        if (assetToAssign == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "Asset not found." }
+            };
+        }
+
+        if (assetToAssign.AssetStatusID != 4) // 4 = Available
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Error", "Asset is not available for checkout." }
+            };
+        }
+
+
+        var assignToUser = _userManager.Users.FirstOrDefault(x => x.Id == checkOutAssetDTO.AssignedToUserId);
+        if (assignToUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "Unable to finf the user to whom you are trying to checkout asset." }
+            };
+        }
+        else if (!assignToUser.Status)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "Cann't checkout asset to this user." }
+            };
+        }
+
+        OrganizationsAssetAssignReturn newAssignReturn = new()
+        {
+            AssignedAt = DateTime.Now,
+            ReturnedAt = DateTime.MinValue,
+            Notes = checkOutAssetDTO.Notes.IsNullOrEmpty() ? "" : checkOutAssetDTO.Notes!,
+            AssignedToUserID = assignToUser.Id,
+            AssignedByUserID = validUser.Id,
+            CheckInByUserID = "",
+            CheckInNotes = "",
+            AssetID = assetToAssign.AssetlD,
+        };
+        assetToAssign.AssetStatusID = 1; // 1 = Assigned
+        await _applicationDbContext.OrganizationsAssetAssignReturns.AddAsync(newAssignReturn);
+        _applicationDbContext.Assets.Update(assetToAssign);
+
+        var result = await _applicationDbContext.SaveChangesAsync();
+        if (result > 0)
+        {
+
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string> { "Success", "Asset checked out to the user successfully." }
+            };
+        }
+
+        return new ApiResponse
+        {
+            Status = StatusCodes.Status400BadRequest,
+            ResponseData = new List<string> { "Error", "Unable to checkout asset to the user." }
+        };
+    }
+
+    public async Task<ApiResponse> CheckInAsset(CheckInAssetDTO checkInAssetDTO, string userId)
+    {
+        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == checkInAssetDTO.OrganizationID);
+        if (targetOrganization == null || !targetOrganization.ActiveOrganization)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to checkIn asset." }
+            };
+        }
+
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to checkIn asset." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to checkIn asset." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to checkIn asset." }
+                };
+            }
+        }
+
+        Asset? assetToReturn = await _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetlD == checkInAssetDTO.AssetId && !x.DeletedByOrganization);
+        if (assetToReturn == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "Asset not found." }
+            };
+        }
+
+        if (assetToReturn.AssetStatusID != 1) // 1 = assigned
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Error", "Unable to checkIn asset." }
+            };
+        }
+
+        OrganizationsAssetAssignReturn? assetReturnEntry = await _applicationDbContext.OrganizationsAssetAssignReturns
+            .FirstOrDefaultAsync(x => x.AssetID == checkInAssetDTO.AssetId && x.ReturnedAt == DateTime.MinValue);
+
+        if (assetReturnEntry == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "Unable to check in asset." }
+            };
+        }
+
+        assetReturnEntry.ReturnedAt = DateTime.Now;
+        assetReturnEntry.CheckInByUserID = validUser.Id;
+        assetReturnEntry.CheckInNotes = checkInAssetDTO.Notes.IsNullOrEmpty() ? "" : checkInAssetDTO.Notes!;
+        assetToReturn.AssetStatusID = 4; // 4 = Available
+        _applicationDbContext.OrganizationsAssetAssignReturns.Update(assetReturnEntry);
+        _applicationDbContext.Assets.Update(assetToReturn);
+        var result = await _applicationDbContext.SaveChangesAsync();
+
+        if (result > 0)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string> { "Success", "Asset checked in successfully." }
+            };
+        }
+
+        return new ApiResponse
+        {
+            Status = StatusCodes.Status400BadRequest,
+            ResponseData = new List<string> { "Error", "Some error occured while the asset CheckIn." }
+        };
+    }
+
+    public async Task<ApiResponse> RetireAsset(AssetRetireDTO assetRetireDTO, string userId)
+    {
+        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == assetRetireDTO.OrganizationID);
+        if (targetOrganization == null || !targetOrganization.ActiveOrganization)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to retire asset." }
+            };
+        }
+
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to retire asset." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (targetOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to retire asset." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != targetOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to retire asset." }
+                };
+            }
+        }
+
+        Asset? targetAsset = await _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetlD == assetRetireDTO.AssetID && !x.DeletedByOrganization);
+        if (targetAsset == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "Asset not found." }
+            };
+        }
+
+        if (targetAsset.AssetStatusID == 2)
+        {
+            // 2 = retired
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Error", "Asset is already retired." }
+            };
+        }
+        else if (targetAsset.AssetStatusID != 4)
+        {
+            // 4 = available
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Error", "Asset is not available for retirement." }
+            };
+        }
+
+        OrganizationsAssetRetirement newRetirement = new()
+        {
+            RetirementReason = assetRetireDTO.RetirementReason,
+            RetirementDate = assetRetireDTO.RetirementDate,
+            Condition = assetRetireDTO.Condition,
+            AssetID = assetRetireDTO.AssetID
+        };
+
+        targetAsset.AssetStatusID = 2; // 2 = retired
+        await _applicationDbContext.OrganizationsAssetRetirements.AddAsync(newRetirement);
+        _applicationDbContext.Assets.Update(targetAsset);
+        var result = await _applicationDbContext.SaveChangesAsync();
+
+        if (result > 0)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string> { "Success", "Asset retired successfully." }
+            };
+        }
+
+        return new ApiResponse
+        {
+            Status = StatusCodes.Status400BadRequest,
+            ResponseData = new List<string> { "Error", "Unable to retire asset." }
         };
     }
 }

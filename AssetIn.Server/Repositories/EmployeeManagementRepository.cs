@@ -16,7 +16,7 @@ public class EmployeeManagementRepository(UserManager<User> userManager, Applica
 
     public async Task<ApiResponse> GetEmployeeList(string userId, int organizationId)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -146,7 +146,7 @@ public class EmployeeManagementRepository(UserManager<User> userManager, Applica
 
     public async Task<ApiResponse> CreateEmployee(string userId, NewEmployeeDTO newEmployee)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse

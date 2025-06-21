@@ -16,7 +16,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
 
     public async Task<ApiResponse> GetAllAssetRequestAdminList(int organizationId, string userId)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -87,7 +87,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
 
     public async Task<ApiResponse> GetAllAssetRequestEmployeeListStatsAndDesignatedAssets(int organizationId, string userId)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -191,7 +191,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
     public async Task<ApiResponse> CreateAssetRequest(AssetRequestDTO assetRequestDTO, string userId)
     {
 
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -296,7 +296,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
             };
         }
 
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -470,7 +470,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
 
     public async Task<ApiResponse> FulFillAssetRequest(FulfillAssetRequestDTO fullfilAssetRequestDTO, string userId)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
