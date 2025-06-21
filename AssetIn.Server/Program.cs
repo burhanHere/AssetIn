@@ -3,6 +3,8 @@ using System.Text;
 using AssetIn.Server.Data;
 using AssetIn.Server.Models;
 using AssetIn.Server.Services;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -97,6 +99,11 @@ builder.Services.AddCors(options =>
 
 // Add Email Service
 builder.Services.AddTransient<EmailService>();
+
+// Add Crystal Reporting Service
+builder.Services.AddTransient<CrystalReportingService>();
+// adding SynchronizedConverter as service 
+builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
 // Add Iconfigurations
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
