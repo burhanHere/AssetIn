@@ -1,0 +1,85 @@
+<div class="main-div">
+    <h2 class="main-div-text">New Product</h2>
+    <div class="product-div">
+        
+        <div class="product-details">
+            <div class="product-details-div">
+                <form [formGroup]="productForm">
+                    <div class="form-div">
+                        
+                        <div class="outer-div">
+                            <input id="productName" formControlName="productName" type="text" placeholder="Product Name">
+                            @if (productForm.controls['productName'].touched && productForm.controls['productName'].errors?.['required']) {
+                            <div class="input-error">Product Name is required.</div>
+                            }
+
+                            <div class="inner-div">
+                                <div class="grid-div">
+                                    <input id="model" formControlName="model" type="text" placeholder="Model">
+                                    @if (productForm.controls['model'].touched && productForm.controls['model'].errors?.['required']) {
+                                        <div class="input-error">Model is required.</div>
+                                    }
+                                </div>
+                                <div class="grid-div">
+                                    <input id="unitPrice" formControlName="unitPrice" type="number" placeholder="Unit Price">
+                                    @if (productForm.controls['unitPrice'].touched && productForm.controls['unitPrice'].errors?.['required']) {
+                                        <div class="input-error">Unit Price is required.</div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="outer-div">
+                            <textarea id="description" formControlName="description" placeholder="Description"></textarea>
+                            @if (productForm.controls['description'].touched && productForm.controls['description'].errors?.['required']) {
+                                <div class="input-error">Description is required.</div>
+                            }
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            
+            <div class="btn-div">
+                <button class="btn" (click)="onCancel()">
+                    <img class="btn-img" src="icons/cancel.png" alt="Cancel Icon">
+                    Cancel
+                </button>
+                <button class="btn" (click)="onSubmit(productForm)">
+                    <img class="btn-img" src="icons/save.png" alt="Save Icon">
+                    Save
+                </button>
+            </div>
+        </div>
+
+        <div class="product-img-div">
+            <div class="action-img-div">
+                <button class="btn-action" (click)="onDeleteImage()">
+                    <img src="icons/delete-black.png" alt="Delete Image">
+                </button>
+                <button class="btn-action" (click)="onUploadImage()">
+                    <img src="icons/upload.png" alt="Upload Image">
+                </button>
+            </div>
+            <div class="img-img-div">
+                <button style="border: none; background-color: white;" (click)="onCaptureImage()">
+                    <img [src]="previewUrl ? previewUrl : 'icons/camera.png'" alt="Image">
+                </button>
+            </div>
+            <input
+                type="file"
+                accept="image/*"
+                #fileUploader
+                (change)="onFileSelected($event)"
+                hidden>
+            <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                #cameraCapture
+                (change)="onFileSelected($event)"
+                hidden>
+        </div>
+
+    </div>
+</div>

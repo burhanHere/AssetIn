@@ -43,11 +43,10 @@
           </div>
         </div>
 
-        
         <div class="btn-edit">
           <div class="input-wrapper">
             <button>Edit</button>
-            <img src="icons/edit.png" class="icon-img" alt="Edit" />
+            <img src="icons/edit.png" class="icon-img-edit" alt="Edit" />
           </div>
         </div>
       </div>
@@ -62,35 +61,48 @@
           </button>
         </div>
         <div class="img-div">
-          <img src="icons/vendor-logo.png" alt="Vendor Image">
+          <img [src]="previewUrl ? previewUrl : 'icons/emp_avatar.png'" alt="Vendor Image">
         </div>
+        <input
+          type="file"
+          accept="image/*"
+          #fileUploader
+          (change)="onFileSelected($event)"
+          hidden>
+        <input
+          type="file"
+          accept="image/*"
+          capture="environment"
+          #cameraCapture
+          (change)="onFileSelected($event)"
+          hidden>
       </div>
-
     </div>
-
   </div>
 </div>
 
-<div class="main-container">
-  <div class="products">
+<div class="product-container">
+  <div>
     <div class="products-header">
       <h2>Products</h2>
-      <button class="add-product" (click)="onAddProduct()">
-        <span>+</span> Add New Product
-      </button>
+      <div class="input-wrapper">
+        <button class="add-product" [routerLink]="['../addNewProduct']">Add New Product</button>
+        <img src="icons/add-new-asset.png" class="icon-img-add-new" alt="Add Product" />
+      </div>
     </div>
 
     <div class="product-cards">
       @for (product of products; track product.id) {
         <div class="product-card">
-          <div class="product-image"></div>
+          <div class="product-image">
+            <img src="icons/camera.png" alt="Product Image" />
+          </div>
           <div class="product-info">
             <h3>{{ product.name }}</h3>
-            <p>{{ product.description }}</p>
+            <p>{{ product.description }}</p>  
             <div class="product-meta">
-              <div>Info <span>Lorem ipsum</span></div>
-              <div>Info <span>Lorem ipsum</span></div>
-              <div>Info <span>Lorem ipsum</span></div>
+              <div class="product-meta-div">Price: <div>5000</div></div>
+              <div class="product-meta-div">Rating: <div>4.7</div></div>
             </div>
           </div>
         </div>

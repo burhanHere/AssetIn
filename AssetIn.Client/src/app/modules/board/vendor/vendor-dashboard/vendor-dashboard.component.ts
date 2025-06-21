@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-vendor-dashboard',
@@ -34,20 +34,37 @@ export class VendorDashboardComponent {
     }
   ];
 
+  previewUrl: string | null = null;
+    @ViewChild('fileUploader') fileUploader!: ElementRef<HTMLInputElement>;
+    @ViewChild('cameraCapture') cameraCapture!: ElementRef<HTMLInputElement>;
+
   onEdit() {
     console.log('Edit vendor info clicked');
   }
 
-  onAddProduct() {
-    console.log('Add new product clicked');
-  }
-
   onDelete() {
-    console.log('Delete clicked');
+    this.previewUrl = null;
+    this.fileUploader.nativeElement.value = '';
+    this.cameraCapture.nativeElement.value = '';
+    console.log('Image Deleted');
   }
 
   onUpload() {
-    console.log('Upload clicked');
+    this.fileUploader.nativeElement.click();
+    console.log('Image uploaded');
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      // reader.result is a base64 data URL
+      this.previewUrl = reader.result as string;
+    };
+    reader.readAsDataURL(file);
   }
 
 }
