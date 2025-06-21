@@ -1,39 +1,306 @@
 @if(showOverlay) {
-<div class="modal-backdrop">
+<div class="modal-backdrop" (click)="showOverlay = false">
   <div class="modal-content" (click)="$event.stopPropagation()">
-    <button class="close-button" (click)="showOverlay = !showOverlay">×</button>
+    <div class="modal-header">
+      <h3>Crystal Report</h3>
+      <button class="close-button" (click)="showOverlay = false">×</button>
+    </div>
 
-    <div style="border: 3px solid red; margin-top: 5px">
-      <div class="top-row" style="border: 3px solid blue">
-        <label>Report Type</label>
-        <select (change)="getTargetData($event)">
-          <option value="">Select</option>
-          <option value="Assets">Assets</option>
-          <option value="Employee">Employee</option>
-          <option value="Assets Request">Assets Request</option>
+    <div class="report-container">
+      <!-- Main Report Type Selection -->
+      <div class="report-type-section">
+        <label class="form-label">Report Type</label>
+        <select
+          class="form-select"
+          [(ngModel)]="selectedReportType"
+          (change)="onReportTypeChange()"
+        >
+          <option value="">Select Report Type</option>
+          <option value="Assets">Assets Report</option>
+          <option value="Employee">Employee Report</option>
+          <option value="Assets Request">Asset Requests Report</option>
         </select>
       </div>
-      <div class="table-container" style="border: 3px solid rgb(0, 255, 242)">
-        @if(targetReport==='') {
-        <p style="position: sticky">Please select a Report Type.</p>
-        }@else{
-        <p style="position: sticky">{{ targetReport }}</p>
-        <table>
-          <thead>
-            <tr>
-              @for (item of tableHeadersAndProperty; track $index) {
-              <th>{{ item }}</th>
+
+      <!-- Dynamic Filter Section -->
+      @if(selectedReportType !== '') {
+      <div class="filters-section">
+        <h4 class="filter-title">
+          Filters for {{ selectedReportType }} Report
+        </h4>
+
+        <!-- Assets Report Filters -->
+        @if(selectedReportType === 'Assets') {
+        <div class="filter-grid">
+          <div class="filter-group">
+            <label class="form-label">Asset Status:</label>
+            <select class="form-select" [(ngModel)]="filters.assetStatus">
+              <option value="">All Statuses</option>
+              <option value="1">Assigned</option>
+              <option value="2">Retired</option>
+              <option value="3">Under Maintenance</option>
+              <option value="4">Available</option>
+              <option value="5">Lost</option>
+              <option value="6">Out Of Order</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label">Asset Type:</label>
+            <select class="form-select" [(ngModel)]="filters.assetType">
+              <option value="">All Types</option>
+              @for (type of assetTypes; track type.id) {
+              <option [value]="type.id">{{ type.name }}</option>
               }
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label">Asset Category:</label>
+            <select class="form-select" [(ngModel)]="filters.assetCategory">
+              <option value="">All Categories</option>
+              @for (category of assetCategories; track category.id) {
+              <option [value]="category.id">{{ category.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label">Assigned To:</label>
+            <select class="form-select" [(ngModel)]="filters.assignedTo">
+              <option value="">All Employees</option>
+              @for (employee of employees; track employee.id) {
+              <option [value]="employee.id">{{ employee.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
         }
+
+        <!-- Employee Report Filters -->
+        @if(selectedReportType === 'Employee') {
+        <div class="filter-grid">
+          <div class="filter-group">
+            <label class="form-label">Employee Role:</label>
+            <select class="form-select" [(ngModel)]="filters.employeeRole">
+              <option value="">All Roles</option>
+              <option value="OrganizationOwner">Organization Owner</option>
+              <option value="OrganizationAssetManager">Asset Manager</option>
+              <option value="OrganizationEmployee">Employee</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label">Employee Status:</label>
+            <select class="form-select" [(ngModel)]="filters.employeeStatus">
+              <option value="">All Status</option>
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label">Specific Employee:</label>
+            <select class="form-select" [(ngModel)]="filters.specificEmployee">
+              <option value="">All Employees</option>
+              @for (employee of employees; track employee.id) {
+              <option [value]="employee.id">{{ employee.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label">Gender:</label>
+            <select class="form-select" [(ngModel)]="filters.gender">
+              <option value="">All Genders</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        }
+
+        <!-- Asset Request Report Filters -->
+        @if(selectedReportType === 'Assets Request') {
+        <div class="filter-grid">
+          <div class="filter-group">
+            <label class="form-label">Request Status:</label>
+            <select class="form-select" [(ngModel)]="filters.requestStatus">
+              <option value="">All Statuses</option>
+              <option value="1">Accepted</option>
+              <option value="2">Pending</option>
+              <option value="3">Declined</option>
+              <option value="4">Fulfilled</option>
+              <option value="5">Canceled</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label">Requested By:</label>
+            <select class="form-select" [(ngModel)]="filters.requestedBy">
+              <option value="">All Employees</option>
+              @for (employee of employees; track employee.id) {
+              <option [value]="employee.id">{{ employee.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label">From Date:</label>
+            <input
+              type="date"
+              class="form-input"
+              [(ngModel)]="filters.dateFrom"
+            />
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label">To Date:</label>
+            <input
+              type="date"
+              class="form-input"
+              [(ngModel)]="filters.dateTo"
+            />
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label">Priority:</label>
+            <select class="form-select" [(ngModel)]="filters.priority">
+              <option value="">All Priorities</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label">Completion Status:</label>
+            <select class="form-select" [(ngModel)]="filters.completionStatus">
+              <option value="">All</option>
+              <option value="true">Completed</option>
+              <option value="false">Pending</option>
+            </select>
+          </div>
+        </div>
+        }
+
+        <!-- Date Range for All Reports -->
+        <div class="date-range-section">
+          <h5>Date Range (Optional)</h5>
+          <div class="date-range-grid">
+            <div class="filter-group">
+              <label class="form-label">From Date:</label>
+              <input
+                type="date"
+                class="form-input"
+                [(ngModel)]="filters.globalDateFrom"
+              />
+            </div>
+            <div class="filter-group">
+              <label class="form-label">To Date:</label>
+              <input
+                type="date"
+                class="form-input"
+                [(ngModel)]="filters.globalDateTo"
+              />
+            </div>
+            <div class="filter-group">
+              <label class="form-label">Quick Select:</label>
+              <select class="form-select" (change)="setQuickDateRange($event)">
+                <option value="">Custom Range</option>
+                <option value="7">Last 7 Days</option>
+                <option value="30">Last 30 Days</option>
+                <option value="90">Last 3 Months</option>
+                <option value="365">Last Year</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Report Actions -->
+        <div class="report-actions">
+          <button
+            class="btn btn-primary"
+            (click)="generateReport()"
+            [disabled]="isGenerating"
+          >
+            @if(isGenerating) {
+            <span class="spinner"></span> Generating... } @else { 📊 Generate
+            Report }
+          </button>
+          <button
+            class="btn btn-secondary"
+            (click)="previewReport()"
+            [disabled]="isGenerating"
+          >
+            👁️ Preview
+          </button>
+          <button class="btn btn-outline" (click)="resetFilters()">
+            🔄 Reset Filters
+          </button>
+          <button
+            class="btn btn-outline"
+            (click)="exportToPDF()"
+            [disabled]="!reportData.length"
+          >
+            📄 Export PDF
+          </button>
+          <button
+            class="btn btn-outline"
+            (click)="exportToExcel()"
+            [disabled]="!reportData.length"
+          >
+            📊 Export Excel
+          </button>
+        </div>
       </div>
+      }
+
+      <!-- Report Preview Section -->
+      @if(reportData.length > 0) {
+      <div class="report-preview-section">
+        <div class="preview-header">
+          <h4>{{ selectedReportType }} Report Preview</h4>
+          <span class="record-count"
+            >{{ reportData.length }} records found</span
+          >
+        </div>
+
+        <div class="table-container">
+          <table class="report-table">
+            <thead>
+              <tr>
+                @for (header of tableHeaders; track $index) {
+                <th>{{ header }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of reportData; track $index) {
+              <tr>
+                @for (header of tableHeaders; track $index) {
+                <td>{{ getFieldValue(row, header) }}</td>
+                }
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+      } @else if(selectedReportType !== '' && !isGenerating) {
+      <div class="no-data-message">
+        <p>🔍 Click "Preview" or "Generate Report" to see data</p>
+      </div>
+      }
+
+      <!-- Loading State -->
+      @if(isGenerating) {
+      <div class="loading-state">
+        <div class="spinner-large"></div>
+        <p>Generating your {{ selectedReportType }} report...</p>
+      </div>
+      }
     </div>
   </div>
 </div>
