@@ -87,13 +87,14 @@
         <img src="icons/Download.png" alt="Download" />
         Export Asset List
       </button>
-      <button class="btn" [routerLink]="['/new-asset']">
+      <button class="btn" (click)="nvgToAddUpdateAsset()">
         <img src="icons/plus.png" alt="Add" />
         Add New Asset
       </button>
     </div>
   </div>
 </div>
+
 
 @if(isLoading) {
 <app-page-loader></app-page-loader>

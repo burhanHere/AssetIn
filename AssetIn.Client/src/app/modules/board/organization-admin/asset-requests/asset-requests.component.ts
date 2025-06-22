@@ -198,7 +198,6 @@ export class AssetRequestsComponent implements OnInit {
       .GetAllAssetCatagory(this.organizationId)
       .subscribe(
         (response: any) => {
-          console.log('Category data:', response);
           this.availableAssetsCategory = response.responseData || [];
           this.isLoading = false;
         },
@@ -211,10 +210,26 @@ export class AssetRequestsComponent implements OnInit {
       );
   }
 
-  public getAvailableAsstes(event: any): void {
-    this.availableAssets;
-    console.log(event.target.value);
-    // call the api to get available AssetsComponent.
+  public getAvailableAssets(event: Event): void {
+    const categoryId = Number((event.target as HTMLSelectElement).value);
+    this.isLoading = true;
+
+    this.assetManagementService
+      .GetAllAvailableAssetByCatagoryId(this.organizationId, categoryId)
+      .subscribe(
+        (response: any) => {
+          debugger;
+          this.availableAssets = response.responseData || [];
+          this.isLoading = false;
+        },
+        (error: any) => {
+          this.alertMessage =
+            error.error.responseData?.[1] || 'Failed to load assets.';
+          this.alertTitle = error.error.responseData?.[0] || 'Error';
+          this.showAlert = true;
+          this.isLoading = false;
+        }
+      );
   }
 
   onSubmit() {
@@ -232,8 +247,8 @@ export class AssetRequestsComponent implements OnInit {
 
           },
           (error) => {
-            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+            this.alertTitle = error.error.responseData[0];
+            this.alertMessage = error.error.responseData[1];
             this.showAlert = true;
             this.isLoading = false;
           },

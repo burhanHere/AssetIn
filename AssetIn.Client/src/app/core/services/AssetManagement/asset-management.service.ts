@@ -28,4 +28,8 @@ export class AssetManagementService {
   public GetAllAssetCatagory(organizationID: number): Observable<ApiResponse> {
     return this.httpClient.get<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.GetAllAssetCatagory + `?organizationID=${organizationID}`);
   }
+
+  public GetAllAvailableAssetByCatagoryId(organizationID: number, catagoryID: number): Observable<ApiResponse> {
+    return this.httpClient.get<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.GetAllAvailableAssetByCatagoryId + `?organizationID=${organizationID}&catagoryID=${catagoryID}`);
+  }
 }

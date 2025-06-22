@@ -1,0 +1,62 @@
+<div class="main-div">
+  <div class="asset-detail-container">
+    <div class="asset-header">
+      <div>
+        <div class="asset-header__info">
+          <h2>{{ asset.assetName }}</h2>
+          <p style="color: #6b7280">{{ asset.description }}</p>
+          <button style="margin: 0.5rem" class="btn btn--primary">
+            Update
+          </button>
+          <button class="btn btn--danger">Delete</button>
+        </div>
+      </div>
+      <div class="asset-status-actions">
+        <div class="available" disabled>Available</div>
+        <div class="assigned">Assigned</div>
+        <div class="retire" disabled>Retire</div>
+        <div class="under-maintenance" disabled>Under Maintenance</div>
+      </div>
+    </div>
+    <div>
+      <div class="asset-section__title">Basic Information</div>
+      <div class="asset-grid">
+        <div>
+          <strong>Identification Number:</strong>
+          {{ asset.assetIdentificationNumber }}
+        </div>
+        <div><strong>Serial Number:</strong> {{ asset.serialNumber }}</div>
+        <div><strong>Asset Type:</strong> {{ asset.assetTypeID }}</div>
+        <div><strong>Location:</strong> {{ asset.location }}</div>
+        <div><strong>Manufacturer:</strong> {{ asset.manufacturer }}</div>
+        <div><strong>Model:</strong> {{ asset.model }}</div>
+        <div>
+          <strong>Created Date:</strong>
+          {{ asset.createdDate | date : "yyyy-MM-dd HH:mm:ss" }}
+        </div>
+        <div><strong>Barcode:</strong> {{ asset.barcode }}</div>
+      </div>
+    </div>
+    <div class="asset-section">
+      <div class="asset-section__title">Buying Details</div>
+      <div class="asset-grid">
+        <div><strong>Vendor Name:</strong> {{ asset.vendorName }}</div>
+        <div>
+          <strong>Purchase Date:</strong>
+          {{ asset.purchaseDate | date : "yyyy-MM-dd" }}
+        </div>
+        <div><strong>Purchase Price:</strong> {{ asset.purchasePrice }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if(isLoading) {
+<app-page-loader></app-page-loader>
+} @if (showAlert) {
+<app-alert-card
+  [title]="alertTitle"
+  [message]="alertMessage"
+  (closeCard)="showAlert = $event"
+></app-alert-card>
+}
