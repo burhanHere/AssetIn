@@ -192,6 +192,10 @@ export class OrganizationAdminDashboardComponent implements OnInit {
     });
   }
 
+  public nvgToAddUpdateAsset(): void {
+    this.router.navigateByUrl('/board/mainBoard/organizationAdmin/addUpdateAsset');
+  }
+
   public exportOrganizationData(): void {
     if (!this.organizationData || typeof this.organizationData !== 'object') {
       this.alertTitle = 'No Data';

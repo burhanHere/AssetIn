@@ -21,6 +21,7 @@ export class AssetsComponent implements OnInit {
   public alertTitle: string;
   public assetList: any[];
   public showDeleteAssetAlert: boolean;
+  public selectedAsset: any;
 
   constructor() {
     const temp = sessionStorage.getItem('targetOrganizationID');
@@ -32,6 +33,7 @@ export class AssetsComponent implements OnInit {
     this.assetList = [];
     this.showDeleteAssetAlert = false;
     this.assetToDelete = {};
+    this.selectedAsset={};
   }
 
   ngOnInit(): void {
@@ -60,7 +62,7 @@ export class AssetsComponent implements OnInit {
   }
 
   public viewAssetDetails(targetAssetId: number): void {
-    alert('viewAssetDetails: ' + targetAssetId)
+     this.router.navigateByUrl(`/board/mainBoard/organizationAdmin/organizationAssetsDetail?assetId=${targetAssetId}`);
   }
 
   public showDeleteAssetConfirmation(targetAsset: any) {
@@ -87,7 +89,7 @@ export class AssetsComponent implements OnInit {
     );
   }
 
-  public NvgToAddUpdateAsset(): void {
+  public nvgToAddUpdateAsset(): void {
     this.router.navigateByUrl('/board/mainBoard/organizationAdmin/addUpdateAsset');
   }
 

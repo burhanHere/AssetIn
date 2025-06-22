@@ -82,22 +82,21 @@ export class AssetRequestsComponent implements OnInit {
       );
   }
 
- public filterRequests(status: string): void {
-  this.activeFilter = status;
+  public filterRequests(status: string): void {
+    this.activeFilter = status;
 
-  if (status === 'All') {
-    this.filteredRequests = [...this.requests];
-  } else {
-    const selected = this.requests.filter(
-      (req: any) => req.requestStatus === status
-    );
-    const rest = this.requests.filter(
-      (req: any) => req.requestStatus !== status
-    );
-    this.filteredRequests = [...selected, ...rest];
+    if (status === 'All') {
+      this.filteredRequests = [...this.requests];
+    } else {
+      const selected = this.requests.filter(
+        (req: any) => req.requestStatus === status
+      );
+      const rest = this.requests.filter(
+        (req: any) => req.requestStatus !== status
+      );
+      this.filteredRequests = [...selected, ...rest];
+    }
   }
-}
-
 
   public openAssignAssetModal(request: any): void {
     this.requests = request;
@@ -199,7 +198,6 @@ export class AssetRequestsComponent implements OnInit {
       .GetAllAssetCatagory(this.organizationId)
       .subscribe(
         (response: any) => {
-          console.log('Category data:', response);
           this.availableAssetsCategory = response.responseData || [];
           this.isLoading = false;
         },
@@ -213,39 +211,53 @@ export class AssetRequestsComponent implements OnInit {
       );
   }
 
-  public getAvailableAsstes(event: any): void {
-    this.availableAssets;
-    console.log(event.target.value);
-    // call the api to get available AssetsComponent.
+  public getAvailableAssets(event: Event): void {
+    const categoryId = Number((event.target as HTMLSelectElement).value);
+    this.isLoading = true;
+
+    this.assetManagementService
+      .GetAllAvailableAssetByCatagoryId(this.organizationId, categoryId)
+      .subscribe(
+        (response: any) => {
+          debugger;
+          this.availableAssets = response.responseData || [];
+          this.isLoading = false;
+        },
+        (error: any) => {
+          this.alertMessage =
+            error.error.responseData?.[1] || 'Failed to load assets.';
+          this.alertTitle = error.error.responseData?.[0] || 'Error';
+          this.showAlert = true;
+          this.isLoading = false;
+        }
+      );
   }
 
   onSubmit() {
     this.isLoading = true;
-  if (this.assignAssetForm.valid) {
-    this.closeAssignAssetModal(); // Close modal first (optional)
-
-    this.assetRequestManagementService
-      .UpdateAssetRequestStatusToFulfilled(this.selectedRequest)
-      .subscribe(
-        (response) => {
-          this.alertMessage = response.responseData[1] || 'Request fulfilled successfully';
-          this.alertTitle = response.responseData[0] || 'Success';
-          this.isLoading = false;
-
-        },
-        (error) => {
-          this.alertTitle = error.error.responseData[0];
-          this.alertMessage = error.error.responseData[1];
-          this.showAlert = true;
-          this.isLoading = false;
-        },
-        ()=>{
+    if (this.assignAssetForm.valid) {
+      this.assetRequestManagementService
+        .UpdateAssetRequestStatusToFulfilled(this.selectedRequest)
+        .subscribe(
+          (response) => {
+            this.alertMessage =
+              response.responseData[1] || 'Request fulfilled successfully';
+            this.alertTitle = response.responseData[0] || 'Success';
+            this.isLoading = false;
+          },
+          (error) => {
+            this.alertTitle = error.error.responseData[0];
+            this.alertMessage = error.error.responseData[1];
+            this.showAlert = true;
+            this.isLoading = false;
+          },
+          () => {
             this.getallAssetrequest();
-        }
-      );
-  } else {
-    this.assignAssetForm.markAllAsTouched();
+          }
+        );
+    } else {
+      this.assignAssetForm.markAllAsTouched();
+      this.isLoading = false;
+    }
   }
-}
-
 }

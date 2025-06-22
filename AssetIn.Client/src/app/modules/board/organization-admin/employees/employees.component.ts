@@ -80,6 +80,7 @@ export class EmployeesComponent implements OnInit {
       .GetEmployeeList(this.organizationId)
       .subscribe(
         (response) => {
+          debugger;
           this.employees = response.responseData;
           this.isLoading = false;
         },

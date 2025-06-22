@@ -34,6 +34,7 @@ export const ApiUrls = {
     DeleteAssetType: '/AssetManagement/DeleteAssetType',
     UpdateAssetType: '/AssetManagement/UpdateAssetType',
     GetAllAssetType: '/AssetManagement/GetAllAssetType',
+    GetAllAvailableAssetByCatagoryId:'/AssetManagement/GetAllAvailableAssetByCatagoryId',
   },
   EmployeeManagement:{
    GetEmployeeList: '/EmployeeManagement/GetEmployeeList',

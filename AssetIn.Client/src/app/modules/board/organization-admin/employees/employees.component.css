@@ -91,10 +91,10 @@
   background: #fff;
   border-radius: 12px;
   padding: 24px;
-  width: 400px;
+  width: 500px;
   position: relative;
   border: 3px solid transparent;
-  height: 400px;
+  height: 500px;
   background-clip: padding-box, border-box;
   background-origin: border-box;
   background-image: linear-gradient(white, white),
@@ -130,13 +130,13 @@
 .userSummary {
   align-items: center;
   width: 400px;
-  height: 250px;
+  height: 350px;
 }
 
 .user-data-container {
   height: 40px;
   margin-bottom: 10px;
-  /* border: 1px solid green; */
+  /* border: 1px solid red; */
 }
 
 /* === Row for each user data field === */
@@ -144,18 +144,19 @@
   display: flex;
   align-items: center;
   width: 100%;
+  /* border: 1px solid red; */
 }
 
 /* === Label text inside user-data row === */
 .lable {
   font-weight: bold;
-  width: 120px;
+  width: 150px;
 }
 
 /* === User data value box === */
 .info-details {
   border: 1px solid transparent;
-  width: 70%;
+  width: 80%;
   height: 20px;
   background-color: #f1f3f6;
   padding: 0px 10px;
@@ -166,7 +167,7 @@
 .role-action {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
 }
 
 /* === Revoke button styling === */

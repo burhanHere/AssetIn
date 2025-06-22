@@ -46,7 +46,7 @@
       >
         <img src="icons/acceptedReq.png" alt="Accepted Requests" />
         <div class="request-info">
-          <div class="count">{{countByFilter("Accepted") }}</div>
+          <div class="count">{{ countByFilter("Accepted") }}</div>
           <div class="label">Accepted Requests</div>
         </div>
       </div>
@@ -189,7 +189,7 @@
           <label>Category</label>
           <select
             formControlName="category"
-            (change)="getAvailableAsstes($event)"
+            (change)="getAvailableAssets($event)"
           >
             <option value="">Select Category</option>
             @for (category of availableAssetsCategory; track
@@ -205,17 +205,39 @@
           <div class="input-error">Category is required.</div>
           }
 
+          <!-- Assets Dropdown -->
           <label>Available Assets</label>
           <select formControlName="availableAssets">
-            <option value="">Select available assets</option>
-            @for (asset of availableAssets; track asset.id) {
-            <option [value]="asset.id">{{ asset.name }}</option>
+            @if(!assignAssetForm.controls['category'].value){
+            <option value="" [selected]="true">
+              Select a catagory to get the available asset...
+            </option>
+            }@else if(availableAssets.length ===0){
+            <option value="" [selected]="true">
+              No Asset Available in this catagory...
+            </option>
+            }@else {
+            <option value="" [selected]="true">Select available asset</option>
+            } @for (asset of availableAssets; track asset.assetlD) {
+            <option
+              [value]="asset.assetlD"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              "
+            >
+              <span style="color: blue">{{ asset.assetName }}</span>
+              <hr />
+              <span>{{ asset.barcode }}</span>
+            </option>
             }
           </select>
-          <!-- @if (assignAssetForm.controls['availableAssets'].touched &&
+
+          @if (assignAssetForm.controls['availableAssets'].touched &&
           assignAssetForm.controls['availableAssets'].hasError('required')) {
           <div class="input-error">Asset selection is required.</div>
-          } -->
+          }
 
           <label>Notes</label>
           <textarea
@@ -223,19 +245,19 @@
             placeholder="Add notes..."
           ></textarea>
 
-          <!-- @if (selectedRequest.requestStatus === 'Accepted') { -->
           <div class="modal-actions">
             <button type="submit" class="submit-button">
               Fulfill Request ➜
             </button>
             <button
-              class="reject-btn" style="margin-top: 25px;"
+              class="reject-btn"
+              style="margin-top: 25px"
               (click)="rejectFromModal(selectedRequest.assetRequestID)"
+              type="button"
             >
               ✗Reject
             </button>
           </div>
-          <!-- } -->
         </form>
       </div>
     </div>

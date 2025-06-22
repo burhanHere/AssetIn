@@ -172,7 +172,7 @@ export class MyAssetRequestsComponent implements OnInit {
           }
         );
     } else {
-      alert('Please Fill the form!!!');
+      this.newAssetRequestForm.markAllAsTouched();
       this.isLoading = false;
     }
   }

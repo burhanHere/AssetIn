@@ -13,6 +13,7 @@ import { PageLoaderComponent } from '../../../shared/components/page-loader/page
 import { AlertCardComponent } from '../../../shared/components/alert-card/alert-card.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AddUpdateAssetComponent } from './add-update-asset/add-update-asset.component';
+import { AssetDetailsComponent } from './asset-details/asset-details.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { AddUpdateAssetComponent } from './add-update-asset/add-update-asset.com
     AssetRequestsComponent,
     VendorsComponent,
     SettingsComponent,
-    AddUpdateAssetComponent
+    AddUpdateAssetComponent,
+    AssetDetailsComponent
   ],
   imports: [
     CommonModule,
