@@ -42,4 +42,12 @@ export class VendorDashboardComponent {
     console.log('Add new product clicked');
   }
 
+  onDelete() {
+    console.log('Delete clicked');
+  }
+
+  onUpload() {
+    console.log('Upload clicked');
+  }
+
 }

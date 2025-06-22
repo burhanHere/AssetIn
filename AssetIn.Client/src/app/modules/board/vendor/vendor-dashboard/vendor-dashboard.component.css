@@ -1,27 +1,15 @@
 .main-container {
   margin: 2vw;
-  padding: 0.125vw 2vw;
+  padding: 0.125vw 2vw 2vw;
   background: white;
-}
-
-.vendor-info {
-  display: flex;
-  justify-content: space-between;
-  background: white;
-  padding: 2vw;
   border-radius: 10px;
 }
 
-.vendor-details {
-  display: flex;
-  flex-direction: column;
-  gap: 1vw;
-  width: 60%;
-}
 
-.outer-div {
-  display: flex;
+.vendor-details {
+  display: grid;
   gap: 1vw;
+  width: 70%;
 }
 
 .vendor-details label {
@@ -30,13 +18,197 @@
 
 .vendor-details input,
 .vendor-details select {
-  padding: 1.5vw;
+  padding: 1vw;
   border: 1px solid #ccc;
   border-radius: 6px;
   background: #e8edf2;
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  gap: 6vw;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vw;
+}
+
+.phone {
+  width: 125%;
+  display: flex;
+  gap: 1vw;
+}
+
+.phone select {
+  width: 40%;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.icon-img {
+  position: absolute;
+  left: 1vw;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.5vw;
+  height: 1.5vw;
+  pointer-events: none;
+}
+
+.input-wrapper input {
+  padding-left: 3.5vw; /* Make space for the icon */
 }
 
 .phone {
   display: flex;
   gap: 1vw;
+  align-items: center;
+}
+
+.phone select {
+  width: 35%;
+  padding: 1vw;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #e8edf2;
+}
+
+.phone input {
+  width: 100%;
+  padding: 1vw;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #e8edf2;
+}
+
+.btn-edit {
+  margin-top: 1vw;
+}
+
+.btn-edit button {
+  padding: 0.75vw 1.5vw;
+  background: #7AC6EC;
+  color: black;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.vendor-img-div {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1vw;
+}
+
+.action-img-div {
+  display: flex;
+  gap: 0.125vw;
+}
+
+.btn-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75vw;
+  background: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-action img {
+  width: 1.5vw;
+  height: 1.5vw;
+}
+
+.img-div {
+  padding: 1vw;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.img-div img {
+  width: 10vw;
+  height: 10vw;
+  border-radius: 10px;
+}
+
+.products {
+  margin-top: 2vw;
+}
+
+.products-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-product {
+  background-color: #e91e63;
+  color: white;
+  padding: 0.5vw 1vw;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.product-cards {
+  display: flex;
+  gap: 1.5vw;
+  margin-top: 2vw;
+  flex-wrap: wrap;
+}
+
+.product-card {
+  width: 15pc;
+  background: white;
+  border-radius: 0.5pc;
+  border: 2px solid transparent;
+  border-image: linear-gradient(to right, #f0f, #0ff) 1;
+  padding: 1vw;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.product-image {
+  width: 100%;
+  height: 150px;
+  background: #ddd;
+  border-radius: 10px;
+}
+
+.product-info {
+  margin-top: 1vw;
+}
+
+.product-info h3 {
+  margin: 5px 0;
+  font-size: 18px;
+}
+
+.product-info p {
+  font-size: 14px;
+  color: #666;
+}
+
+.product-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.product-meta div {
+  text-align: center;
 }
