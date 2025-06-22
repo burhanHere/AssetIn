@@ -33,7 +33,7 @@ export class AssetsComponent implements OnInit {
     this.assetList = [];
     this.showDeleteAssetAlert = false;
     this.assetToDelete = {};
-    this.selectedAsset={};
+    this.selectedAsset = {};
   }
 
   ngOnInit(): void {
@@ -44,17 +44,15 @@ export class AssetsComponent implements OnInit {
     this.isLoading = true;
     this.AssetManagementService.GetAllAsset(this.organizationId).subscribe(
       (responce: any) => {
-
         this.isLoading = false;
         this.assetList = [];
         this.assetList = responce.responseData;
       },
       (error: HttpErrorResponse) => {
-
-        this.isLoading = false;
-        this.showAlert = true;
         this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
         this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.isLoading = false;
+        this.showAlert = true;
       }
     );
   }
@@ -64,7 +62,7 @@ export class AssetsComponent implements OnInit {
   }
 
   public viewAssetDetails(targetAssetId: number): void {
-     this.router.navigateByUrl(`/board/mainBoard/organizationAdmin/organizationAssetsDetail?assetId=${targetAssetId}`);
+    this.router.navigateByUrl(`/board/mainBoard/organizationAdmin/organizationAssetsDetail?assetId=${targetAssetId}`);
   }
 
   public showDeleteAssetConfirmation(targetAsset: any) {

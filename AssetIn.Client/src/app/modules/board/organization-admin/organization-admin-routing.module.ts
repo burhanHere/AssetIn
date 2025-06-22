@@ -8,6 +8,7 @@ import { AssetRequestsComponent } from './asset-requests/asset-requests.componen
 import { VendorsComponent } from './vendors/vendors.component';
 import { SettingsComponent } from './settings/settings.component';
 import { AddUpdateAssetComponent } from './add-update-asset/add-update-asset.component';
+import { ReportingComponent } from './reporting/reporting.component';
 
 const routes: Routes = [
   {
@@ -39,6 +40,11 @@ const routes: Routes = [
     path: 'organizationAssetsRequet',
     component: AssetRequestsComponent,
     title: 'Asset Requests'
+  },
+  {
+    path: 'reporting',
+    component: ReportingComponent,
+    title: 'Reporting'
   },
   {
     path: 'organizationVendors',

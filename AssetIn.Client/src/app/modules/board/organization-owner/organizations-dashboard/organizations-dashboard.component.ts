@@ -60,10 +60,10 @@ export class OrganizationsDashboardComponent implements OnInit {
           this.organizations = responce.responseData;
         },
         (error: HttpErrorResponse) => {
-          this.isLoading = false;
-          this.showAlert = true;
           this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
           this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+          this.isLoading = false;
+          this.showAlert = true;
         }
       );
   }
@@ -95,10 +95,10 @@ export class OrganizationsDashboardComponent implements OnInit {
             this.isLoading = false;
           },
           (error: HttpErrorResponse) => {
-            this.isLoading = false;
-            this.showAlert = true;
             this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
             this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+            this.isLoading = false;
+            this.showAlert = true;
           },
           () => {
             this.getAllOrganization();

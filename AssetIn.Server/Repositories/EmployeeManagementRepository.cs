@@ -124,7 +124,7 @@ public class EmployeeManagementRepository(UserManager<User> userManager, Applica
                 UserName = g.Key.UserName,
                 RoleName = g.Key.Name,
                 Email = g.Key.Email,
-                PhoneNumber = g.Key.PhoneNumber,
+                PhoneNumber = g.Key.Name != "OrganizationOwner" ? g.Key.PhoneNumber : "",
                 ProfilePicturePath = g.Key.ProfilePicturePath,
                 Gender = g.Key.Gender,
                 DateOfBirth = g.Key.DateOfBirth,
@@ -136,6 +136,8 @@ public class EmployeeManagementRepository(UserManager<User> userManager, Applica
                     .ToList()
             }
         ).ToListAsync();
+
+
 
         return new()
         {

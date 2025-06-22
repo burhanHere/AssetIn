@@ -17,7 +17,7 @@ export class AssetDetailsComponent implements OnInit {
   public showAlert: boolean;
   public alertMessage: string;
   public alertTitle: string;
-  public asset:any;
+  public asset: any;
   constructor() {
     this.assetId = 0;
     this.activatedRoute.queryParamMap.subscribe((params) => {
@@ -33,20 +33,18 @@ export class AssetDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.assetManagementService.GetAsset(this.assetId).subscribe(
       (response) => {
-        debugger;
         this.isLoading = false;
         this.asset = response.responseData;
         console.log('Asset Details:', this.asset);
       },
       (error) => {
-        debugger;
+        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
         this.isLoading = false;
         this.showAlert = true;
-        this.alertTitle = error.error.responseData[0] || 'Error';
-        this.alertMessage = error.error.responseData[1] || 'An error occurred.';
       }
     );
   }
 
-  
+
 }

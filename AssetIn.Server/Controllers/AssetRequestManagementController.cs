@@ -118,7 +118,7 @@ public class AssetRequestManagementController(ApplicationDbContext applicationDb
     }
     [HttpPatch("FulFillAssetRequest")]
     [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerPolicy")]
-    public async Task<IActionResult> FulFillAssetRequest([FromBody] FulfillAssetRequestDTO fullfilAssetRequestDTO)
+    public async Task<IActionResult> FulFillAssetRequest(FulfillAssetRequestDTO fulfillAssetRequestDTO)
     {
         var userId = User.FindFirst("UserId")?.Value;
 
@@ -132,8 +132,7 @@ public class AssetRequestManagementController(ApplicationDbContext applicationDb
             });
         }
 
-        // var result = await _assetRequestManagementRepository.FulFillAssetRequest(fullfilAssetRequestDTO, userId);
-        var result = new ApiResponse();
+        var result = await _assetRequestManagementRepository.FulFillAssetRequest(fulfillAssetRequestDTO, userId);
         return HelperFunctions.ResponseFormatter(this, result);
     }
 

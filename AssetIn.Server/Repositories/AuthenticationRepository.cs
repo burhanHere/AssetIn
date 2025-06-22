@@ -42,6 +42,7 @@ public class AuthenticationRepository(ApplicationDbContext applicationDbContext,
       SecurityStamp = Guid.NewGuid().ToString(),
       Gender = userSignUpDTO.Gender!,
       DateOfBirth = userSignUpDTO.DateOfBirth,
+      PhoneNumber = userSignUpDTO.PhoneNumber,
       ProfilePicturePath = ""
     };
 

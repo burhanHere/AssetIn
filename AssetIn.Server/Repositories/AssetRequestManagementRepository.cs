@@ -129,12 +129,11 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
                 };
             }
         }
-
         var requiredAssetRequests = await
         (from assetRequests in _applicationDbContext.OrganizationsAssetRequests
          join AssetRequestStatuses in _applicationDbContext.OrganizationsAssetRequestStatuses
          on assetRequests.RequestStatus equals AssetRequestStatuses.OrganizationsAssetRequestStatusID
-         where assetRequests.UserID == validUser.Id && assetRequests.OrganizationID == organizationId
+         where assetRequests.UserID == validUser.Id
          select new
          {
              AssetRequestID = assetRequests.OrganizationsAssetRequestID,
@@ -468,7 +467,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
         };
     }
 
-    public async Task<ApiResponse> FulFillAssetRequest(FulfillAssetRequestDTO fullfilAssetRequestDTO, string userId)
+    public async Task<ApiResponse> FulFillAssetRequest(FulfillAssetRequestDTO fulfillAssetRequestDTO, string userId)
     {
         var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
@@ -480,7 +479,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
             };
         }
 
-        var targetAssetRequest = await _applicationDbContext.OrganizationsAssetRequests.FirstOrDefaultAsync(x => x.OrganizationsAssetRequestID == fullfilAssetRequestDTO.AssetRequestId);
+        var targetAssetRequest = await _applicationDbContext.OrganizationsAssetRequests.FirstOrDefaultAsync(x => x.OrganizationsAssetRequestID == fulfillAssetRequestDTO.AssetRequestId);
         if (targetAssetRequest == null)
         {
             return new ApiResponse
@@ -540,7 +539,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
             }
         }
 
-        var assetToAssign = await _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetlD == fullfilAssetRequestDTO.AssetID);
+        var assetToAssign = await _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetlD == fulfillAssetRequestDTO.AssetID);
         if (assetToAssign == null)
         {
             return new ApiResponse
@@ -558,7 +557,9 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
             };
         }
 
-        if (!targetAssetRequest.User.Status)
+        // Check if the user who made the request is still active
+        var requestUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == targetAssetRequest.UserID);
+        if (requestUser == null || !requestUser.Status)
         {
             return new ApiResponse
             {
@@ -571,7 +572,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
         {
             AssignedAt = DateTime.Now,
             ReturnedAt = DateTime.MinValue,
-            Notes = fullfilAssetRequestDTO.Notes,
+            Notes = fulfillAssetRequestDTO.Notes,
             AssignedToUserID = targetAssetRequest.UserID,
             AssignedByUserID = validUser.Id,
             AssetID = assetToAssign.AssetlD,
@@ -610,11 +611,10 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
 
         <div style=""margin-bottom: 20px;"">
             <p style=""font-weight: bold;""><strong>Asset Request Title:</strong> {targetAssetRequest.Title}</p>
-            <p style=""font-weight: bold;""><strong>Description:</strong> {targetAssetRequest.Description}</p>
-            <p style=""font-weight: bold;""><strong>Request Date:</strong> {targetAssetRequest.RequestDate}</p>
+            <p style=""font-weight: bold;""><strong>Description:</strong> {targetAssetRequest.Description}</p>            <p style=""font-weight: bold;""><strong>Request Date:</strong> {targetAssetRequest.RequestDate}</p>
         </div>
  </div>";
-            bool emailResult = await _emailService.SendEmailAsync(validUser.Email!, subject, messageTemplate);
+            bool emailResult = await _emailService.SendEmailAsync(requestUser.Email!, subject, messageTemplate);
 
             return new ApiResponse
             {

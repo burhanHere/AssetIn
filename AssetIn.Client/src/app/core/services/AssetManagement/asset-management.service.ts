@@ -25,11 +25,28 @@ export class AssetManagementService {
     return this.httpClient.delete<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.DeleteAsset + `?assetID=${targetAssetId}`);
   }
 
+  public GetAllAvailableAssetByCatagoryId(organizationID: number, catagoryID: number): Observable<ApiResponse> {
+    return this.httpClient.get<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.GetAllAvailableAssetByCatagoryId + `?organizationID=${organizationID}&catagoryID=${catagoryID}`);
+  }
+
   public GetAllAssetCatagory(organizationID: number): Observable<ApiResponse> {
     return this.httpClient.get<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.GetAllAssetCatagory + `?organizationID=${organizationID}`);
   }
 
-  public GetAllAvailableAssetByCatagoryId(organizationID: number, catagoryID: number): Observable<ApiResponse> {
-    return this.httpClient.get<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.GetAllAvailableAssetByCatagoryId + `?organizationID=${organizationID}&catagoryID=${catagoryID}`);
+  public GetAllAssetType(organizationID: number): Observable<ApiResponse> {
+    return this.httpClient.get<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.GetAllAssetType + `?organizationID=${organizationID}`);
+  }
+
+  public CreateNewAssetType(assetType: any): Observable<ApiResponse> {
+    return this.httpClient.post<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.CreateNewAssetType, assetType);
+  }
+
+  public CreateNewAssetCatagory(assetCatagory: any): Observable<ApiResponse> {
+    return this.httpClient.post<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.CreateNewAssetCatagory, assetCatagory);
+  }
+
+  public CreateAsset(asset: any): Observable<ApiResponse> {
+    return this.httpClient.post<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.CreateAsset, asset);
   }
 }
+

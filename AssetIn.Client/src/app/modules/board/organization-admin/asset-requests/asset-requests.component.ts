@@ -218,14 +218,12 @@ export class AssetRequestsComponent implements OnInit {
       .GetAllAvailableAssetByCatagoryId(this.organizationId, categoryId)
       .subscribe(
         (response: any) => {
-          debugger;
           this.availableAssets = response.responseData || [];
           this.isLoading = false;
         },
         (error: any) => {
-          this.alertMessage =
-            error.error.responseData?.[1] || 'Failed to load assets.';
-          this.alertTitle = error.error.responseData?.[0] || 'Error';
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         }
@@ -247,8 +245,8 @@ export class AssetRequestsComponent implements OnInit {
 
           },
           (error) => {
-            this.alertTitle = error.error.responseData[0];
-            this.alertMessage = error.error.responseData[1];
+            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
             this.showAlert = true;
             this.isLoading = false;
           },

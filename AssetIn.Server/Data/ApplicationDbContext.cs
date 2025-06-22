@@ -43,8 +43,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         .HasOne(o => o.OrganizationsAssetAssignReturn)
         .WithMany()
         .HasForeignKey(o => o.AssetAssignmentId)
-        .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
-
+        .OnDelete(DeleteBehavior.SetNull)
+        .IsRequired(false);
         modelBuilder.Entity<OrganizationsAssetRequest>()
         .HasOne(o => o.Organization)
         .WithMany() // many Organizations can point to one User

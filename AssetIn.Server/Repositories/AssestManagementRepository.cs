@@ -58,26 +58,50 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             }
         }
 
+        string assetIdentificationNumber = "";
+        while (true)
+        {
+            assetIdentificationNumber = Guid.NewGuid().ToString("N"); // Generate a random barcode
+            if (!(await _applicationDbContext.Assets.AnyAsync(x => x.AssetIdentificationNumber == assetIdentificationNumber)))
+            {
+                break;
+            }
+        }
+
+        string barcode = "";
+        while (true)
+        {
+            barcode = Guid.NewGuid().ToString("N").Substring(0, 10); // Generate a random barcode
+            if (!(await _applicationDbContext.Assets.AnyAsync(x => x.Barcode == barcode)))
+            {
+                break;
+            }
+        }
+
+
         Asset newAssetModel = new()
         {
             AssetName = newAsset.AssetName,
             Description = newAsset.Description,
             SerialNumber = newAsset.SerialNumber,
-            Barcode = newAsset.Barcode,
+            Barcode = barcode,
             Model = newAsset.Model,
             Manufacturer = newAsset.Manufacturer,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
             PurchaseDate = newAsset.PurchaseDate,
+            PurchasePrice = newAsset.PurchasePrice,
+            CostPrice = newAsset.CostPrice,
             Location = newAsset.Location,
             DepreciationRate = newAsset.DepreciationRate,
             Problem = newAsset.Problem,
-            AssetIdentificationNumber = newAsset.AssetIdentificationNumber,
+            AssetIdentificationNumber = assetIdentificationNumber,
             OrganizationID = requiredOrganization.OrganizationID,
-            AssetStatusID = newAsset.AssetStatusID,
+            AssetStatusID = 4, // 4 = available
             AssetCatagoryID = newAsset.AssetCatagoryID,
             AssetTypeID = newAsset.AssetTypeID,
             DeletedByOrganization = false,
+            ProfilePicturePath = newAsset.ProfilePicturePath
         };
 
         await _applicationDbContext.Assets.AddAsync(newAssetModel);
@@ -156,15 +180,12 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
         targetAsset.AssetName = updatedAsset.AssetName;
         targetAsset.Description = updatedAsset.Description;
         targetAsset.SerialNumber = updatedAsset.SerialNumber;
-        targetAsset.Barcode = updatedAsset.Barcode;
         targetAsset.Model = updatedAsset.Model;
         targetAsset.Manufacturer = updatedAsset.Manufacturer;
         targetAsset.PurchaseDate = updatedAsset.PurchaseDate;
         targetAsset.Location = updatedAsset.Location;
         targetAsset.DepreciationRate = updatedAsset.DepreciationRate;
         targetAsset.Problem = updatedAsset.Problem;
-        targetAsset.AssetIdentificationNumber = updatedAsset.AssetIdentificationNumber;
-        targetAsset.AssetStatusID = updatedAsset.AssetStatusID;
         targetAsset.AssetCatagoryID = updatedAsset.AssetCatagoryID;
         targetAsset.AssetTypeID = updatedAsset.AssetTypeID;
         targetAsset.UpdatedDate = DateTime.UtcNow;
@@ -780,7 +801,14 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             }
         }
 
-        List<OrganizationsAssetCatagory> allCatagories = await _applicationDbContext.OrganizationsAssetCatagories.Where(x => x.OrganizationsID == organizationID).ToListAsync();
+        var allCatagories = await _applicationDbContext.OrganizationsAssetCatagories
+        .Where(x => x.OrganizationsID == organizationID)
+        .Select(x => new OrganizationsAssetCatagory
+        {
+            OrganizationsAssetCatagoryID = x.OrganizationsAssetCatagoryID,
+            OrganizationsAssetCatagoryName = x.OrganizationsAssetCatagoryName,
+            OrganizationsID = x.OrganizationsID
+        }).ToListAsync();
 
         return new ApiResponse
         {
@@ -1060,7 +1088,15 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             }
         }
 
-        List<OrganizationsAssetType> allAssetType = await _applicationDbContext.OrganizationsAssetTypes.Where(x => x.OrganizationsID == organizationID).ToListAsync();
+        var allAssetType = await _applicationDbContext.OrganizationsAssetTypes
+        .Where(x => x.OrganizationsID == organizationID)
+        .Select(x => new
+        {
+            OrganizationsAssetTypeID = x.OrganizationsAssetTypeID,
+            OrganizationsAssetTypeName = x.OrganizationsAssetTypeName,
+            OrganizationsID = x.OrganizationsID
+        })
+        .ToListAsync();
 
         return new ApiResponse
         {

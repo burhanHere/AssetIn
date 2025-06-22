@@ -1,162 +1,307 @@
 <div class="main-div">
+  <div class="heading-container">
     <h2 class="main-div-text">New Asset</h2>
-    <div class="asset-div">
-        
-        <div style="display: grid;">
-            <div class="asset-details-div">
-                <form [formGroup]="assetForm">
-                    <div class="form-div">
-                        
-                        <div class="outer-div">
-                            <input id="assetName" formControlName="assetName" type="text" placeholder="Asset Name">
-                            @if (assetForm.controls['assetName'].touched && assetForm.controls['assetName'].errors?.['required']) {
-                            <div class="input-error">Asset Name is required.</div>
-                            }
-
-                            <div class="grid-div">
-                                <select style="margin-top: 1vw;" formControlName="assetCategory">
-                                    <option value="" disabled>Select Category</option>
-                                    @for (category of assetCategories; track category) {
-                                        <option [value]="category">{{ category }}</option>
-                                    }
-                                </select>
-                                @if (assetForm.controls['assetCategory'].touched && assetForm.controls['assetCategory'].errors?.['required']) {
-                                    <div class="input-error">Asset Category is required.</div>
-                                }
-                            </div>
-
-                            <div class="grid-div">
-                                <select style="margin-top: 1vw;" formControlName="assetType">
-                                    <option selected disabled value="">Select Asset Type</option>
-                                    @for (type of assetTypes; track type) {
-                                        <option [value]="type">{{ type }}</option>
-                                    }
-                                </select>
-                                @if (assetForm.controls['assetType'].touched && assetForm.controls['assetType'].errors?.['required']) {
-                                    <div class="input-error">Asset Type is required.</div>
-                                }
-                            </div>
-
-                            <div class="inner-div">
-                                <div class="grid-div">
-                                    <input id="serialNumber" formControlName="serialNumber" type="number" placeholder="Serial Number" formControlName="serialNumber">
-                                    @if (assetForm.controls['serialNumber'].touched && assetForm.controls['serialNumber'].errors?.['required']) {
-                                        <div class="input-error">Serial Number is required.</div>
-                                    }
-                                </div>
-                                <div class="grid-div">
-                                    <input id="purchasePrice" formControlName="purchasePrice" type="number" placeholder="Purchase Price">
-                                    @if (assetForm.controls['purchasePrice'].touched && assetForm.controls['purchasePrice'].errors?.['required']) {
-                                        <div class="input-error">Purchase Price is required.</div>
-                                    }
-                                </div>
-                            </div>
-
-                            <div class="inner-div">
-                                <div class="grid-div">
-                                    <input id="model" formControlName="model" type="text" placeholder="Model">
-                                    @if (assetForm.controls['model'].touched && assetForm.controls['model'].errors?.['required']) {
-                                        <div class="input-error">Model is required.</div>
-                                    }
-                                </div>
-                                <div class="grid-div">
-                                    <input id="manufacturer" formControlName="manufacturer" type="text" placeholder="Manufacturer">
-                                    @if (assetForm.controls['manufacturer'].touched && assetForm.controls['manufacturer'].errors?.['required']) {
-                                        <div class="input-error">Manufacturer is required.</div>
-                                    }
-                                </div>
-                            </div>
-
-                            <input id="depreciationRate" formControlName="depreciationRate" type="number" placeholder="Depreciation Rate" step="0.1" min="0" max="10">
-                            @if (assetForm.controls['depreciationRate'].touched && assetForm.controls['depreciationRate'].errors?.['required']) {
-                                <div class="input-error">Depreciation Rate is required.</div>
-                            } 
-                        </div>
-                        
-                        <div class="outer-div">
-                            <textarea id="description" formControlName="description" placeholder="Description"></textarea>
-                            @if (assetForm.controls['description'].touched && assetForm.controls['description'].errors?.['required']) {
-                                <div class="input-error">Description is required.</div>
-                            } 
-                            <textarea id="problem" formControlName="problem" placeholder="Problem"></textarea>
-                            @if (assetForm.controls['problem'].touched && assetForm.controls['problem'].errors?.['required']) {
-                                <div class="input-error">Problem is required.</div>
-                            }
-                            
-                            <div class="inner-div">
-                                <div class="grid-div">
-                                    <label>Purchase Date</label>
-                                    <input id="purchaseDate" formControlName="purchaseDate" type="date">
-                                    @if (assetForm.controls['purchaseDate'].touched && assetForm.controls['purchaseDate'].errors?.['required']) {
-                                        <div class="input-error">Purchase Date is required.</div>
-                                    }
-                                </div>
-                                <div class="grid-div">
-                                    <label>Location</label>
-                                    <div class="input-icon-wrapper">
-                                        <img src="icons/location.png" alt="Location Icon" class="input-icon">
-                                        <input id="location" formControlName="location" type="text" placeholder="Location">
-                                        @if (assetForm.controls['location'].touched && assetForm.controls['location'].errors?.['required']) {
-                                            <div class="input-error">Location is required.</div>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
-            </div>
-            
-            <div class="btn-div">
-                <button class="btn" (click)="onCancel()">
-                    <img class="btn-img" src="icons/cancel.png" alt="Cancel Icon">
-                    Cancel
-                </button>
-                <button class="btn" (click)="onSubmit(assetForm)">
-                    <img class="btn-img" src="icons/save.png" alt="Save Icon">
-                    Save
-                </button>
-            </div>
-        </div>
-
-        <div class="asset-img-div">
-            <div class="action-img-div">
-                <button class="btn-action" (click)="onDeleteImage()">
-                    <img src="icons/delete-black.png" alt="Delete Image">
-                </button>
-                <button class="btn-action" (click)="onUploadImage()">
-                    <img src="icons/upload.png" alt="Upload Image">
-                </button>
-            </div>
-            <div class="img-img-div">
-                <button style="border: none; background-color: white;" (click)="onCaptureImage()">
-                    <img [src]="previewUrl ? previewUrl : 'icons/camera.png'" alt="Image">
-                </button>
-                <div class="preview-wrapper">
-                <img *ngIf="previewUrl; else placeholder"
-                    [src]="previewUrl"
-                    class="preview-img">
-                <ng-template #placeholder>
-                    <!-- your placeholder markup, e.g. grey box -->
-                    <div class="preview-placeholder"></div>
-                </ng-template>
-                </div>
-            </div>
-            <input
-                type="file"
-                accept="image/*"
-                #fileUploader
-                (change)="onFileSelected($event)"
-                hidden>
-            <input
-                type="file"
-                accept="image/*"
-                capture="environment"
-                #cameraCapture
-                (change)="onFileSelected($event)"
-                hidden>
-        </div>
-
+    <div
+      class="request-card add-new"
+      (click)="showNewAssetCatagoryForm = !showNewAssetCatagoryForm"
+    >
+      <img src="icons/newReq.png" alt="New Request" />
+      <div class="label bold">Add Asset Category or Asset Type</div>
     </div>
+  </div>
+  <div class="asset-div">
+    <div style="display: grid">
+      <div class="asset-details-div">
+        <form [formGroup]="assetForm">
+          <div class="form-div">
+            <div class="outer-div">
+              <div class="grid-div">
+                <input
+                  id="assetName"
+                  formControlName="assetName"
+                  type="text"
+                  placeholder="Asset Name"
+                />
+                @if (assetForm.controls['assetName'].touched &&
+                assetForm.controls['assetName'].errors?.['required']) {
+                <div class="input-error">Asset Name is required.</div>
+                }
+              </div>
+
+              <div class="grid-div">
+                <select style="margin-top: 1vw" formControlName="assetCategory">
+                  <option value="" disabled>Select Category</option>
+                  @for (category of assetCategories; track $index) {
+                  <option [value]="category?.organizationsAssetCatagoryID">
+                    {{ category?.organizationsAssetCatagoryName }}
+                  </option>
+                  }
+                </select>
+                @if (assetForm.controls['assetCategory'].touched &&
+                assetForm.controls['assetCategory'].errors?.['required']) {
+                <div class="input-error">Asset Category is required.</div>
+                }
+              </div>
+
+              <div class="grid-div">
+                <select style="margin-top: 1vw" formControlName="assetType">
+                  <option selected disabled value="">Select Asset Type</option>
+                  @for (type of assetTypes; track $index) {
+                  <option [value]="type?.organizationsAssetTypeID">
+                    {{ type?.organizationsAssetTypeName }}
+                  </option>
+                  }
+                </select>
+                @if (assetForm.controls['assetType'].touched &&
+                assetForm.controls['assetType'].errors?.['required']) {
+                <div class="input-error">Asset Type is required.</div>
+                }
+              </div>
+
+              <div class="inner-div">
+                <div class="grid-div">
+                  <input
+                    id="serialNumber"
+                    formControlName="serialNumber"
+                    type="text"
+                    placeholder="Serial Number"
+                    formControlName="serialNumber"
+                  />
+                  @if (assetForm.controls['serialNumber'].touched &&
+                  assetForm.controls['serialNumber'].errors?.['required']) {
+                  <div class="input-error">Serial Number is required.</div>
+                  }
+                </div>
+                <div class="grid-div">
+                  <input
+                    id="depreciationRate"
+                    formControlName="depreciationRate"
+                    type="number"
+                    placeholder="Depreciation Rate"
+                    step="0.1"
+                    min="0"
+                    max="10"
+                  />
+                  @if (assetForm.controls['depreciationRate'].touched &&
+                  assetForm.controls['depreciationRate'].errors?.['required']) {
+                  <div class="input-error">Depreciation Rate is required.</div>
+                  }
+                </div>
+              </div>
+
+              <div class="inner-div">
+                <div class="grid-div">
+                  <input
+                    id="model"
+                    formControlName="model"
+                    type="text"
+                    placeholder="Model"
+                  />
+                  @if (assetForm.controls['model'].touched &&
+                  assetForm.controls['model'].errors?.['required']) {
+                  <div class="input-error">Model is required.</div>
+                  }
+                </div>
+                <div class="grid-div">
+                  <input
+                    id="manufacturer"
+                    formControlName="manufacturer"
+                    type="text"
+                    placeholder="Manufacturer"
+                  />
+                  @if (assetForm.controls['manufacturer'].touched &&
+                  assetForm.controls['manufacturer'].errors?.['required']) {
+                  <div class="input-error">Manufacturer is required.</div>
+                  }
+                </div>
+              </div>
+
+              <div class="inner-div">
+                <div class="grid-div">
+                  <input
+                    id="purchasePrice"
+                    formControlName="purchasePrice"
+                    type="number"
+                    placeholder="Purchase Price"
+                  />
+                  @if (assetForm.controls['purchasePrice'].touched &&
+                  assetForm.controls['purchasePrice'].errors?.['required']) {
+                  <div class="input-error">Purchase Price is required.</div>
+                  }
+                </div>
+                <div class="grid-div">
+                  <input
+                    id="costPrice"
+                    formControlName="costPrice"
+                    type="number"
+                    placeholder="Cost Price"
+                  />
+                  @if (assetForm.controls['costPrice'].touched &&
+                  assetForm.controls['costPrice'].errors?.['required']) {
+                  <div class="input-error">Cost Price is required.</div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="outer-div">
+              <div class="grid-div">
+                <textarea
+                  id="description"
+                  formControlName="description"
+                  placeholder="Description"
+                ></textarea>
+                @if (assetForm.controls['description'].touched &&
+                assetForm.controls['description'].errors?.['required']) {
+                <div class="input-error">Description is required.</div>
+                }
+              </div>
+
+              <div class="grid-div">
+                <textarea
+                  id="problem"
+                  formControlName="problem"
+                  placeholder="Problem"
+                ></textarea>
+                @if (assetForm.controls['problem'].touched &&
+                assetForm.controls['problem'].errors?.['required']) {
+                <div class="input-error">Problem is required.</div>
+                }
+              </div>
+
+              <div class="inner-div">
+                <div class="grid-div">
+                  <label>Purchase Date</label>
+                  <input
+                    id="purchaseDate"
+                    formControlName="purchaseDate"
+                    type="date"
+                  />
+                  @if (assetForm.controls['purchaseDate'].touched &&
+                  assetForm.controls['purchaseDate'].errors?.['required']) {
+                  <div class="input-error">Purchase Date is required.</div>
+                  }
+                </div>
+                <div class="grid-div">
+                  <label>Location</label>
+                  <div class="input-icon-wrapper">
+                    <img
+                      src="icons/location.png"
+                      alt="Location Icon"
+                      class="input-icon"
+                    />
+                    <input
+                      id="location"
+                      formControlName="location"
+                      type="text"
+                      placeholder="Location"
+                    />
+                    @if (assetForm.controls['location'].touched &&
+                    assetForm.controls['location'].errors?.['required']) {
+                    <div class="input-error">Location is required.</div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="btn-div">
+        <button class="btn" (click)="onReset()">
+          <img class="btn-img" src="icons/cancel.png" alt="Cancel Icon" />
+          Reset Form
+        </button>
+        <button class="btn" (click)="createNewAsset()">
+          <img class="btn-img" src="icons/save.png" alt="Save Icon" />
+          Save Asset
+        </button>
+      </div>
+    </div>
+
+    <div class="asset-img-div">
+      <div class="action-img-div">
+        <button class="btn-action">
+          <img src="icons/delete-black.png" alt="Delete Image" />
+        </button>
+        <button class="btn-action">
+          <img src="icons/upload.png" alt="Upload Image" />
+        </button>
+      </div>
+      <div class="img-img-div">
+        <img
+          [src]="uploadedAssetImage ? uploadedAssetImage : 'icons/camera.png'"
+          alt="Image"
+        />
+      </div>
+    </div>
+  </div>
 </div>
+
+@if (showNewAssetCatagoryForm) {
+<div class="asset-form-popup">
+  <form [formGroup]="newAssetCategoryOrTypeForm">
+    <button
+      type="button"
+      class="close-btn"
+      (click)="showNewAssetCatagoryForm = false"
+    >
+      ×
+    </button>
+    <h3>New Asset Category</h3>
+
+    <div>
+      <label for="name">Name</label>
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        placeholder="Enter Name"
+      />
+      @if (newAssetCategoryOrTypeForm.controls['name'].touched &&
+      newAssetCategoryOrTypeForm.controls['name'].errors?.['required']) {
+      <div class="input-error">Name is required.</div>
+      }
+    </div>
+    <div>
+      <div style="display: flex; gap: 1vw">
+        <label for="CatagoryOrType">Asset Catagory</label>
+        <input
+          id="CatagoryOrType"
+          type="radio"
+          formControlName="CatagoryOrType"
+          value="Asset Catagory"
+        />
+        <label for="CatagoryOrType">Asset Type</label>
+        <input
+          id="CatagoryOrType"
+          type="radio"
+          formControlName="CatagoryOrType"
+          value="Asset Type"
+        />
+      </div>
+      @if (newAssetCategoryOrTypeForm.controls['CatagoryOrType'].touched &&
+      newAssetCategoryOrTypeForm.controls['CatagoryOrType'].errors?.['required'])
+      {
+      <div class="input-error">Catagory/Type is required.</div>
+      }
+    </div>
+    <div style="text-align: right">
+      <button class="forward-btn" (click)="createNewAssetTypeOrCategory()">
+        Create
+      </button>
+    </div>
+  </form>
+</div>
+}
+<!-- loader and alert from here -->
+@if(isLoading) {
+<app-page-loader></app-page-loader>
+} @if (showAlert) {
+<app-alert-card
+  [title]="alertTitle"
+  [message]="alertMessage"
+  (closeCard)="showAlert = $event"
+></app-alert-card>
+}

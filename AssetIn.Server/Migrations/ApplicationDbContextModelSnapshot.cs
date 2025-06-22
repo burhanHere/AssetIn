@@ -273,7 +273,7 @@ namespace AssetIn.Server.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("OrganizationsAssetRequestID"));
 
-                    b.Property<int>("AssetAssignmentId")
+                    b.Property<int?>("AssetAssignmentId")
                         .HasColumnType("int");
 
                     b.Property<bool>("CompletionStatus")
@@ -669,28 +669,28 @@ namespace AssetIn.Server.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "9e1deadb-2d9d-440d-8a61-efc2f6382c09",
+                            ConcurrencyStamp = "9432df9c-b196-41f1-942f-6690a0d10f33",
                             Name = "OrganizationOwner",
                             NormalizedName = "ORGANIZATIONOWNER"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "03558503-7746-4df5-952f-0f1b5f9b922e",
+                            ConcurrencyStamp = "58694e25-a9e7-4708-8833-f84dbed500bf",
                             Name = "OrganizationEmployee",
                             NormalizedName = "ORGANIZATIONEMPLOYEE"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "5d9d7755-db3a-4405-b58b-2fc35eec1857",
+                            ConcurrencyStamp = "8fbe05a6-21fa-4493-9129-fe5bee1d4d23",
                             Name = "OrganizationAssetManager",
                             NormalizedName = "ORGANIZATIONASSETMANAGER"
                         },
                         new
                         {
                             Id = "4",
-                            ConcurrencyStamp = "59fd15bd-1d5b-41c4-8fea-72380a6b95cd",
+                            ConcurrencyStamp = "6108fcc1-6f31-47d4-83ff-7c94a959c91c",
                             Name = "Vendor",
                             NormalizedName = "VENDOR"
                         });
@@ -908,8 +908,7 @@ namespace AssetIn.Server.Migrations
                     b.HasOne("AssetIn.Server.Models.OrganizationsAssetAssignReturn", "OrganizationsAssetAssignReturn")
                         .WithMany()
                         .HasForeignKey("AssetAssignmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("AssetIn.Server.Models.Organization", "Organization")
                         .WithMany()
