@@ -196,17 +196,6 @@ textarea {
   border: 1px solid #ccc;
 }
 
-.preview-placeholder {
-  width: 100%;
-  height: 200px; /* Adjust based on your image size */
-  background-color: #e0e0e0; /* Light grey */
-  border: 1px dashed #aaa;   /* Optional: gives a dashed border */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-  font-style: italic;
-=======
 /* burahnhere  */
 .heading-container {
   display: flex;
@@ -272,8 +261,8 @@ textarea {
   border: 3px solid transparent;
   background-clip: padding-box, border-box;
   background-origin: border-box;
-  background-image: linear-gradient(white, white),
-    /* Inner */ linear-gradient(360deg, #7ac6ec, #cf42d7); /* Gradient border */
+  background-image: linear-gradient(white, white);
+  /* Inner / linear-gradient(360deg, #7ac6ec, #cf42d7); / Gradient border */
 }
 
 /* Close button */
