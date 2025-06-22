@@ -18,7 +18,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<OrganizationsAssetRequestStatus> OrganizationsAssetRequestStatuses { get; set; }
     public DbSet<OrganizationsAssetType> OrganizationsAssetTypes { get; set; }
     public DbSet<Vendor> Vendors { get; set; }
-    public DbSet<VendorProcurementDetail> VendorProcurementDetails { get; set; }
+    public DbSet<VendorProduct> VendorProducts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -75,7 +75,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
        .HasForeignKey(o => o.UserID)
        .OnDelete(DeleteBehavior.Cascade); // or whatever behavior you want
 
-        modelBuilder.Entity<VendorProcurementDetail>()
+        modelBuilder.Entity<VendorProduct>()
        .HasOne(o => o.Vendor)
        .WithMany() // many Organizations can point to one User
        .HasForeignKey(o => o.VendorID)
