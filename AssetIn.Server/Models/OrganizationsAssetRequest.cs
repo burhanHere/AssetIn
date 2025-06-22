@@ -24,6 +24,10 @@ public class OrganizationsAssetRequest
     [Required]
     public string UserID { get; set; }
     [Required]
+    public int AssetAssignmentId { get; set; }
+    [ForeignKey("AssetAssignmentId")]
+    public OrganizationsAssetAssignReturn OrganizationsAssetAssignReturn { get; set; }
+    [Required]
     public int OrganizationID { get; set; }
     [ForeignKey("OrganizationID")]
     public Organization Organization { get; set; }

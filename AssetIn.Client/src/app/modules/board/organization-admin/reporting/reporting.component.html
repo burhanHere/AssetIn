@@ -1,0 +1,172 @@
+<div class="main-div">
+  <div class="heading">
+    <h3>Reportings</h3>
+  </div>
+  <div class="filters">
+    <label>Report type</label>
+    <select (change)="onReportTypeChange($event)">
+      <option value="" [selected]="true">Select Report Type</option>
+      <option value="Assets">Assets Report</option>
+      <option value="Employee">Employee Report</option>
+      <option value="Assets Request">Asset Requests Report</option>
+    </select>
+    @if(selectedReportType!==''){
+    <form [formGroup]="reportingForm">
+      @if (selectedReportType === 'Assets') {
+      <div class="filter-control-container">
+        <div class="filter-item">
+          <label>Asset type</label>
+          <select formControlName="assetType">
+            <option value="" [selected]="true">Select Asset Type</option>
+            @for (assetType of assetTypes; track $index) {
+            <option [value]="assetType?.id">{{ assetType?.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label>Asset Status</label>
+          <select formControlName="assetStatus">
+            <option value="" [selected]="true">Select Asset Status</option>
+            @for (assetStatus of assetStatuses; track $index) {
+            <option [value]="assetStatus?.id">{{ assetStatus?.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label>Asset Catagory</label>
+          <select formControlName="assetCategory">
+            <option value="" [selected]="true">Select Asset Catagory</option>
+            @for (assetCatagory of assetCatagories; track $index) {
+            <option [value]="assetCatagory?.id">
+              {{ assetCatagory?.name }}
+            </option>
+            }
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label>Assigned To</label>
+          <select formControlName="assignedTo">
+            <option value="" [selected]="true">All Employees</option>
+            @for (employee of employees; track $index) {
+            <option [value]="employee?.id">{{ employee?.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      }@else if (selectedReportType === 'Employee') {
+      <div class="filter-control-container">
+        <div class="filter-item">
+          <label>Employee Role</label>
+          <select formControlName="employeeRole">
+            <option value="" [selected]="true">Select Employee Role</option>
+            @for (role of employeeRoles; track $index) {
+            <option [value]="role?.id">{{ role?.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label>Employee Status</label>
+          <select formControlName="employeeStatus">
+            <option value="" [selected]="true">Select Employee Status</option>
+            @for (item of employeeStatus; track $index) {
+            <option [value]="item?.id">{{ item?.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label>Specific Employee</label>
+          <select formControlName="specificEmployee">
+            <option value="" [selected]="true">Select Specific Employee</option>
+            @for (employee of employees; track $index) {
+            <option [value]="employee?.id">{{ employee?.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label>Gender</label>
+          <select formControlName="gender">
+            <option value="" [selected]="true">Select Gender</option>
+            @for (gender of genders; track $index) {
+            <option [value]="gender">{{ gender }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      } @else if (selectedReportType === 'Assets Request') {
+      <div class="filter-control-container">
+        <div class="filter-item">
+          <label>Request Status</label>
+          <select formControlName="requestStatus">
+            <option value="" [selected]="true">Select Request Status</option>
+            @for (assetRequestStatus of assetRequestStatuses; track $index) {
+            <option [value]="assetRequestStatus?.id">
+              {{ assetRequestStatus?.name }}
+            </option>
+            }
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label>Requested By</label>
+          <select formControlName="requestedBy">
+            <option value="" [selected]="true">Select Asset Type</option>
+            @for (employee of employees; track $index) {
+            <option [value]="employee?.id">{{ employee?.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      }
+
+      <div class="filter-control-container">
+        <div class="filter-item">
+          <label>From Date</label>
+          <input type="date" formControlName="fromDate" />
+        </div>
+
+        <div class="filter-item">
+          <label>To Date</label>
+          <input type="date" formControlName="toDate" />
+        </div>
+
+        <div class="filter-item">
+          <label>Quick Select Date Range</label>
+          <select
+            formControlName="quickSelectDateRange"
+            (change)="updateDateRange($event)"
+          >
+            <option value="" [selected]="true">Custom Range</option>
+            <option value="Last 7 Days">Last 7 Days</option>
+            <option value="Last 30 Days">Last 30 Days</option>
+            <option value="Last 3 Months">Last 3 Months</option>
+            <option value="Last Year">Last Year</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-control-container">
+        <button (click)="fetchReportData()">Download</button>
+        <button (click)="resetAllFilters()">Reset Filters</button>
+      </div>
+    </form>
+    }@else{
+    <p>Please Select a report type to continue...</p>
+    }
+  </div>
+</div>
+
+@if(isLoading) {
+<app-page-loader></app-page-loader>
+} @if (showAlert) {
+<app-alert-card
+  [title]="alertTitle"
+  [message]="alertMessage"
+  (closeCard)="showAlert = $event"
+></app-alert-card>
+}

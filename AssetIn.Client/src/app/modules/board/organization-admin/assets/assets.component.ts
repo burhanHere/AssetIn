@@ -42,15 +42,17 @@ export class AssetsComponent implements OnInit {
     this.isLoading = true;
     this.AssetManagementService.GetAllAsset(this.organizationId).subscribe(
       (responce: any) => {
+
         this.isLoading = false;
         this.assetList = [];
         this.assetList = responce.responseData;
       },
       (error: HttpErrorResponse) => {
+
         this.isLoading = false;
         this.showAlert = true;
-        this.alertTitle = error.error.responseData[0] || 'Error';
-        this.alertMessage = error.error.responseData[1] || 'An error occurred.';
+        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
       }
     );
   }
@@ -76,10 +78,11 @@ export class AssetsComponent implements OnInit {
         this.isLoading = false;
       },
       (error: HttpErrorResponse) => {
+
         this.isLoading = false;
         this.showAlert = true;
-        this.alertTitle = error.error.responseData[0] || 'Error';
-        this.alertMessage = error.error.responseData[1] || 'An error occurred.';
+        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
       },
       () => {
         this.getAssetList();

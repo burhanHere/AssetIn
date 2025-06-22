@@ -87,7 +87,7 @@ public class AuthenticationRepository(ApplicationDbContext applicationDbContext,
     // genrating email confirmation token
     var targetUser = await _userManager.FindByEmailAsync(userSignUpDTO.Email!);
     var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(targetUser!);
-    var tokenToLink = HelperFunctions.TokenToLink(_configuration.GetValue<string>("JWT:ValidAudience") + "//auth", "EmailConfirmation", emailConfirmationToken, newUser.Email!);
+    var tokenToLink = HelperFunctions.TokenToLink(_configuration.GetValue<string>("JWT:ValidAudience") + "/auth", "emailConfirmation", emailConfirmationToken, newUser.Email!);
 
     //Confirmation Email message 
     string message = $"<h2>Hello,</h2>\nPlease click the below link to confirm you email address.\n Confirmation Link: <a href={tokenToLink}>Click Here </a>";

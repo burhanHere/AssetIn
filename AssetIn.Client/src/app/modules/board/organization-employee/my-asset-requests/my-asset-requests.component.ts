@@ -22,7 +22,7 @@ export class MyAssetRequestsComponent implements OnInit {
   // Asset requests data
   public activeFilter: string;
   public dashboardData: any;
-  public originalRequests:any;
+  public originalRequests: any;
   public filteredRequests: Array<any>;
   // Assets data
   public isLoading: boolean;
@@ -67,22 +67,21 @@ export class MyAssetRequestsComponent implements OnInit {
       )
       .subscribe(
         (response: any) => {
-        // Sort requests by requestDate
-        this.dashboardData = response.responseData;
-        const sortedRequests = response.responseData.requiredAssetRequests.sort(
-          (a: any, b: any) => new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime()
-        );
+          // Sort requests by requestDate
+          this.dashboardData = response.responseData;
+          const sortedRequests = response.responseData.requiredAssetRequests.sort(
+            (a: any, b: any) => new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime()
+          );
 
-        // Set both main and original copies
-        this.dashboardData.requiredAssetRequests = [...sortedRequests];
-        this.dashboardData['originalRequests'] = [...sortedRequests];
-
-        this.isLoading = false;
-      },
+          // Set both main and original copies
+          this.dashboardData.requiredAssetRequests = [...sortedRequests];
+          this.dashboardData['originalRequests'] = [...sortedRequests];
+          this.isLoading = false;
+        },
 
         (error: any) => {
-          this.alertMessage = error.error.responseData[1];
-          this.alertTitle = error.error.responseData[0];
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         }
@@ -95,19 +94,19 @@ export class MyAssetRequestsComponent implements OnInit {
     this.showNewAssetRequestForm = !this.showNewAssetRequestForm;
   }
 
- public filterRequests(status: string): void {
-  this.activeFilter = status;
+  public filterRequests(status: string): void {
+    this.activeFilter = status;
 
-  const allRequests = this.dashboardData?.originalRequests || [];
+    const allRequests = this.dashboardData?.originalRequests || [];
 
-  if (status === 'All') {
-    this.dashboardData.requiredAssetRequests = [...allRequests];
-  } else {
-    const selected = allRequests.filter((req: any) => req.requestStatus === status);
-    const rest = allRequests.filter((req: any) => req.requestStatus !== status);
-    this.dashboardData.requiredAssetRequests = [...selected, ...rest];
+    if (status === 'All') {
+      this.dashboardData.requiredAssetRequests = [...allRequests];
+    } else {
+      const selected = allRequests.filter((req: any) => req.requestStatus === status);
+      const rest = allRequests.filter((req: any) => req.requestStatus !== status);
+      this.dashboardData.requiredAssetRequests = [...selected, ...rest];
+    }
   }
-}
 
 
 
@@ -125,8 +124,8 @@ export class MyAssetRequestsComponent implements OnInit {
           this.isLoading = false;
         },
         (error: any) => {
-          this.alertMessage = error.error.responseData[1];
-          this.alertTitle = error.error.responseData[0];
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         },
@@ -162,8 +161,8 @@ export class MyAssetRequestsComponent implements OnInit {
             this.isLoading = false;
           },
           (error) => {
-            this.alertTitle = error.error.responseData[0];
-            this.alertMessage = error.error.responseData[1];
+            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
             this.showAlert = true;
             this.isLoading = false;
           },

@@ -84,8 +84,8 @@ export class EmployeesComponent implements OnInit {
           this.isLoading = false;
         },
         (error) => {
-          this.alertMessage = error.error.responseData[1];
-          this.alertTitle = error.error.responseData[0];
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         }
@@ -119,6 +119,7 @@ export class EmployeesComponent implements OnInit {
             this.isLoading = false;
           },
           (error) => {
+
             this.alertTitle = error.error.responseData[0];
             this.alertMessage = error.error.responseData[1];
             this.showAlert = true;
@@ -140,6 +141,7 @@ export class EmployeesComponent implements OnInit {
             this.isLoading = false;
           },
           (error) => {
+
             this.alertTitle = error.error.responseData[0];
             this.alertMessage = error.error.responseData[1];
             this.showAlert = true;
@@ -173,8 +175,8 @@ export class EmployeesComponent implements OnInit {
             this.isLoading = false;
           },
           (error) => {
-            this.alertTitle = error.error.responseData[0];
-            this.alertMessage = error.error.responseData[1];
+            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
             this.showAlert = true;
             this.isLoading = false;
           },
@@ -192,8 +194,8 @@ export class EmployeesComponent implements OnInit {
           },
           (error) => {
 
-            this.alertTitle = error.error.responseData[0];
-            this.alertMessage = error.error.responseData[1];
+            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
             this.showAlert = true;
             this.isLoading = false;
           },
@@ -233,8 +235,9 @@ export class EmployeesComponent implements OnInit {
           this.isLoading = false;
         },
         (error) => {
-          this.alertTitle = error.error.responseData[0];
-          this.alertMessage = error.error.responseData[1];
+
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         },

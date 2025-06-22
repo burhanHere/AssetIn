@@ -73,30 +73,30 @@ export class AssetRequestsComponent implements OnInit {
           this.isLoading = false;
         },
         (error: any) => {
-          this.alertMessage =
-            error.error.responseData[1] || 'Some error occured.';
-          this.alertTitle = error.error.responseData[0] || 'Error';
+
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         }
       );
   }
 
- public filterRequests(status: string): void {
-  this.activeFilter = status;
+  public filterRequests(status: string): void {
+    this.activeFilter = status;
 
-  if (status === 'All') {
-    this.filteredRequests = [...this.requests];
-  } else {
-    const selected = this.requests.filter(
-      (req: any) => req.requestStatus === status
-    );
-    const rest = this.requests.filter(
-      (req: any) => req.requestStatus !== status
-    );
-    this.filteredRequests = [...selected, ...rest];
+    if (status === 'All') {
+      this.filteredRequests = [...this.requests];
+    } else {
+      const selected = this.requests.filter(
+        (req: any) => req.requestStatus === status
+      );
+      const rest = this.requests.filter(
+        (req: any) => req.requestStatus !== status
+      );
+      this.filteredRequests = [...selected, ...rest];
+    }
   }
-}
 
 
   public openAssignAssetModal(request: any): void {
@@ -139,9 +139,9 @@ export class AssetRequestsComponent implements OnInit {
           this.isLoading = false;
         },
         (error) => {
-          this.alertMessage =
-            error.error.responseData[1] || 'Some error occured.';
-          this.alertTitle = error.error.responseData[0] || 'Error';
+
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         },
@@ -173,9 +173,8 @@ export class AssetRequestsComponent implements OnInit {
           this.showAssignAssetModal = false;
         },
         (error: any) => {
-          this.alertMessage =
-            error.error.responseData[1] || 'Some error occured.';
-          this.alertTitle = error.error.responseData[0] || 'Error';
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         },
@@ -204,9 +203,8 @@ export class AssetRequestsComponent implements OnInit {
           this.isLoading = false;
         },
         (error: any) => {
-          this.alertMessage =
-            error.error.responseData?.[1] || 'Failed to load assets.';
-          this.alertTitle = error.error.responseData?.[0] || 'Error';
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         }
@@ -221,31 +219,31 @@ export class AssetRequestsComponent implements OnInit {
 
   onSubmit() {
     this.isLoading = true;
-  if (this.assignAssetForm.valid) {
-    this.closeAssignAssetModal(); // Close modal first (optional)
+    if (this.assignAssetForm.valid) {
+      this.closeAssignAssetModal(); // Close modal first (optional)
 
-    this.assetRequestManagementService
-      .UpdateAssetRequestStatusToFulfilled(this.selectedRequest)
-      .subscribe(
-        (response) => {
-          this.alertMessage = response.responseData[1] || 'Request fulfilled successfully';
-          this.alertTitle = response.responseData[0] || 'Success';
-          this.isLoading = false;
+      this.assetRequestManagementService
+        .UpdateAssetRequestStatusToFulfilled(this.selectedRequest)
+        .subscribe(
+          (response) => {
+            this.alertMessage = response.responseData[1] || 'Request fulfilled successfully';
+            this.alertTitle = response.responseData[0] || 'Success';
+            this.isLoading = false;
 
-        },
-        (error) => {
-          this.alertTitle = error.error.responseData[0];
-          this.alertMessage = error.error.responseData[1];
-          this.showAlert = true;
-          this.isLoading = false;
-        },
-        ()=>{
+          },
+          (error) => {
+            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+            this.showAlert = true;
+            this.isLoading = false;
+          },
+          () => {
             this.getallAssetrequest();
-        }
-      );
-  } else {
-    this.assignAssetForm.markAllAsTouched();
+          }
+        );
+    } else {
+      this.assignAssetForm.markAllAsTouched();
+    }
   }
-}
 
 }

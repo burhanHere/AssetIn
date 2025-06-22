@@ -576,14 +576,15 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
             AssignedByUserID = validUser.Id,
             AssetID = assetToAssign.AssetlD,
         };
+        var assignmentResult = await _applicationDbContext.OrganizationsAssetAssignReturns.AddAsync(newAssetAssign);
 
         targetAssetRequest.RequestStatus = 4; // 4 = Fulfilled
         targetAssetRequest.CompletionStatus = true;
         targetAssetRequest.RequestCompletedDate = DateTime.Now;
+        targetAssetRequest.AssetAssignmentId = assignmentResult.Entity.ID;
 
         assetToAssign.AssetStatusID = 1; // 1 = Assigned
 
-        _applicationDbContext.OrganizationsAssetAssignReturns.Add(newAssetAssign);
         _applicationDbContext.OrganizationsAssetRequests.Update(targetAssetRequest);
         _applicationDbContext.Assets.Update(assetToAssign);
 
