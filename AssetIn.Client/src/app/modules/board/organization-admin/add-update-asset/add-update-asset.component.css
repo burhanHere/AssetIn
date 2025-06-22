@@ -261,8 +261,8 @@ textarea {
   border: 3px solid transparent;
   background-clip: padding-box, border-box;
   background-origin: border-box;
-  background-image: linear-gradient(white, white),
-    /* Inner */ linear-gradient(360deg, #7ac6ec, #cf42d7); /* Gradient border */
+  background-image: linear-gradient(white, white);
+  /* Inner / linear-gradient(360deg, #7ac6ec, #cf42d7); / Gradient border */
 }
 
 /* Close button */

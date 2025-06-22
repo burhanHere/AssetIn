@@ -1,28 +1,144 @@
 <div class="main-container">
-  <div>
+  <div class="vendor-info">
     <h2>Vendor Info</h2>
-    <div class="vendor-details">
-      <div class="outer-div">
-        <div class="inner-div" style="display: flex; flex-direction: column;">
-          <label>Full Name</label>
-          <input type="text" [value]="vendor.fullName" readonly />
-          
-          <label>Email</label>
-          <input type="email" [value]="vendor.email" readonly />
-        </div>
-      </div>
+    <div style="display: flex; width: 100%;">
+      <div class="vendor-details">
+        <!-- Row 1: Full Name + Email -->
+        <div class="row">
+          <div class="form-group icon-input">
+            <label>Full Name</label>
+            <div class="input-wrapper">
+              <img src="icons/house.png" class="icon-img" alt="User" />
+              <input type="text"
+                [value]="isEditMode ? tempVendor.fullName : vendor.fullName"
+                [readonly]="!isEditMode"
+                (input)="isEditMode && (tempVendor.fullName = $any($event.target).value)" 
+              />
 
-      <div class="div-flex">
-        <label>Address</label>
-        <input type="text" [value]="vendor.address" readonly />
-  
-        <label>Phone Number</label>
-        <div class="phone">
-          <select [value]="vendor.countryCode" disabled>
-            <option value="+92">+92</option>
-          </select>
-          <input type="text" [value]="vendor.phoneNumber" readonly />
+            </div>
+          </div>
+
+          <div class="form-group icon-input">
+            <label>Email</label>
+            <div class="input-wrapper">
+              <img src="icons/email.png" class="icon-img" alt="Email" />
+              <input type="email"
+                [value]="isEditMode ? tempVendor.email : vendor.email"
+                [readonly]="!isEditMode"
+                (input)="isEditMode && (tempVendor.email = $any($event.target).value)"
+              />
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Address + Phone Number -->
+        <div class="row">
+          <div class="form-group icon-input">
+            <label>Address</label>
+            <div class="input-wrapper">
+              <img src="icons/location.png" class="icon-img" alt="Address" />
+              <input type="text"
+                [value]="isEditMode ? tempVendor.address : vendor.address"
+                [readonly]="!isEditMode"
+                (input)="isEditMode && (tempVendor.address = $any($event.target).value)"
+              />
+
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Phone Number</label>
+            <div class="phone">
+              <select [value]="isEditMode ? tempVendor.countryCode : vendor.countryCode"
+                      [disabled]="!isEditMode"
+                      (change)="tempVendor.countryCode = $any($event.target).value">
+                <option value="+92">+92</option>
+              </select>
+
+              <input type="text"
+                [value]="isEditMode ? tempVendor.phoneNumber : vendor.phoneNumber"
+                [readonly]="!isEditMode"
+                (input)="isEditMode && (tempVendor.phoneNumber = $any($event.target).value)"
+              />
+
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-edit">
+          <div class="input-wrapper">
+            @if(!isEditMode){
+              <button (click)="toggleEdit()">
+                {{ isEditMode ? 'Save' : 'Edit' }}
+              </button>
+              <img src="icons/edit.png" class="icon-img-edit" alt="Edit" />
+            }
+            @else {
+              <div style="display: flex; gap: 1vw;">
+                <button (click)="saveChanges()">Save</button>
+                <button (click)="cancelChanges()">Cancel</button>
+              </div>}
+          </div>
         </div>
       </div>
+      
+      <div class="vendor-img-div">
+        <div class="action-img-div">
+          <button class="btn-action" (click)="onDelete()">
+            <img src="icons/delete-black.png" alt="Delete Image">
+          </button>
+          <button class="btn-action" (click)="onUpload()">
+            <img src="icons/upload.png" alt="Upload Image">
+          </button>
+        </div>
+        <div class="img-div">
+          <img [src]="previewUrl ? previewUrl : 'icons/emp_avatar.png'" alt="Vendor Image">
+        </div>
+        <input
+          type="file"
+          accept="image/*"
+          #fileUploader
+          (change)="onFileSelected($event)"
+          hidden>
+        <input
+          type="file"
+          accept="image/*"
+          capture="environment"
+          #cameraCapture
+          (change)="onFileSelected($event)"
+          hidden>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="product-container">
+  <div>
+    <div class="products-header">
+      <h2>Products</h2>
+      <div class="input-wrapper">
+        <button class="add-product" [routerLink]="['../addNewProduct']">Add New Product</button>
+        <img src="icons/add-new-asset.png" class="icon-img-add-new" alt="Add Product" />
+      </div>
+    </div>
+
+    <div class="product-cards">
+      @for (product of products; track product.id) {
+        <div class="product-card">
+          <div class="product-image">
+            <img src="icons/camera.png" alt="Product Image" />
+          </div>
+          <div class="product-info">
+            <h3>{{ product.name }}</h3>
+            <p>{{ product.description }}</p>  
+            <div class="product-meta">
+              <div class="product-meta-div">Price: <div>5000</div></div>
+              <div class="product-meta-div">Model: <div>Lorem ipsum</div></div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
   </div>
 </div>
