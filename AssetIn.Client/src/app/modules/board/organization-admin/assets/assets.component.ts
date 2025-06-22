@@ -62,7 +62,7 @@ export class AssetsComponent implements OnInit {
   }
 
   public viewAssetDetails(targetAssetId: number): void {
-    this.router.navigateByUrl(`/board/mainBoard/organizationAdmin/organizationAssetsDetail?assetId=${targetAssetId}`);
+    this.router.navigateByUrl(`/board/mainBoard/organizationAdmin/organizationAssetDetails?assetId=${targetAssetId}`);
   }
 
   public showDeleteAssetConfirmation(targetAsset: any) {

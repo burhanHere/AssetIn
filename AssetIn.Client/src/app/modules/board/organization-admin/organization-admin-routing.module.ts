@@ -9,6 +9,7 @@ import { VendorsComponent } from './vendors/vendors.component';
 import { SettingsComponent } from './settings/settings.component';
 import { AddUpdateAssetComponent } from './add-update-asset/add-update-asset.component';
 import { ReportingComponent } from './reporting/reporting.component';
+import { AssetDetailsComponent } from './asset-details/asset-details.component';
 
 const routes: Routes = [
   {
@@ -30,6 +31,11 @@ const routes: Routes = [
     path: 'addUpdateAsset',
     component: AddUpdateAssetComponent,
     title: 'Add Update Asset'
+  },
+   {
+    path: 'organizationAssetDetails',
+    component: AssetDetailsComponent,
+    title: 'Asset Details'
   },
   {
     path: 'organizationEmployees',
