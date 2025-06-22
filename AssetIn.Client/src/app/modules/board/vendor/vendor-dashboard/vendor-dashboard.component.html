@@ -9,7 +9,12 @@
             <label>Full Name</label>
             <div class="input-wrapper">
               <img src="icons/house.png" class="icon-img" alt="User" />
-              <input type="text" [value]="vendor.fullName" readonly />
+              <input type="text"
+                [value]="isEditMode ? tempVendor.fullName : vendor.fullName"
+                [readonly]="!isEditMode"
+                (input)="isEditMode && (tempVendor.fullName = $any($event.target).value)" 
+              />
+
             </div>
           </div>
 
@@ -17,7 +22,12 @@
             <label>Email</label>
             <div class="input-wrapper">
               <img src="icons/email.png" class="icon-img" alt="Email" />
-              <input type="email" [value]="vendor.email" readonly />
+              <input type="email"
+                [value]="isEditMode ? tempVendor.email : vendor.email"
+                [readonly]="!isEditMode"
+                (input)="isEditMode && (tempVendor.email = $any($event.target).value)"
+              />
+
             </div>
           </div>
         </div>
@@ -28,25 +38,47 @@
             <label>Address</label>
             <div class="input-wrapper">
               <img src="icons/location.png" class="icon-img" alt="Address" />
-              <input type="text" [value]="vendor.address" readonly />
+              <input type="text"
+                [value]="isEditMode ? tempVendor.address : vendor.address"
+                [readonly]="!isEditMode"
+                (input)="isEditMode && (tempVendor.address = $any($event.target).value)"
+              />
+
             </div>
           </div>
 
           <div class="form-group">
             <label>Phone Number</label>
             <div class="phone">
-              <select [value]="vendor.countryCode">
+              <select [value]="isEditMode ? tempVendor.countryCode : vendor.countryCode"
+                      [disabled]="!isEditMode"
+                      (change)="tempVendor.countryCode = $any($event.target).value">
                 <option value="+92">+92</option>
               </select>
-              <input type="text" [value]="vendor.phoneNumber" readonly />
+
+              <input type="text"
+                [value]="isEditMode ? tempVendor.phoneNumber : vendor.phoneNumber"
+                [readonly]="!isEditMode"
+                (input)="isEditMode && (tempVendor.phoneNumber = $any($event.target).value)"
+              />
+
             </div>
           </div>
         </div>
 
         <div class="btn-edit">
           <div class="input-wrapper">
-            <button>Edit</button>
-            <img src="icons/edit.png" class="icon-img-edit" alt="Edit" />
+            @if(!isEditMode){
+              <button (click)="toggleEdit()">
+                {{ isEditMode ? 'Save' : 'Edit' }}
+              </button>
+              <img src="icons/edit.png" class="icon-img-edit" alt="Edit" />
+            }
+            @else {
+              <div style="display: flex; gap: 1vw;">
+                <button (click)="saveChanges()">Save</button>
+                <button (click)="cancelChanges()">Cancel</button>
+              </div>}
           </div>
         </div>
       </div>
@@ -102,7 +134,7 @@
             <p>{{ product.description }}</p>  
             <div class="product-meta">
               <div class="product-meta-div">Price: <div>5000</div></div>
-              <div class="product-meta-div">Rating: <div>4.7</div></div>
+              <div class="product-meta-div">Model: <div>Lorem ipsum</div></div>
             </div>
           </div>
         </div>
