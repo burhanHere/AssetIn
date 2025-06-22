@@ -44,7 +44,7 @@
         (click)="filterRequests('Accepted')"
         [class.active]="activeFilter === 'Accepted'"
       >
-        <img src="icons/fullfilledReq.png" alt="Accepted Requests" />
+        <img src="icons/acceptedReq.png" alt="Accepted Requests" />
         <div class="request-info">
           <div class="count">{{ dashboardData?.acceptedRequests }}</div>
           <div class="label">Accepted Requests</div>
@@ -65,8 +65,8 @@
 
       <div
         class="request-card"
-        (click)="filterRequests('Cancel')"
-        [class.active]="activeFilter === 'Cancel'"
+        (click)="filterRequests('Canceled')"
+        [class.active]="activeFilter === 'Canceled'"
       >
         <img src="icons/cancelReq.png" alt="Cancel Requests" />
         <div class="request-info">

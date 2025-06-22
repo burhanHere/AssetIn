@@ -16,7 +16,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
 
     public async Task<ApiResponse> GetAllAssetRequestAdminList(int organizationId, string userId)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -68,6 +68,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
          {
              AssetRequestID = assetRequests.OrganizationsAssetRequestID,
              Title = assetRequests.Title,
+             Description = assetRequests.Description,
              RequestDate = assetRequests.RequestDate,
              RequestStatus = AssetRequestStatuses.OrganizationsAssetRequestStatusName,
              RequestProcessedDate = assetRequests.RequestProcessedDate,
@@ -86,7 +87,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
 
     public async Task<ApiResponse> GetAllAssetRequestEmployeeListStatsAndDesignatedAssets(int organizationId, string userId)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -128,12 +129,11 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
                 };
             }
         }
-
         var requiredAssetRequests = await
         (from assetRequests in _applicationDbContext.OrganizationsAssetRequests
          join AssetRequestStatuses in _applicationDbContext.OrganizationsAssetRequestStatuses
          on assetRequests.RequestStatus equals AssetRequestStatuses.OrganizationsAssetRequestStatusID
-         where assetRequests.UserID == validUser.Id && assetRequests.OrganizationID == organizationId
+         where assetRequests.UserID == validUser.Id
          select new
          {
              AssetRequestID = assetRequests.OrganizationsAssetRequestID,
@@ -190,7 +190,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
     public async Task<ApiResponse> CreateAssetRequest(AssetRequestDTO assetRequestDTO, string userId)
     {
 
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -284,9 +284,18 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
     {
         string requiredWord = statusId == 1 ? " Accepted" :
                               statusId == 3 ? " Declined" :
-                              statusId == 4 ? " Fillfilled" :
+                              statusId == 4 ? " Fulfilled" :
                               /*statusId == 5 ?*/ " Canceled";
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (requiredWord == "Fulfilled")
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", $"Invalid Operation." }
+            };
+        }
+
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -360,9 +369,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
         string messageText = "";
 
         if (statusId == 1 || // Accepted
-            statusId == 3 || // Declined
-            statusId == 4) // Fulfilled
-                           //2 == Pending
+            statusId == 3) // Declined
         {
             //these actions can only be performed by organization owner and asset meneger
             if (statusId == 1 && targetAssetRequest.RequestStatus == 2)
@@ -377,12 +384,11 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
                 messageText = "Your asset request has been declined.";
                 targetAssetRequest.RequestProcessedDate = DateTime.UtcNow;
             }
-            else if (statusId == 4 && targetAssetRequest.RequestStatus == 1)
+            else if (statusId == 3 && targetAssetRequest.RequestStatus == 1)
             {
-                // asset request can be fullfiled only if current status is Accepted
-                messageText = "Your asset request has been fulfilled.";
-                targetAssetRequest.RequestCompletedDate = DateTime.UtcNow;
-                targetAssetRequest.CompletionStatus = true;
+                // asset request can be declined only if current status is Pending
+                messageText = "Your asset request has been declined.";
+                targetAssetRequest.RequestProcessedDate = DateTime.UtcNow;
             }
             else
             {
@@ -390,7 +396,7 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
                 return new ApiResponse
                 {
                     Status = StatusCodes.Status400BadRequest,
-                    ResponseData = new List<string> { "Error", "Unable to update asset request status to {requiredWord}." }
+                    ResponseData = new List<string> { "Error", $"Unable to update asset request status to {requiredWord}." }
                 };
             }
         }
@@ -460,4 +466,169 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
             ResponseData = new List<string> { "Error", $"Unable to update asset request status to {requiredWord}." }
         };
     }
+
+    public async Task<ApiResponse> FulFillAssetRequest(FulfillAssetRequestDTO fulfillAssetRequestDTO, string userId)
+    {
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to fullfill asset request." }
+            };
+        }
+
+        var targetAssetRequest = await _applicationDbContext.OrganizationsAssetRequests.FirstOrDefaultAsync(x => x.OrganizationsAssetRequestID == fulfillAssetRequestDTO.AssetRequestId);
+        if (targetAssetRequest == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to fullfill asset request." }
+            };
+        }
+
+        if (targetAssetRequest.RequestStatus == 3 || targetAssetRequest.RequestStatus == 5)// 3 = declined & 5 = canceled
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Error", "Cant update status request already" + (targetAssetRequest.RequestStatus == 5 ? "Canceled" : "Declined") + "." }
+            };
+        }
+        else if (targetAssetRequest.RequestStatus == 4)// 4 = fulfiled 
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status208AlreadyReported,
+                ResponseData = new List<string> { "Error", "Asset request already fulfiled." }
+            };
+        }
+
+        Organization? requiredOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == targetAssetRequest.OrganizationID);
+        if (requiredOrganization == null || !requiredOrganization.ActiveOrganization)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to fullfill asset request." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (requiredOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", $"User not authorized to update asset." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result || _userManager.IsInRoleAsync(validUser, "OrganizationEmployee").Result)
+        {
+            if (validUser.OrganizationId != requiredOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", $"User not authorized to fulfill this asset request." }
+                };
+            }
+        }
+
+        var assetToAssign = await _applicationDbContext.Assets.FirstOrDefaultAsync(x => x.AssetlD == fulfillAssetRequestDTO.AssetID);
+        if (assetToAssign == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to fullfill asset request." }
+            };
+        }
+        if (assetToAssign.AssetStatusID != 4) // 4 = Available
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Error", "Asset is not available for assignment." }
+            };
+        }
+
+        // Check if the user who made the request is still active
+        var requestUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == targetAssetRequest.UserID);
+        if (requestUser == null || !requestUser.Status)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Error", "The requisitioner is not allowed to get assets. Requisitioner account is locked." }
+            };
+        }
+
+        OrganizationsAssetAssignReturn newAssetAssign = new()
+        {
+            AssignedAt = DateTime.Now,
+            ReturnedAt = DateTime.MinValue,
+            Notes = fulfillAssetRequestDTO.Notes,
+            AssignedToUserID = targetAssetRequest.UserID,
+            AssignedByUserID = validUser.Id,
+            AssetID = assetToAssign.AssetlD,
+        };
+        var assignmentResult = await _applicationDbContext.OrganizationsAssetAssignReturns.AddAsync(newAssetAssign);
+
+        targetAssetRequest.RequestStatus = 4; // 4 = Fulfilled
+        targetAssetRequest.CompletionStatus = true;
+        targetAssetRequest.RequestCompletedDate = DateTime.Now;
+        targetAssetRequest.AssetAssignmentId = assignmentResult.Entity.ID;
+
+        assetToAssign.AssetStatusID = 1; // 1 = Assigned
+
+        _applicationDbContext.OrganizationsAssetRequests.Update(targetAssetRequest);
+        _applicationDbContext.Assets.Update(assetToAssign);
+
+        // add asset assign logic here 
+        int result = await _applicationDbContext.SaveChangesAsync();
+        if (result > 0)
+        {
+
+            string subject = "Asset Request Update";
+            string messageTemplate = $@"
+<div style=""text-align: center;
+            margin-bottom: 20px;"">
+	<h1 style=""color: #4CAF50;
+            font-size: 24px;"">Asset Request Update</h1>
+</div>
+
+<div style=""background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"">
+        <p style=""font-size: 14px;
+            line-height: 1.6;"">Your asset request has been successfully fulfilled. Please find the details below.</p>
+
+        <div style=""margin-bottom: 20px;"">
+            <p style=""font-weight: bold;""><strong>Asset Request Title:</strong> {targetAssetRequest.Title}</p>
+            <p style=""font-weight: bold;""><strong>Description:</strong> {targetAssetRequest.Description}</p>            <p style=""font-weight: bold;""><strong>Request Date:</strong> {targetAssetRequest.RequestDate}</p>
+        </div>
+ </div>";
+            bool emailResult = await _emailService.SendEmailAsync(requestUser.Email!, subject, messageTemplate);
+
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string> { "Success", $"Asset request fulFilled successfully." }
+            };
+        }
+
+        return new ApiResponse
+        {
+            Status = StatusCodes.Status400BadRequest,
+            ResponseData = new List<string> { "Error", $"Unable to fulfill asset request." }
+        };
+    }
+
+
 }

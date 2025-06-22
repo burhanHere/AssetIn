@@ -115,11 +115,10 @@ public class AssetRequestManagementController(ApplicationDbContext applicationDb
 
         var result = await _assetRequestManagementRepository.UpdateAssetRequestStatus(AssetRequestID, 3, userId);
         return HelperFunctions.ResponseFormatter(this, result);
-
     }
-    [HttpPatch("UpdateAssetRequestStatusToFulfilled")]
+    [HttpPatch("FulFillAssetRequest")]
     [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerPolicy")]
-    public async Task<IActionResult> UpdateAssetRequestStatusToFulfilled(int AssetRequestID)
+    public async Task<IActionResult> FulFillAssetRequest(FulfillAssetRequestDTO fulfillAssetRequestDTO)
     {
         var userId = User.FindFirst("UserId")?.Value;
 
@@ -133,10 +132,10 @@ public class AssetRequestManagementController(ApplicationDbContext applicationDb
             });
         }
 
-        var result = await _assetRequestManagementRepository.UpdateAssetRequestStatus(AssetRequestID, 4, userId);
+        var result = await _assetRequestManagementRepository.FulFillAssetRequest(fulfillAssetRequestDTO, userId);
         return HelperFunctions.ResponseFormatter(this, result);
-
     }
+
     [HttpPatch("UpdateAssetRequestStatusToCanceled")]
     [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerOrganizationEmployeePolicy")]
     public async Task<IActionResult> UpdateAssetRequestStatusToCanceled(int AssetRequestID)

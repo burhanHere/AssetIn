@@ -1,0 +1,3 @@
+kam chl raha ha  abhi tng na kroo hma 
+
+na charoo hma hm staaay hua ha.....

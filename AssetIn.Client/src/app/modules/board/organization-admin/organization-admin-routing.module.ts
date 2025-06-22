@@ -8,49 +8,55 @@ import { AssetRequestsComponent } from './asset-requests/asset-requests.componen
 import { VendorsComponent } from './vendors/vendors.component';
 import { SettingsComponent } from './settings/settings.component';
 import { AddUpdateAssetComponent } from './add-update-asset/add-update-asset.component';
+import { ReportingComponent } from './reporting/reporting.component';
 
 const routes: Routes = [
   {
-      path: '',
-      redirectTo: 'organizationDashboard',
-      pathMatch: 'full'
-    },
-    {
-      path: 'organizationDashboard',
-      component: OrganizationAdminDashboardComponent,
-      title: 'Dashboard'
-    },
-    {
-      path: 'organizationAssets',
-      component: AssetsComponent,
-      title: 'Assets'
-    },
-    {
-      path: 'addUpdateAsset',
-      component: AddUpdateAssetComponent,
-      title: 'Add Update Asset'
-    },
-    {
-      path: 'organizationEmployees',
-      component: EmployeesComponent,
-      title: 'Employees'
-    },
-    {
-      path: 'organizationAssetsRequet',
-      component: AssetRequestsComponent,
-      title: 'Asset Requests'
-    },
-    {
-      path: 'organizationVendors',
-      component: VendorsComponent,
-      title: 'Dashboard'
-    },
-    {
-      path: 'organizationSettings',
-      component: SettingsComponent,
-      title: 'Settings'
-    },
-    { path: '**', component: ErrorPageComponent, title: 'Dashboard' },
+    path: '',
+    redirectTo: 'organizationDashboard',
+    pathMatch: 'full'
+  },
+  {
+    path: 'organizationDashboard',
+    component: OrganizationAdminDashboardComponent,
+    title: 'Dashboard'
+  },
+  {
+    path: 'organizationAssets',
+    component: AssetsComponent,
+    title: 'Assets'
+  },
+  {
+    path: 'addUpdateAsset',
+    component: AddUpdateAssetComponent,
+    title: 'Add Update Asset'
+  },
+  {
+    path: 'organizationEmployees',
+    component: EmployeesComponent,
+    title: 'Employees'
+  },
+  {
+    path: 'organizationAssetsRequet',
+    component: AssetRequestsComponent,
+    title: 'Asset Requests'
+  },
+  {
+    path: 'reporting',
+    component: ReportingComponent,
+    title: 'Reporting'
+  },
+  {
+    path: 'organizationVendors',
+    component: VendorsComponent,
+    title: 'Dashboard'
+  },
+  {
+    path: 'organizationSettings',
+    component: SettingsComponent,
+    title: 'Settings'
+  },
+  { path: '**', component: ErrorPageComponent, title: 'Dashboard' },
 ];
 
 @NgModule({

@@ -27,7 +27,6 @@
                   formControlName="userName"
                   type="text"
                   placeholder="Enter name"
-                  pattern="^[a-zA-Z0-9 ]*$"
                 />
               </div>
               @if (employeeForm.controls['userName'].touched &&
@@ -35,7 +34,9 @@
               <div class="input-error">User Name is required.</div>
               } @if (employeeForm.controls['userName'].touched &&
               employeeForm.controls['userName'].errors?.['pattern']) {
-              <div class="input-error">Special characters are not allowed.</div>
+              <div class="input-error">
+                Special characters and whitespaces are not allowed.
+              </div>
               }
             </div>
             <div class="user-data-container">
@@ -48,7 +49,7 @@
                   type="email"
                   placeholder="john.doe@example.com"
                   [value]="
-                    this.employeeForm.controls['userName'].value +
+                    this.employeeForm.controls['userName'].value.toLowerCase() +
                     this.organizationDomain
                   "
                   [readonly]="true"
@@ -105,7 +106,7 @@
               <div class="input-error">Date of Birth is required.</div>
               }
             </div>
-            <div class="user-data-container">
+            <!-- <div class="user-data-container">
               <div class="user-data">
                 <label for="role">Role:</label>
                 <select id="role" formControlName="role">
@@ -118,7 +119,7 @@
               employeeForm.controls['role'].errors?.['required']) {
               <div class="input-error">Role is required.</div>
               }
-            </div>
+            </div> -->
             <div class="button-container">
               <button type="submit" (click)="onSubmit()">Submit</button>
             </div>
@@ -155,34 +156,53 @@
           </div>
 
           <div class="userSummary">
-            <div class="user-data" style="height: 35px">
+            <div class="user-data" style="height: 35px; width: 450px">
               <span class="lable">User Name:</span>
               <span class="info-details">{{ selectedEmployee.userName }}</span>
             </div>
 
-            <div class="user-data" style="height: 35px">
+            <div class="user-data" style="height: 35px; width: 450px">
               <span class="lable">Email:</span>
               <span class="info-details">{{ selectedEmployee.email }}</span>
             </div>
-            <div class="user-data" style="height: 35px">
+            <div class="user-data" style="height: 35px; width: 450px">
               <span class="lable">Phone #:</span>
               <span class="info-details">{{
                 selectedEmployee.phoneNumber
               }}</span>
             </div>
-            <div class="user-data" style="height: 35px">
+            <div class="user-data" style="height: 35px; width: 450px">
               <span class="lable">Gender:</span>
               <span class="info-details">{{ selectedEmployee.gender }}</span>
             </div>
-            <div class="user-data" style="height: 35px">
+            <div class="user-data" style="height: 35px; width: 450px">
               <span class="lable">Date of Birth:</span>
               <span class="info-details">{{
                 selectedEmployee.dateOfBirth | date : "dd/MM/yyyy"
               }}</span>
             </div>
 
-            <div class="role-action" style="height: 35px">
-              <span class="lable" style="width: 165px">Role:</span>
+            <div class="user-data" style="height: 35px; width: 450px">
+              <span class="lable">Joining Date</span>
+              <span class="info-details">{{
+                selectedEmployee.dateOfJoining | date : "dd/MM/yyyy"
+              }}</span>
+            </div>
+
+            <div class="user-data" style="min-height: 35px; width: 450px">
+              <span class="lable">Allocated assets ids:</span>
+              <span class="info-details">
+                @if (selectedEmployee.allocatedAssetIdsList?.length > 0) { @for
+                (id of selectedEmployee.allocatedAssetIdsList; track id) {
+                <span>{{ id }}</span>
+                } } @else {
+                <span>No assets allocated</span>
+                }
+              </span>
+            </div>
+
+            <div class="role-action" style="height: 35px; width: 450px">
+              <span class="lable" style="width: 180px">Role:</span>
               <span class="info-details">{{ selectedEmployee.roleName }}</span>
               @if(selectedEmployee.roleName !== 'OrganizationOwner'){
               @if(selectedEmployee.roleName === 'OrganizationEmployee') {

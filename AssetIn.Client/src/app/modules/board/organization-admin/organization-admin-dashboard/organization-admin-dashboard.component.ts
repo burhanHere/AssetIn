@@ -89,11 +89,10 @@ export class OrganizationAdminDashboardComponent implements OnInit {
             this.createDoughnutChart();
           },
           (error: HttpErrorResponse) => {
+            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
             this.isLoading = false;
             this.showAlert = true;
-            this.alertMessage = error.error.responseData[0] || 'Error';
-            this.alertTitle =
-              error.error.responseData[1] || 'An error occurred.';
           }
         );
     }
@@ -190,6 +189,10 @@ export class OrganizationAdminDashboardComponent implements OnInit {
         },
       },
     });
+  }
+
+  public nvgToAddUpdateAsset(): void {
+    this.router.navigateByUrl('/board/mainBoard/organizationAdmin/addUpdateAsset');
   }
 
   public exportOrganizationData(): void {

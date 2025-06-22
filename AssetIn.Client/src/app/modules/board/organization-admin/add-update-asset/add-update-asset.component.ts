@@ -1,93 +1,197 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { Form, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BarController } from 'chart.js';
+import { AssetManagementService } from '../../../../core/services/AssetManagement/asset-management.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-add-update-asset',
   templateUrl: './add-update-asset.component.html',
   styleUrl: './add-update-asset.component.css'
 })
-export class AddUpdateAssetComponent {
-  
+export class AddUpdateAssetComponent implements OnInit {
+  private assetManagementService: AssetManagementService = inject(AssetManagementService);
+  private organizationId: number;
   public assetForm: FormGroup;
-  public showErrorMessage: boolean;
-  public showForm: boolean;
-  public submitted: boolean;
-  public errorMessage: string;
+  public isLoading: boolean;
+  public showAlert: boolean;
+  public alertMessage: string;
+  public alertTitle: string;
+  public assetCategories: any[];
+  public assetTypes: any[];
+  public uploadedAssetImage: string;
+  public showNewAssetCatagoryForm: boolean;
+  public newAssetCategoryOrTypeForm: FormGroup;
 
   constructor() {
-      this.assetForm = new FormGroup({
-        assetName: new FormControl('', [Validators.required]),
-        assetCategory: new FormControl('', [Validators.required]),
-        serialNumber: new FormControl('', [Validators.required]),
-        purchasePrice: new FormControl('', [Validators.required]),
-        model: new FormControl('', [Validators.required]),
-        manufacturer: new FormControl('', [Validators.required]),
-        depreciationRate: new FormControl('', [Validators.required]),
-        assetIdentificationNumber: new FormControl('', [Validators.required]),
-        assetType: new FormControl('', [Validators.required]),
-        purchaseDate: new FormControl('', [Validators.required]),
-        location: new FormControl('', [Validators.required]),
-        description: new FormControl('', [Validators.required]),
-        problem: new FormControl('', [Validators.required]),
-      });
+    const temp = sessionStorage.getItem('targetOrganizationID');
+    this.organizationId = Number(temp === null || temp === undefined ? 0 : temp);
+    this.assetForm = new FormGroup({
+      assetName: new FormControl('', [Validators.required]),
+      assetCategory: new FormControl('', [Validators.required]),
+      serialNumber: new FormControl('', [Validators.required]),
+      purchasePrice: new FormControl('', [Validators.required]),
+      model: new FormControl('', [Validators.required]),
+      manufacturer: new FormControl('', [Validators.required]),
+      depreciationRate: new FormControl('', [Validators.required]),
+      assetType: new FormControl('', [Validators.required]),
+      purchaseDate: new FormControl('', [Validators.required]),
+      location: new FormControl('', [Validators.required]),
+      description: new FormControl('', [Validators.required]),
+      problem: new FormControl('', []),
+      costPrice: new FormControl('', [Validators.required]),
+    });
 
-      this.showErrorMessage = false;
-      this.showForm = false;
-      this.submitted = false;
-      this.errorMessage = '';
-    }
-
-  assetCategories: string[] = ['Computer Accessory', 'Stationery', 'Furniture'];
-  assetTypes: string[] = ['Laptop', 'Monitor', 'Keyboard', 'Mouse', 'CPU', 'USB', 'Charger'];
-  
-  previewUrl: string | null = null;
-  @ViewChild('fileUploader') fileUploader!: ElementRef<HTMLInputElement>;
-  @ViewChild('cameraCapture') cameraCapture!: ElementRef<HTMLInputElement>;
-
-  onSubmit(a: any) {
-    console.log('Form submitted');
+    this.isLoading = false;
+    this.showAlert = false;
+    this.alertMessage = '';
+    this.alertTitle = '';
+    this.assetCategories = [];
+    this.assetTypes = [];
+    this.uploadedAssetImage = '';
+    this.showNewAssetCatagoryForm = false;
+    this.newAssetCategoryOrTypeForm = new FormGroup({
+      name: new FormControl('', [Validators.required]),
+      CatagoryOrType: new FormControl('', [Validators.required]),
+    });
   }
 
-  onCancel() {
-    console.log('Form cancelled');
-    this.assetForm.reset(
-      {
-        assetCategory: '',
-        assetType: ''
+  ngOnInit(): void {
+    this.GetAssetCategories();
+    this.GetAssetTypes();
+  }
+
+  private GetAssetCategories(): void {
+    this.isLoading = true;
+    this.assetManagementService.GetAllAssetCatagory(this.organizationId).subscribe(
+      (response: any) => {
+        this.assetCategories = response.responseData;
+        this.isLoading = false;
+      },
+      (error: HttpErrorResponse) => {
+        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.showAlert = true;
+        this.isLoading = false;
       }
     );
-    this.previewUrl = null;
   }
 
-  onDeleteImage() {
-    console.log('Image deleted');
-    this.previewUrl = null;
-    this.fileUploader.nativeElement.value = '';
-    this.cameraCapture.nativeElement.value = '';
+  private GetAssetTypes(): void {
+    this.isLoading = true;
+    this.assetManagementService.GetAllAssetType(this.organizationId).subscribe(
+      (response: any) => {
+        this.assetTypes = response.responseData;
+        this.isLoading = false;
+      },
+      (error: HttpErrorResponse) => {
+        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.showAlert = true;
+        this.isLoading = false;
+      }
+    );
   }
 
-  onUploadImage() {
-    console.log('Image uploaded');
-    this.fileUploader.nativeElement.click();
+  public createNewAssetTypeOrCategory(): void {
+    if (this.newAssetCategoryOrTypeForm.valid) {
+      const requestType = this.newAssetCategoryOrTypeForm.controls["CatagoryOrType"].value
+      this.isLoading = true;
+      if (requestType == "Asset Catagory") {
+        const apiInput = {
+          "organizationsAssetCatagoryID": 0,
+          "organizationsAssetCatagoryName": this.newAssetCategoryOrTypeForm.controls["name"].value,
+          "organizationsID": this.organizationId
+        }
+        this.assetManagementService.CreateNewAssetCatagory(apiInput).subscribe(
+          (response: any) => {
+            this.alertTitle = response?.responseData?.[0] || 'Success';
+            this.alertMessage = response?.responseData?.[1] || 'New asset category created successfully';
+            this.showAlert = true;
+            this.isLoading = false;
+          },
+          (error: HttpErrorResponse) => {
+            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+            this.showAlert = true;
+            this.isLoading = false;
+          }, () => {
+            this.GetAssetCategories();
+          }
+        );
+      } else {
+        //requestType == Asset Type
+        const apiInput = {
+          "organizationsAssetTypeID": 0,
+          "organizationsAssetTypeName": this.newAssetCategoryOrTypeForm.controls["name"].value,
+          "organizationsID": this.organizationId
+        }
+        this.assetManagementService.CreateNewAssetType(apiInput).subscribe(
+          (response: any) => {
+            this.alertTitle = response?.responseData?.[0] || 'Success';
+            this.alertMessage = response?.responseData?.[1] || 'New asset type created successfully';
+            this.showAlert = true;
+            this.isLoading = false;
+          },
+          (error: HttpErrorResponse) => {
+            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+            this.showAlert = true;
+            this.isLoading = false;
+          }, () => {
+            this.GetAssetTypes();
+          }
+        );
+      }
+      this.newAssetCategoryOrTypeForm.reset();
+    } else {
+      this.newAssetCategoryOrTypeForm.markAllAsTouched();
+    }
   }
 
-  onCaptureImage() {
-    console.log('Asset captured');
-    this.cameraCapture.nativeElement.click();
+  public createNewAsset(): void {
+    if (this.assetForm.valid) {
+      this.isLoading = true;
+      const apiInput = {
+        "assetlD": 0,
+        "assetName": this.assetForm.controls["assetName"].value,
+        "description": this.assetForm.controls["description"].value,
+        "serialNumber": this.assetForm.controls["serialNumber"].value,
+        "model": this.assetForm.controls["model"].value,
+        "manufacturer": this.assetForm.controls["manufacturer"].value,
+        "purchaseDate": this.assetForm.controls["purchaseDate"].value,
+        "purchasePrice": this.assetForm.controls["purchasePrice"].value,
+        "costPrice": this.assetForm.controls["costPrice"].value,
+        "location": this.assetForm.controls["location"].value,
+        "depreciationRate": this.assetForm.controls["depreciationRate"].value,
+        "problem": this.assetForm.controls["problem"].value,
+        "assetCatagoryID": this.assetForm.controls["assetCategory"].value,
+        "assetTypeID": this.assetForm.controls["assetType"].value,
+        "organizationID": this.organizationId,
+        "profilePicturePath": ""
+      };
+      this.assetManagementService.CreateAsset(apiInput).subscribe(
+        (response: any) => {
+          this.alertTitle = response?.responseData?.[0] || 'Success';
+          this.alertMessage = response?.responseData?.[1] || 'New asset created successfully';
+          this.showAlert = true;
+          this.isLoading = false;
+          this.assetForm.reset();
+        },
+        (error: HttpErrorResponse) => {
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+          this.showAlert = true;
+          this.isLoading = false;
+        }
+      );
+    } else {
+      this.assetForm.markAllAsTouched();
+    }
   }
 
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
-
-    const file = input.files[0];
-    const reader = new FileReader();
-    reader.onload = () => {
-      // reader.result is a base64 data URL
-      this.previewUrl = reader.result as string;
-    };
-    reader.readAsDataURL(file);
+  public onReset(): void {
+    console.log('Form reseted');
+    this.assetForm.reset();
   }
-
 }

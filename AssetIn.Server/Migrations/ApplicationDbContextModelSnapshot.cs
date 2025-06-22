@@ -184,6 +184,13 @@ namespace AssetIn.Server.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("CheckInByUserID")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("CheckInNotes")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Notes")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -198,6 +205,8 @@ namespace AssetIn.Server.Migrations
                     b.HasIndex("AssignedByUserID");
 
                     b.HasIndex("AssignedToUserID");
+
+                    b.HasIndex("CheckInByUserID");
 
                     b.ToTable("OrganizationsAssetAssignReturns");
                 });
@@ -264,6 +273,9 @@ namespace AssetIn.Server.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("OrganizationsAssetRequestID"));
 
+                    b.Property<int?>("AssetAssignmentId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("CompletionStatus")
                         .HasColumnType("tinyint(1)");
 
@@ -297,6 +309,8 @@ namespace AssetIn.Server.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("OrganizationsAssetRequestID");
+
+                    b.HasIndex("AssetAssignmentId");
 
                     b.HasIndex("OrganizationID");
 
@@ -464,6 +478,9 @@ namespace AssetIn.Server.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<DateTime>("DateOfJoining")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
@@ -576,7 +593,7 @@ namespace AssetIn.Server.Migrations
                     b.ToTable("Vendors");
                 });
 
-            modelBuilder.Entity("AssetIn.Server.Models.VendorProcurementDetail", b =>
+            modelBuilder.Entity("AssetIn.Server.Models.VendorProduct", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -584,32 +601,21 @@ namespace AssetIn.Server.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<DateTime>("DispachDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<float>("GrandTotal")
-                        .HasColumnType("float");
-
-                    b.Property<string>("HardlnvoiceImagePath")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("OrderStatus")
+                    b.Property<string>("Model")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ProductCatagory")
-                        .IsRequired()
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<string>("ProductImage")
                         .HasColumnType("longtext");
 
                     b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<float>("ProductPrice")
-                        .HasColumnType("float");
-
-                    b.Property<string>("ProductStatus")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -620,7 +626,7 @@ namespace AssetIn.Server.Migrations
 
                     b.HasIndex("VendorID");
 
-                    b.ToTable("VendorProcurementDetails");
+                    b.ToTable("VendorProducts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -652,28 +658,28 @@ namespace AssetIn.Server.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "28d02b60-f0a4-4e51-a4cf-e8904be9646b",
+                            ConcurrencyStamp = "cc3ad06b-7160-44a5-93b5-195321e3d89b",
                             Name = "OrganizationOwner",
                             NormalizedName = "ORGANIZATIONOWNER"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "3b39e7f3-5933-4442-bc36-ca80ebc6fc5b",
+                            ConcurrencyStamp = "f5cd44a9-7cb4-4612-988a-4a9bbc667e43",
                             Name = "OrganizationEmployee",
                             NormalizedName = "ORGANIZATIONEMPLOYEE"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "f2c5c393-32f6-4a0c-9086-35099a53e6a8",
+                            ConcurrencyStamp = "22ec94a9-a17f-4526-850f-ba394e75a388",
                             Name = "OrganizationAssetManager",
                             NormalizedName = "ORGANIZATIONASSETMANAGER"
                         },
                         new
                         {
                             Id = "4",
-                            ConcurrencyStamp = "92f8a81a-f37b-4945-80f8-58aa4c4e3d9d",
+                            ConcurrencyStamp = "1ffda9d9-c29f-4fe2-bd82-555f54c77396",
                             Name = "Vendor",
                             NormalizedName = "VENDOR"
                         });
@@ -851,11 +857,17 @@ namespace AssetIn.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("AssetIn.Server.Models.User", "CheckInByUser")
+                        .WithMany()
+                        .HasForeignKey("CheckInByUserID");
+
                     b.Navigation("Asset");
 
                     b.Navigation("AssignedByUser");
 
                     b.Navigation("AssignedToUser");
+
+                    b.Navigation("CheckInByUser");
                 });
 
             modelBuilder.Entity("AssetIn.Server.Models.OrganizationsAssetCatagory", b =>
@@ -882,6 +894,11 @@ namespace AssetIn.Server.Migrations
 
             modelBuilder.Entity("AssetIn.Server.Models.OrganizationsAssetRequest", b =>
                 {
+                    b.HasOne("AssetIn.Server.Models.OrganizationsAssetAssignReturn", "OrganizationsAssetAssignReturn")
+                        .WithMany()
+                        .HasForeignKey("AssetAssignmentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("AssetIn.Server.Models.Organization", "Organization")
                         .WithMany()
                         .HasForeignKey("OrganizationID")
@@ -895,6 +912,8 @@ namespace AssetIn.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("Organization");
+
+                    b.Navigation("OrganizationsAssetAssignReturn");
 
                     b.Navigation("User");
                 });
@@ -941,7 +960,7 @@ namespace AssetIn.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("AssetIn.Server.Models.VendorProcurementDetail", b =>
+            modelBuilder.Entity("AssetIn.Server.Models.VendorProduct", b =>
                 {
                     b.HasOne("AssetIn.Server.Models.Vendor", "Vendor")
                         .WithMany()

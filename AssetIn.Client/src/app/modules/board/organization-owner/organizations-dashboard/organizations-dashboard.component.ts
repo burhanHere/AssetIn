@@ -60,11 +60,10 @@ export class OrganizationsDashboardComponent implements OnInit {
           this.organizations = responce.responseData;
         },
         (error: HttpErrorResponse) => {
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
           this.isLoading = false;
           this.showAlert = true;
-          this.alertTitle = error.error.responseData[0] || 'Error';
-          this.alertMessage =
-            error.error.responseData[1] || 'An error occurred.';
         }
       );
   }
@@ -96,11 +95,10 @@ export class OrganizationsDashboardComponent implements OnInit {
             this.isLoading = false;
           },
           (error: HttpErrorResponse) => {
+            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
             this.isLoading = false;
             this.showAlert = true;
-            this.alertMessage = error.error.responseData[0] || 'Error';
-            this.alertTitle =
-              error.error.responseData[1] || 'An error occurred.';
           },
           () => {
             this.getAllOrganization();

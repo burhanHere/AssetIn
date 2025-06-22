@@ -58,6 +58,7 @@
 
 .request-card.add-new {
   width: 130px;
+  margin-right: 5px;
 }
 
 .request-card.add-new .label {
@@ -67,7 +68,7 @@
 
 .request-history-container {
   margin: 20px;
-  width: 70%;
+  width: 85%;
   /* border: 1px solid red; */
 }
 
@@ -305,8 +306,11 @@ h3 {
   border-radius: 12px;
   width: 400px;
   position: relative;
-  /* height: 380px; */
-  border: 1px solid red;
+  border: 3px solid transparent;
+  background-clip: padding-box, border-box;
+  background-origin: border-box;
+  background-image: linear-gradient(white, white),
+    /* Inner */ linear-gradient(360deg, #7ac6ec, #cf42d7); /* Gradient border */
 }
 
 /* Close button */
@@ -322,13 +326,13 @@ h3 {
 
 .asset-form-popup label {
   font-weight: bold;
-  margin-bottom: 7px;
+  margin-bottom: 10px;
 }
 
 /* === Input & Textarea Styling for New Asset Request Popup === */
 .asset-form-popup input[type="text"],
 .asset-form-popup textarea {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   width: 100%;
   height: 30px;
   padding-left: 10px;
@@ -361,8 +365,7 @@ h3 {
 .input-error {
   color: red;
   font-size: 12px;
-  margin-top: -10px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 /* Submit button */

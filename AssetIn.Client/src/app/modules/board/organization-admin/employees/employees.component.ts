@@ -47,12 +47,12 @@ export class EmployeesComponent implements OnInit {
     //   sessionStorage.getItem('targetOrganizationDomain') || '';
     this.organizationDomain = '@domain.com';
     this.employeeForm = new FormGroup({
-      userName: new FormControl('', [Validators.required]),
+      userName: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9]*$')]),
       email: new FormControl(this.organizationDomain),
       phone: new FormControl('', [Validators.required]),
       gender: new FormControl('', [Validators.required]),
       dateOfBirth: new FormControl('', [Validators.required]),
-      role: new FormControl('', [Validators.required]),
+      // role: new FormControl('', [Validators.required]),
     });
 
 
@@ -84,8 +84,8 @@ export class EmployeesComponent implements OnInit {
           this.isLoading = false;
         },
         (error) => {
-          this.alertMessage = error.error.responseData[1];
-          this.alertTitle = error.error.responseData[0];
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         }
@@ -119,8 +119,8 @@ export class EmployeesComponent implements OnInit {
             this.isLoading = false;
           },
           (error) => {
-            this.alertTitle = error.error.responseData[0];
-            this.alertMessage = error.error.responseData[1];
+            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
             this.showAlert = true;
             this.isLoading = false;
           },
@@ -140,8 +140,8 @@ export class EmployeesComponent implements OnInit {
             this.isLoading = false;
           },
           (error) => {
-            this.alertTitle = error.error.responseData[0];
-            this.alertMessage = error.error.responseData[1];
+            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
             this.showAlert = true;
             this.isLoading = false;
           },
@@ -173,8 +173,8 @@ export class EmployeesComponent implements OnInit {
             this.isLoading = false;
           },
           (error) => {
-            this.alertTitle = error.error.responseData[0];
-            this.alertMessage = error.error.responseData[1];
+            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
             this.showAlert = true;
             this.isLoading = false;
           },
@@ -191,9 +191,8 @@ export class EmployeesComponent implements OnInit {
             this.isLoading = false;
           },
           (error) => {
-
-            this.alertTitle = error.error.responseData[0];
-            this.alertMessage = error.error.responseData[1];
+            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
             this.showAlert = true;
             this.isLoading = false;
           },
@@ -233,8 +232,8 @@ export class EmployeesComponent implements OnInit {
           this.isLoading = false;
         },
         (error) => {
-          this.alertTitle = error.error.responseData[0];
-          this.alertMessage = error.error.responseData[1];
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         },

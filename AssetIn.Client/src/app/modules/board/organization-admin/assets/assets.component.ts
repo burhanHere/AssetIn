@@ -21,6 +21,7 @@ export class AssetsComponent implements OnInit {
   public alertTitle: string;
   public assetList: any[];
   public showDeleteAssetAlert: boolean;
+  public selectedAsset: any;
 
   constructor() {
     const temp = sessionStorage.getItem('targetOrganizationID');
@@ -32,6 +33,7 @@ export class AssetsComponent implements OnInit {
     this.assetList = [];
     this.showDeleteAssetAlert = false;
     this.assetToDelete = {};
+    this.selectedAsset = {};
   }
 
   ngOnInit(): void {
@@ -47,10 +49,10 @@ export class AssetsComponent implements OnInit {
         this.assetList = responce.responseData;
       },
       (error: HttpErrorResponse) => {
+        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
         this.isLoading = false;
         this.showAlert = true;
-        this.alertTitle = error.error.responseData[0] || 'Error';
-        this.alertMessage = error.error.responseData[1] || 'An error occurred.';
       }
     );
   }
@@ -60,7 +62,7 @@ export class AssetsComponent implements OnInit {
   }
 
   public viewAssetDetails(targetAssetId: number): void {
-    alert('viewAssetDetails: ' + targetAssetId)
+    this.router.navigateByUrl(`/board/mainBoard/organizationAdmin/organizationAssetsDetail?assetId=${targetAssetId}`);
   }
 
   public showDeleteAssetConfirmation(targetAsset: any) {
@@ -76,10 +78,11 @@ export class AssetsComponent implements OnInit {
         this.isLoading = false;
       },
       (error: HttpErrorResponse) => {
+
         this.isLoading = false;
         this.showAlert = true;
-        this.alertTitle = error.error.responseData[0] || 'Error';
-        this.alertMessage = error.error.responseData[1] || 'An error occurred.';
+        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
       },
       () => {
         this.getAssetList();
@@ -87,7 +90,7 @@ export class AssetsComponent implements OnInit {
     );
   }
 
-  public NvgToAddUpdateAsset(): void {
+  public nvgToAddUpdateAsset(): void {
     this.router.navigateByUrl('/board/mainBoard/organizationAdmin/addUpdateAsset');
   }
 

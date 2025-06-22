@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetIn.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250428174631_addedRequestCompletedDateColumnINAssetRequestTable")]
-    partial class addedRequestCompletedDateColumnINAssetRequestTable
+    [Migration("20250622145455_RemovedAllMigrationsAndCreatedOne")]
+    partial class RemovedAllMigrationsAndCreatedOne
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,6 +89,9 @@ namespace AssetIn.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("ProfilePicturePath")
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime(6)");
 
@@ -139,6 +142,10 @@ namespace AssetIn.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("OrganizationDomain")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("OrganizationLogo")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -180,6 +187,13 @@ namespace AssetIn.Server.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("CheckInByUserID")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("CheckInNotes")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Notes")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -194,6 +208,8 @@ namespace AssetIn.Server.Migrations
                     b.HasIndex("AssignedByUserID");
 
                     b.HasIndex("AssignedToUserID");
+
+                    b.HasIndex("CheckInByUserID");
 
                     b.ToTable("OrganizationsAssetAssignReturns");
                 });
@@ -260,12 +276,18 @@ namespace AssetIn.Server.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("OrganizationsAssetRequestID"));
 
+                    b.Property<int?>("AssetAssignmentId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("CompletionStatus")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("OrganizationID")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("RequestCompletedDate")
                         .IsRequired()
@@ -290,6 +312,10 @@ namespace AssetIn.Server.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("OrganizationsAssetRequestID");
+
+                    b.HasIndex("AssetAssignmentId");
+
+                    b.HasIndex("OrganizationID");
 
                     b.HasIndex("UserID");
 
@@ -440,28 +466,6 @@ namespace AssetIn.Server.Migrations
                     b.ToTable("OrganizationsAssetTypes");
                 });
 
-            modelBuilder.Entity("AssetIn.Server.Models.OrganizationsDomain", b =>
-                {
-                    b.Property<int>("OrganizationsDomainID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("OrganizationsDomainID"));
-
-                    b.Property<string>("Domain")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("OrganizationsID")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrganizationsDomainID");
-
-                    b.HasIndex("OrganizationsID");
-
-                    b.ToTable("OrganizationsDomains");
-                });
-
             modelBuilder.Entity("AssetIn.Server.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -474,12 +478,22 @@ namespace AssetIn.Server.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("longtext");
 
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("DateOfJoining")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
@@ -658,28 +672,28 @@ namespace AssetIn.Server.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "537652b8-f2b7-4052-8fd3-116eb1bdacf4",
+                            ConcurrencyStamp = "9432df9c-b196-41f1-942f-6690a0d10f33",
                             Name = "OrganizationOwner",
                             NormalizedName = "ORGANIZATIONOWNER"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "b478e79f-8b78-4d62-aa09-7d3eff952f68",
+                            ConcurrencyStamp = "58694e25-a9e7-4708-8833-f84dbed500bf",
                             Name = "OrganizationEmployee",
                             NormalizedName = "ORGANIZATIONEMPLOYEE"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "f503ccc5-352d-4260-863b-62b2bca1590e",
+                            ConcurrencyStamp = "8fbe05a6-21fa-4493-9129-fe5bee1d4d23",
                             Name = "OrganizationAssetManager",
                             NormalizedName = "ORGANIZATIONASSETMANAGER"
                         },
                         new
                         {
                             Id = "4",
-                            ConcurrencyStamp = "40175156-b3a3-426d-968d-4e7ca3fce34a",
+                            ConcurrencyStamp = "6108fcc1-6f31-47d4-83ff-7c94a959c91c",
                             Name = "Vendor",
                             NormalizedName = "VENDOR"
                         });
@@ -857,11 +871,17 @@ namespace AssetIn.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("AssetIn.Server.Models.User", "CheckInByUser")
+                        .WithMany()
+                        .HasForeignKey("CheckInByUserID");
+
                     b.Navigation("Asset");
 
                     b.Navigation("AssignedByUser");
 
                     b.Navigation("AssignedToUser");
+
+                    b.Navigation("CheckInByUser");
                 });
 
             modelBuilder.Entity("AssetIn.Server.Models.OrganizationsAssetCatagory", b =>
@@ -888,11 +908,26 @@ namespace AssetIn.Server.Migrations
 
             modelBuilder.Entity("AssetIn.Server.Models.OrganizationsAssetRequest", b =>
                 {
+                    b.HasOne("AssetIn.Server.Models.OrganizationsAssetAssignReturn", "OrganizationsAssetAssignReturn")
+                        .WithMany()
+                        .HasForeignKey("AssetAssignmentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("AssetIn.Server.Models.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("AssetIn.Server.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("OrganizationsAssetAssignReturn");
 
                     b.Navigation("User");
                 });
@@ -909,17 +944,6 @@ namespace AssetIn.Server.Migrations
                 });
 
             modelBuilder.Entity("AssetIn.Server.Models.OrganizationsAssetType", b =>
-                {
-                    b.HasOne("AssetIn.Server.Models.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationsID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Organization");
-                });
-
-            modelBuilder.Entity("AssetIn.Server.Models.OrganizationsDomain", b =>
                 {
                     b.HasOne("AssetIn.Server.Models.Organization", "Organization")
                         .WithMany()

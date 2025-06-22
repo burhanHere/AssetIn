@@ -9,8 +9,10 @@ import { NewAssetRequest } from '../../../../core/models/newAssetRequest';
   styleUrl: './my-asset-requests.component.css',
 })
 export class MyAssetRequestsComponent implements OnInit {
-  // you did not injected the service
-  private assetRequestManagementService: AssetRequestManagementService = inject(AssetRequestManagementService);
+  // Injecting the AssetRequestManagementService to handle asset requests
+  private assetRequestManagementService: AssetRequestManagementService = inject(
+    AssetRequestManagementService
+  );
   private organizationId: number;
   // Modal form for new asset request
   public showNewAssetRequestForm: boolean;
@@ -20,6 +22,7 @@ export class MyAssetRequestsComponent implements OnInit {
   // Asset requests data
   public activeFilter: string;
   public dashboardData: any;
+  public originalRequests: any;
   public filteredRequests: Array<any>;
   // Assets data
   public isLoading: boolean;
@@ -39,6 +42,7 @@ export class MyAssetRequestsComponent implements OnInit {
 
     this.showNewAssetRequestForm = false;
     this.dashboardData = {};
+    this.originalRequests = {};
     this.organizationId =
       Number(sessionStorage.getItem('targetOrganizationID')) || 0;
     this.isLoading = false;
@@ -57,16 +61,27 @@ export class MyAssetRequestsComponent implements OnInit {
   public getallAssetrequest(): void {
     this.isLoading = true;
     this.showAlert = false;
-    this.assetRequestManagementService.GetAllAssetRequestEmployeeListStatsAndDesignatedAssets(this.organizationId)
+    this.assetRequestManagementService
+      .GetAllAssetRequestEmployeeListStatsAndDesignatedAssets(
+        this.organizationId
+      )
       .subscribe(
         (response: any) => {
+          // Sort requests by requestDate
           this.dashboardData = response.responseData;
-          this.dashboardData.requiredAssetRequests = this.dashboardData.requiredAssetRequests.sort((a: any, b: any) => new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime())
+          const sortedRequests = response.responseData.requiredAssetRequests.sort(
+            (a: any, b: any) => new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime()
+          );
+
+          // Set both main and original copies
+          this.dashboardData.requiredAssetRequests = [...sortedRequests];
+          this.dashboardData['originalRequests'] = [...sortedRequests];
           this.isLoading = false;
         },
+
         (error: any) => {
-          this.alertMessage = error.error.responseData[1];
-          this.alertTitle = error.error.responseData[0];
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         }
@@ -79,42 +94,46 @@ export class MyAssetRequestsComponent implements OnInit {
     this.showNewAssetRequestForm = !this.showNewAssetRequestForm;
   }
 
-  // Filter requests by status
   public filterRequests(status: string): void {
     this.activeFilter = status;
 
+    const allRequests = this.dashboardData?.originalRequests || [];
+
     if (status === 'All') {
-      this.filteredRequests = this.dashboardData?.requiredAssetRequests || [];
+      this.dashboardData.requiredAssetRequests = [...allRequests];
     } else {
-      // Show selected status at top, others after
-      const selected = this.filteredRequests.filter((req) => req.status === status);
-      const rest = this.filteredRequests.filter((req) => req.status !== status);
-      this.filteredRequests = [...selected, ...rest];
+      const selected = allRequests.filter((req: any) => req.requestStatus === status);
+      const rest = allRequests.filter((req: any) => req.requestStatus !== status);
+      this.dashboardData.requiredAssetRequests = [...selected, ...rest];
     }
   }
+
+
 
   public cancelRequest(request: number): void {
     this.isLoading = true;
     //request.status = 'Cancel'; // or 'Cancelled', depending on your app
-    this.assetRequestManagementService.UpdateAssetRequestStatusToCanceled(request).subscribe(
-      (response: any) => {
-        this.alertMessage = response.responseData[1] || 'Request Cancel Successfully';
-        this.alertTitle = response.responseData[0] || 'Success';
-        this.showAlert = true;
-        this.isLoading = false;
-      },
-      (error: any) => {
-        this.alertMessage = error.error.responseData[1];
-        this.alertTitle = error.error.responseData[0];
-        this.showAlert = true;
-        this.isLoading = false;
-      },
-      () => {
-        this.getallAssetrequest();
-      }
-    );
+    this.assetRequestManagementService
+      .UpdateAssetRequestStatusToCanceled(request)
+      .subscribe(
+        (response: any) => {
+          this.alertMessage =
+            response.responseData[1] || 'Request Cancel Successfully';
+          this.alertTitle = response.responseData[0] || 'Success';
+          this.showAlert = true;
+          this.isLoading = false;
+        },
+        (error: any) => {
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+          this.showAlert = true;
+          this.isLoading = false;
+        },
+        () => {
+          this.getallAssetrequest();
+        }
+      );
   }
-
 
   public createNewRequest() {
     this.showNewAssetRequestForm = true;
@@ -129,27 +148,30 @@ export class MyAssetRequestsComponent implements OnInit {
         title: this.newAssetRequestForm.controls['subject'].value,
         description: this.newAssetRequestForm.controls['notes'].value,
         organizationID: this.organizationId,
-      }
+      };
       this.newAssetRequestForm.reset();
-      this.assetRequestManagementService.CreateAssetRequest(NewAssetReq).subscribe(
-        (response) => {
-          this.alertMessage = response.responseData[1] || 'Request created Successfully';
-          this.alertTitle = response.responseData[0] || 'Success';
-          this.showAlert = true;
-          this.isLoading = false;
-        },
-        (error) => {
-          this.alertTitle = error.error.responseData[0];
-          this.alertMessage = error.error.responseData[1];
-          this.showAlert = true;
-          this.isLoading = false;
-        },
-        () => {
-          this.getallAssetrequest();
-        }
-      );
+      this.assetRequestManagementService
+        .CreateAssetRequest(NewAssetReq)
+        .subscribe(
+          (response) => {
+            this.alertMessage =
+              response.responseData[1] || 'Request created Successfully';
+            this.alertTitle = response.responseData[0] || 'Success';
+            this.showAlert = true;
+            this.isLoading = false;
+          },
+          (error) => {
+            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+            this.showAlert = true;
+            this.isLoading = false;
+          },
+          () => {
+            this.getallAssetrequest();
+          }
+        );
     } else {
-      alert('Please Fill the form!!!');
+      this.newAssetRequestForm.markAllAsTouched();
       this.isLoading = false;
     }
   }

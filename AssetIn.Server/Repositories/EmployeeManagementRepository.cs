@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using AssetIn.Server.Data;
 using AssetIn.Server.DTOs;
 using AssetIn.Server.Models;
@@ -15,7 +16,7 @@ public class EmployeeManagementRepository(UserManager<User> userManager, Applica
 
     public async Task<ApiResponse> GetEmployeeList(string userId, int organizationId)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse
@@ -58,30 +59,85 @@ public class EmployeeManagementRepository(UserManager<User> userManager, Applica
             }
         }
 
-        var targetEmployees = await _applicationDbContext.Users.Where(x => x.OrganizationId == organizationId || x.Id == requiredOrganization.UserID).Join(_applicationDbContext.Roles.Join(
-            _applicationDbContext.UserRoles,
-            role => role.Id,
-            userRole => userRole.RoleId,
-            (role, userRole) => new
+        //     var targetEmployees = await _applicationDbContext.Users.Where(x => x.OrganizationId == organizationId || x.Id == requiredOrganization.UserID).Join(_applicationDbContext.Roles.Join(
+        //         _applicationDbContext.UserRoles,
+        //         role => role.Id,
+        //         userRole => userRole.RoleId,
+        //         (role, userRole) => new
+        //         {
+        //             RoleName = role.Name,
+        //             UserId = userRole.UserId,
+        //         }
+        //     ),
+        //     user => user.Id,
+        //     userIdRole => userIdRole.UserId,
+        //     (user, userIdRole) => new
+        //     {
+        //         Id = user.Id,
+        //         UserName = user.UserName,
+        //         RoleName = userIdRole.RoleName,
+        //         Email = user.Email,
+        //         PhoneNumber = user.PhoneNumber,
+        //         ProfilePicturePath = user.ProfilePicturePath,
+        //         Gender = user.Gender,
+        //         DateOfBirth = user.DateOfBirth,
+        //         Status = user.Status,
+        //         DateOfJoining = user.DateOfJoining,
+        //         allocatedAssetIdsList = new List<Object>()
+        //     }).ToListAsync();
+
+        //     List<string> targetUserIds = targetEmployees.Select(x => x.Id).ToList();
+
+        //     var targetUserIdAssetID = await _applicationDbContext.OrganizationsAssetAssignReturns
+        //  .Where(x => targetUserIds.Contains(x.AssignedToUserID) && x.ReturnedAt == DateTime.MinValue)
+        //  .GroupBy(x => x.AssignedToUserID)
+        //  .ToDictionaryAsync(
+        //      g => g.Key,
+        //      g => g.Select(x => x.AssetID).ToList()
+        //  );
+
+        var targetEmployees = await (
+            from user in _applicationDbContext.Users
+            where user.OrganizationId == organizationId || user.Id == requiredOrganization.UserID
+            join userRole in _applicationDbContext.UserRoles on user.Id equals userRole.UserId
+            join role in _applicationDbContext.Roles on userRole.RoleId equals role.Id
+            join asset in _applicationDbContext.OrganizationsAssetAssignReturns
+                on user.Id equals asset.AssignedToUserID into assetGroup
+            from asset in assetGroup.DefaultIfEmpty()
+            where asset == null || asset.ReturnedAt == DateTime.MinValue
+            group new { user, role, asset } by new
             {
-                RoleName = role.Name,
-                UserId = userRole.UserId,
+                user.Id,
+                user.UserName,
+                role.Name,
+                user.Email,
+                user.PhoneNumber,
+                user.ProfilePicturePath,
+                user.Gender,
+                user.DateOfBirth,
+                user.Status,
+                user.DateOfJoining
+            } into g
+            select new
+            {
+                Id = g.Key.Id,
+                UserName = g.Key.UserName,
+                RoleName = g.Key.Name,
+                Email = g.Key.Email,
+                PhoneNumber = g.Key.Name != "OrganizationOwner" ? g.Key.PhoneNumber : "",
+                ProfilePicturePath = g.Key.ProfilePicturePath,
+                Gender = g.Key.Gender,
+                DateOfBirth = g.Key.DateOfBirth,
+                Status = g.Key.Status,
+                DateOfJoining = g.Key.DateOfJoining,
+                allocatedAssetIdsList = g
+                    .Where(x => x.asset != null && x.asset.ReturnedAt == DateTime.MinValue)
+                    .Select(x => x.asset.AssetID)
+                    .ToList()
             }
-        ),
-        user => user.Id,
-        userIdRole => userIdRole.UserId,
-        (user, userIdRole) => new
-        {
-            Id = user.Id,
-            UserName = user.UserName,
-            RoleName = userIdRole.RoleName,
-            Email = user.Email,
-            PhoneNumber = user.PhoneNumber,
-            ProfilePicturePath = user.ProfilePicturePath,
-            Gender = user.Gender,
-            DateOfBirth = user.DateOfBirth,
-            Status = user.Status
-        }).ToListAsync();
+        ).ToListAsync();
+
+
 
         return new()
         {
@@ -92,7 +148,7 @@ public class EmployeeManagementRepository(UserManager<User> userManager, Applica
 
     public async Task<ApiResponse> CreateEmployee(string userId, NewEmployeeDTO newEmployee)
     {
-        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
         {
             return new ApiResponse

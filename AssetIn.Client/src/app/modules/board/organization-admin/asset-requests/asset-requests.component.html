@@ -10,7 +10,7 @@
       >
         <img src="icons/totalReq.png" alt="Total Requests" />
         <div class="request-info">
-          <div class="count">{{ countRequests("All") }}</div>
+          <div class="count">{{ requests.length }}</div>
           <div class="label">Total Requests</div>
         </div>
       </div>
@@ -22,7 +22,7 @@
       >
         <img src="icons/pendingReq.png" alt="Pending Requests" />
         <div class="request-info">
-          <div class="count">{{ countRequests("Pending") }}</div>
+          <div class="count">{{ countByFilter("Pending") }}</div>
           <div class="label">Pending Requests</div>
         </div>
       </div>
@@ -34,11 +34,22 @@
       >
         <img src="icons/fullfilledReq.png" alt="Fulfilled Requests" />
         <div class="request-info">
-          <div class="count">{{ countRequests("Fulfilled") }}</div>
+          <div class="count">{{ countByFilter("Fulfilled") }}</div>
           <div class="label">Fulfilled Requests</div>
         </div>
       </div>
 
+      <div
+        class="request-card"
+        (click)="filterRequests('Accepted')"
+        [class.active]="activeFilter === 'Accepted'"
+      >
+        <img src="icons/acceptedReq.png" alt="Accepted Requests" />
+        <div class="request-info">
+          <div class="count">{{ countByFilter("Accepted") }}</div>
+          <div class="label">Accepted Requests</div>
+        </div>
+      </div>
       <div
         class="request-card"
         (click)="filterRequests('Declined')"
@@ -46,48 +57,47 @@
       >
         <img src="icons/declinedReq.png" alt="Declined Requests" />
         <div class="request-info">
-          <div class="count">{{ countRequests("Declined") }}</div>
+          <div class="count">{{ countByFilter("Declined") }}</div>
           <div class="label">Declined Requests</div>
         </div>
       </div>
+
       <div
         class="request-card"
-        (click)="filterRequests('Cancel')"
-        [class.active]="activeFilter === 'Cancel'"
+        (click)="filterRequests('Canceled')"
+        [class.active]="activeFilter === 'Canceled'"
       >
         <img src="icons/cancelReq.png" alt="Cancel Requests" />
         <div class="request-info">
-          <div class="count">{{ countRequests("Cancel") }}</div>
+          <div class="count">{{ countByFilter("Canceled") }}</div>
           <div class="label">Cancel Requests</div>
         </div>
       </div>
     </div>
   </div>
+
   <div style="display: flex">
     <div class="request-history-container">
       <div class="request-table-wrapper">
-        <!-- Table Header -->
         <table class="request-table">
           <thead>
             <tr>
               <th>Request ID</th>
               <th>Requisitioner ID</th>
-              <th>Request Description</th>
+              <th>Request Subject</th>
               <th>Request Date</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
         </table>
-
-        <!-- Scrollable Table Body -->
         <div class="scrollable-tbody">
           <table class="request-table">
             <tbody>
-              @for (request of filteredRequests; track request.requestId) {
+              @for (request of filteredRequests; track $index) {
               <tr>
-                <td>{{ request.requestId }}</td>
-                <td>{{ request.requisitionerId }}</td>
+                <td>{{ request.assetRequestID }}</td>
+                <td>{{ request.userID }}</td>
                 <td>
                   <div class="description">
                     <div class="title">
@@ -96,33 +106,25 @@
                     <div class="text">{{ request.description }}</div>
                   </div>
                 </td>
-                <td>{{ request.date | date : "dd/MM/yyyy" }}</td>
+                <td>{{ request.requestDate | date : "dd/MM/yyyy" }}</td>
                 <td>
                   <div style="display: flex">
                     <span
                       class="status-badge"
-                      [ngClass]="request.status.toLowerCase()"
+                      [ngClass]="request.requestStatus.toLowerCase()"
                     >
-                      {{ request.status }}
+                      {{ request.requestStatus }}
                     </span>
                   </div>
                 </td>
                 <td>
-                  <div class="action-icons">
-                    <button
-                      class="action-btn approve"
-                      (click)="approveRequest(request)"
-                      [disabled]="request.status !== 'Pending'"
-                    >
-                      ✅
-                    </button>
-                    <button
-                      class="action-btn reject"
-                      (click)="rejectRequest(request)"
-                      [disabled]="request.status !== 'Pending'"
-                    >
-                      ❌
-                    </button>
+                  <div class="view-action">
+                    <img
+                      style="height: 30px; width: 30px; cursor: pointer"
+                      src="icons/view.png"
+                      alt="View"
+                      (click)="openViewModal(request)"
+                    />
                   </div>
                 </td>
               </tr>
@@ -132,7 +134,50 @@
         </div>
       </div>
     </div>
-    @if (showAssignAssetModal) {
+
+    @if (showViewModal && selectedRequest) {
+    <div class="modal">
+      <div class="modal-content">
+        <button class="close-button" (click)="closeViewModal()">×</button>
+        <h3>Request Details</h3>
+
+        <p><strong>Request ID:</strong> {{ selectedRequest.assetRequestID }}</p>
+        <p><strong>Requisitioner:</strong> {{ selectedRequest.userID }}</p>
+        <p><strong>Title:</strong> {{ selectedRequest.title }}</p>
+        <p><strong>Description:</strong> {{ selectedRequest.description }}</p>
+        <p>
+          <strong>Date:</strong>
+          {{ selectedRequest.requestDate | date : "dd/MM/yyyy hh:mm:ss" }}
+        </p>
+        <p>
+          <strong>Status:</strong>
+          <span
+            class="status-tag"
+            [ngClass]="selectedRequest.requestStatus.toLowerCase()"
+          >
+            {{ selectedRequest.requestStatus }}
+          </span>
+        </p>
+
+        @if (selectedRequest.requestStatus === 'Pending') {
+        <div class="modal-actions">
+          <button
+            class="approve-btn"
+            (click)="acceptFromModal(selectedRequest.assetRequestID)"
+          >
+            ✓ Accept
+          </button>
+          <button
+            class="reject-btn"
+            (click)="rejectFromModal(selectedRequest.assetRequestID)"
+          >
+            ✗ Reject
+          </button>
+        </div>
+        }
+      </div>
+    </div>
+    } @if (showAssignAssetModal) {
     <div class="modal">
       <div class="modal-content">
         <button class="close-button" (click)="closeAssignAssetModal()">
@@ -142,25 +187,55 @@
 
         <form [formGroup]="assignAssetForm" (ngSubmit)="onSubmit()">
           <label>Category</label>
-          <select formControlName="category">
+          <select
+            formControlName="category"
+            (change)="getAvailableAssets($event)"
+          >
             <option value="">Select Category</option>
-            <option value="laptops">Laptops</option>
-            <option value="monitors">Monitors</option>
+            @for (category of availableAssetsCategory; track
+            category.organizationsAssetCatagoryID) {
+            <option [value]="category.organizationsAssetCatagoryID">
+              {{ category.organizationsAssetCatagoryName }}
+            </option>
+            }
           </select>
+
           @if (assignAssetForm.controls['category'].touched &&
           assignAssetForm.controls['category'].hasError('required')) {
           <div class="input-error">Category is required.</div>
           }
 
+          <!-- Assets Dropdown -->
           <label>Available Assets</label>
-          <select formControlName="asset">
-            <option value="">Select available assets</option>
-            @for (asset of availableAssets; track asset.id) {
-            <option [value]="asset.id">{{ asset.name }}</option>
+          <select formControlName="availableAssets">
+            @if(!assignAssetForm.controls['category'].value){
+            <option value="" [selected]="true">
+              Select a catagory to get the available asset...
+            </option>
+            }@else if(availableAssets.length ===0){
+            <option value="" [selected]="true">
+              No Asset Available in this catagory...
+            </option>
+            }@else {
+            <option value="" [selected]="true">Select available asset</option>
+            } @for (asset of availableAssets; track asset.assetlD) {
+            <option
+              [value]="asset.assetlD"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              "
+            >
+              <span style="color: blue">{{ asset.assetName }}</span>
+              <hr />
+              <span>{{ asset.barcode }}</span>
+            </option>
             }
           </select>
-          @if (assignAssetForm.controls['asset'].touched &&
-          assignAssetForm.controls['asset'].hasError('required')) {
+
+          @if (assignAssetForm.controls['availableAssets'].touched &&
+          assignAssetForm.controls['availableAssets'].hasError('required')) {
           <div class="input-error">Asset selection is required.</div>
           }
 
@@ -170,7 +245,19 @@
             placeholder="Add notes..."
           ></textarea>
 
-          <button type="submit" class="submit-button">Fulfill Request ➜</button>
+          <div class="modal-actions">
+            <button type="submit" class="submit-button">
+              Fulfill Request ➜
+            </button>
+            <button
+              class="reject-btn"
+              style="margin-top: 25px"
+              (click)="rejectFromModal(selectedRequest.assetRequestID)"
+              type="button"
+            >
+              ✗Reject
+            </button>
+          </div>
         </form>
       </div>
     </div>
