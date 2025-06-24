@@ -54,7 +54,7 @@ public class AuthenticationRepository(ApplicationDbContext applicationDbContext,
       {
         Status = StatusCodes.Status400BadRequest,
         ResponseData = new List<string>
-                {"Unable to create new user Account"},
+                {"Error","Unable to create new user Account."+createNewUser.Errors.First().Description},
         Errors = createNewUser.Errors,
       };
     }

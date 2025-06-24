@@ -29,7 +29,7 @@ public class CrystalReportingController(ApplicationDbContext applicationDbContex
         return HelperFunctions.ResponseFormatter(this, result);
     }
 
-    [HttpGet("GenerateHtmlReportByFilter")]
+    [HttpPost("GenerateHtmlReportByFilter")]
     public async Task<IActionResult> GenerateHtmlReportByFilter(ReportingFilterDto reportingFilterDto)
     {
         if (reportingFilterDto.reportType == "Assets")

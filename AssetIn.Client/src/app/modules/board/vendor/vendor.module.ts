@@ -7,6 +7,8 @@ import { ErrorPageComponent } from '../../../shared/components/error-page/error-
 import { SettingsComponent } from './settings/settings.component';
 import { AddNewProductComponent } from './add-new-product/add-new-product.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { PageLoaderComponent } from '../../../shared/components/page-loader/page-loader.component';
+import { AlertCardComponent } from '../../../shared/components/alert-card/alert-card.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     VendorRoutingModule,
     ErrorPageComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    PageLoaderComponent,
+    AlertCardComponent,
   ]
 })
 export class VendorModule { }

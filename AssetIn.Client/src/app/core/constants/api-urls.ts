@@ -16,8 +16,10 @@ export const ApiUrls = {
   },
   VendorManagement: {
     GetVendorInfo: '/VendorManagement/GetVendorInfo',
-    CreateVendorInfo: '/VendorManagement/CreateVendorInfo',
-    UpdateVendorInfo: '/VendorManagement/UpdateVendorInfo',
+    CreateUpdateVendorInfo: '/VendorManagement/CreateUpdateVendorInfo',
+    CreateVendorProduct: '/VendorManagement/CreateVendorProduct',
+    GetVendorProducts: '/VendorManagement/GetVendorProducts',
+    UploadVendorProfilePicture: '/VendorManagement/UploadVendorProfilePicture',
   },
   AssetManagement: {
     CreateAsset: '/AssetManagement/CreateAsset',
@@ -34,7 +36,7 @@ export const ApiUrls = {
     DeleteAssetType: '/AssetManagement/DeleteAssetType',
     UpdateAssetType: '/AssetManagement/UpdateAssetType',
     GetAllAssetType: '/AssetManagement/GetAllAssetType',
-    GetAllAvailableAssetByCatagoryId:'/AssetManagement/GetAllAvailableAssetByCatagoryId',
+    GetAllAvailableAssetByCatagoryId: '/AssetManagement/GetAllAvailableAssetByCatagoryId',
   },
   EmployeeManagement: {
     GetEmployeeList: '/EmployeeManagement/GetEmployeeList',
@@ -54,6 +56,7 @@ export const ApiUrls = {
     UpdateAssetRequestStatusToCanceled: '/AssetRequestManagement/UpdateAssetRequestStatusToCanceled',
   },
   CrystalReporting: {
-    GetFilterData: '/CrystalReporting/GetFilterData'
+    GetFilterData: '/CrystalReporting/GetFilterData',
+    GenerateHtmlReportByFilter: '/CrystalReporting/GenerateHtmlReportByFilter'
   }
 };

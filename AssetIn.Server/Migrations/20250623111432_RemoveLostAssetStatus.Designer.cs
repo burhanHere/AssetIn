@@ -4,6 +4,7 @@ using AssetIn.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetIn.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250623111432_RemoveLostAssetStatus")]
+    partial class RemoveLostAssetStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -428,6 +431,11 @@ namespace AssetIn.Server.Migrations
                         {
                             OrganizationsAssetStatusID = 4,
                             OrganizationsAssetStatusName = "Available"
+                        },
+                        new
+                        {
+                            OrganizationsAssetStatusID = 5,
+                            OrganizationsAssetStatusName = "Out Of Order"
                         });
                 });
 
@@ -562,9 +570,6 @@ namespace AssetIn.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ProfilePicturePath")
-                        .HasColumnType("longtext");
-
                     b.Property<bool>("Status")
                         .HasColumnType("tinyint(1)");
 
@@ -651,28 +656,28 @@ namespace AssetIn.Server.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "045d19a6-bff3-42c1-82be-17039cc1f3a3",
+                            ConcurrencyStamp = "a5d98478-2941-4901-b628-e2f22e4db92c",
                             Name = "OrganizationOwner",
                             NormalizedName = "ORGANIZATIONOWNER"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "1e5bc45f-d7ce-4618-8243-1bfe7ab92f2f",
+                            ConcurrencyStamp = "9a0e34ec-76b7-4688-ae34-11e1f3f1b3ef",
                             Name = "OrganizationEmployee",
                             NormalizedName = "ORGANIZATIONEMPLOYEE"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "d07f9279-0a24-47d3-8ebf-1124218c502f",
+                            ConcurrencyStamp = "8fa520e0-5f39-497d-8d49-dfcc00f70243",
                             Name = "OrganizationAssetManager",
                             NormalizedName = "ORGANIZATIONASSETMANAGER"
                         },
                         new
                         {
                             Id = "4",
-                            ConcurrencyStamp = "58525f0e-54ff-4653-bd7e-9a061a2df206",
+                            ConcurrencyStamp = "bf9e717b-5ba2-4b14-bd2f-f61ea80d8e2e",
                             Name = "Vendor",
                             NormalizedName = "VENDOR"
                         });

@@ -8,5 +8,6 @@ public class VendorDTO
     public string PhoneNumber { get; set; }
     public string Email { get; set; }
     public string ContactPerson { get; set; }
+    public string? ProfilePicturePath { get; set; }
     public string UserID { get; set; }
 }

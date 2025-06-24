@@ -573,11 +573,13 @@ public class AssetRequestManagementRepository(ApplicationDbContext applicationDb
             AssignedAt = DateTime.Now,
             ReturnedAt = DateTime.MinValue,
             Notes = fulfillAssetRequestDTO.Notes,
+            CheckInNotes = "",
             AssignedToUserID = targetAssetRequest.UserID,
             AssignedByUserID = validUser.Id,
             AssetID = assetToAssign.AssetlD,
         };
         var assignmentResult = await _applicationDbContext.OrganizationsAssetAssignReturns.AddAsync(newAssetAssign);
+        int result2 = await _applicationDbContext.SaveChangesAsync();
 
         targetAssetRequest.RequestStatus = 4; // 4 = Fulfilled
         targetAssetRequest.CompletionStatus = true;

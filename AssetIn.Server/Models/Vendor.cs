@@ -19,6 +19,7 @@ public class Vendor
     public string ContactPerson { get; set; }
     [Required]
     public bool Status { get; set; }
+    public string? ProfilePicturePath { get; set; }
     [Required]
     public string UserID { get; set; }
     [ForeignKey("UserID")]

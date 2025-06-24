@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using YourAssetManager.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -104,6 +105,11 @@ builder.Services.AddTransient<EmailService>();
 builder.Services.AddTransient<CrystalReportingService>();
 // adding SynchronizedConverter as service 
 builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+
+// adding cloudinary service
+builder.Services.AddTransient<CloudinaryService>();
+
+
 
 // Add Iconfigurations
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);

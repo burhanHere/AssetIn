@@ -69,8 +69,8 @@
         <div>
           <p>
             {{
-              organizationData?.organizationAssetRatioByAssetType[0]
-                ?.assetRatioInType + "%"
+              (organizationData?.organizationAssetRatioByAssetType[0]
+                ?.assetRatioInType | number : "1.0-2") + "%"
             }}
           </p>
           <p>
@@ -84,8 +84,8 @@
         <div>
           <p>
             {{
-              organizationData?.organizationAssetRatioByAssetType[1]
-                ?.assetRatioInType + "%"
+              (organizationData?.organizationAssetRatioByAssetType[1]
+                ?.assetRatioInType | number : "1.0-2") + "%"
             }}
           </p>
           <p>
@@ -151,7 +151,7 @@
     <div class="asset-list">
       <h2>Asset List</h2>
       <div class="actions">
-        <button class="btn add" (click)="nvgToAddUpdateAsset()" >
+        <button class="btn add" (click)="nvgToAddUpdateAsset()">
           <img src="icons/add-new-asset.png" alt="Add" />
           <i class="add"></i> Add
         </button>

@@ -15,4 +15,9 @@ export class CrystalReportingService {
   public GetFilterData(organizationId: number): Observable<ApiResponse> {
     return this.httpCient.get<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.CrystalReporting.GetFilterData + `?organizationId=${organizationId}`);
   }
+
+  public GenerateHtmlReportByFilter(reportFilterationData: any) {
+    return this.httpCient.post(this.apiUrls.baseUrl + this.apiUrls.CrystalReporting.GenerateHtmlReportByFilter, reportFilterationData);
+  }
+
 }
