@@ -4,15 +4,16 @@ using AssetIn.Server.Helpers;
 using AssetIn.Server.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YourAssetManager.Server.Services;
 
 namespace AssetIn.Server.Controllers;
 
 [ApiController]
 [Route("AssetIn.Server/[controller]")]
 [Authorize(Policy = "VendorPolicy")]
-public class VendorManagementController(ApplicationDbContext applicationDbContext) : ControllerBase
+public class VendorManagementController(ApplicationDbContext applicationDbContext, CloudinaryService cloudinaryService) : ControllerBase
 {
-    private readonly VendorManagementRepository _vendorManagementRepository = new(applicationDbContext);
+    private readonly VendorManagementRepository _vendorManagementRepository = new(applicationDbContext, cloudinaryService);
 
     [HttpGet("GetVendorInfo")]
     public async Task<IActionResult> GetVendorInfo()
@@ -33,8 +34,8 @@ public class VendorManagementController(ApplicationDbContext applicationDbContex
         return HelperFunctions.ResponseFormatter(this, result);
     }
 
-    [HttpPost("CreateVendorInfo")]
-    public async Task<IActionResult> CreateVendorInfo(VendorDTO newVendorInfo)
+    [HttpPut("CreateUpdateVendorInfo")]
+    public async Task<IActionResult> CreateUpdateVendorInfo(VendorDTO newVendorInfo)
     {
         var userId = User.FindFirst("UserId")?.Value;
 
@@ -48,12 +49,12 @@ public class VendorManagementController(ApplicationDbContext applicationDbContex
             });
         }
 
-        ApiResponse result = await _vendorManagementRepository.CreateVendorInfo(newVendorInfo, userId);
+        ApiResponse result = await _vendorManagementRepository.CreateUpdateVendorInfo(newVendorInfo, userId);
         return HelperFunctions.ResponseFormatter(this, result);
     }
 
-    [HttpPatch("UpdateVendorInfo")]
-    public async Task<IActionResult> UpdateVendorInfo(VendorDTO newVendorInfo)
+    [HttpPost("CreateVendorProduct")]
+    public async Task<IActionResult> CreateVendorProduct(VendorProductDTO newVendorProduct)
     {
         var userId = User.FindFirst("UserId")?.Value;
 
@@ -67,8 +68,45 @@ public class VendorManagementController(ApplicationDbContext applicationDbContex
             });
         }
 
-        ApiResponse result = await _vendorManagementRepository.UpdateVendorInfo(newVendorInfo, userId);
+        ApiResponse result = await _vendorManagementRepository.CreateVendorProduct(newVendorProduct, userId);
         return HelperFunctions.ResponseFormatter(this, result);
     }
 
+    [HttpGet("GetVendorProducts")]
+    public async Task<IActionResult> GetVendorProducts()
+    {
+        var userId = User.FindFirst("UserId")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            // If the username is not found, return an unauthorized response
+            return Unauthorized(new ApiResponse
+            {
+                Status = StatusCodes.Status401Unauthorized,
+                ResponseData = new List<string> { "User data not found in token." }
+            });
+        }
+
+        ApiResponse result = await _vendorManagementRepository.GetVendorProducts(userId);
+        return HelperFunctions.ResponseFormatter(this, result);
+    }
+
+    [HttpPatch("UploadVendorProfilePicture")]
+    public async Task<IActionResult> UploadVendorProfilePicture(IFormFile file)
+    {
+        var userId = User.FindFirst("UserId")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            // If the username is not found, return an unauthorized response
+            return Unauthorized(new ApiResponse
+            {
+                Status = StatusCodes.Status401Unauthorized,
+                ResponseData = new List<string> { "User data not found in token." }
+            });
+        }
+
+        ApiResponse result = await _vendorManagementRepository.UploadVendorProfilePicture(file, userId);
+        return HelperFunctions.ResponseFormatter(this, result);
+    }
 }

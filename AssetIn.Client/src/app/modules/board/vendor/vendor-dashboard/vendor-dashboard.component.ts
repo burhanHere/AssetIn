@@ -1,4 +1,9 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { VendorManagementService } from '../../../../core/services/VendorManagement/vendor-management.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { JwtService } from '../../../../core/services/jwt/jwt.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-vendor-dashboard',
@@ -6,103 +11,226 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
   styleUrl: './vendor-dashboard.component.css'
 })
 export class VendorDashboardComponent {
+  @ViewChild('imageUpload') imageUpload!: ElementRef<HTMLInputElement>;
+  public profilePicture: string;
+  public selectedFile: File | null;
+  private vendorManagementService: VendorManagementService = inject(VendorManagementService);
+  private jwtService: JwtService = inject(JwtService);
+  public vendorInfoForm: FormGroup;
+  public isEditMode: boolean;
+  public vendor: any;
+  public products: any[];
+  public isLoading: boolean;
+  public showAlert: boolean;
+  public alertTitle: string;
+  public alertMessage: string;
 
-  public isEditMode: boolean = false;
-
-  vendor = {
-    fullName: 'Jaidi Pan Shop',
-    email: 'jaidipan.shop@gmail.com',
-    address: 'Shop 29, 1 Floor , Hafeez Center, Lahore.',
-    countryCode: '+92',
-    phoneNumber: '0300XXXXXXX'
-  };
-
-  tempVendor = {
-    fullName: '',
-    email: '',
-    address: '',
-    countryCode: '',
-    phoneNumber: ''
-  };
-  
-  ngOnInit() {
-    this.tempVendor = { ...this.vendor };
+  constructor() {
+    this.vendorInfoForm = new FormGroup({
+      vendorName: new FormControl('', [Validators.required]),
+      contactPersonName: new FormControl('', [Validators.required]),
+      vendorEmail: new FormControl('', [Validators.required, Validators.email]),
+      vendorPhone: new FormControl('', [Validators.required, Validators.maxLength(13),
+      Validators.minLength(13),
+      Validators.pattern(/^\+\d{1,3}\d{9,12}$/)]),
+      vendorAddress: new FormControl('', [Validators.required]),
+    });
+    this.isEditMode = false;
+    this.vendor = {};
+    this.products = [];
+    this.isLoading = false;
+    this.showAlert = false;
+    this.alertTitle = '';
+    this.alertMessage = '';
+    this.profilePicture = '';
+    this.selectedFile = null;
   }
 
-  products = [
-    {
-      id: 1,
-      name: 'Logitech K380s',
-      description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia...'
-    },
-    {
-      id: 2,
-      name: 'Logitech K380s',
-      description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia...'
-    },
-    {
-      id: 3,
-      name: 'Logitech K380s',
-      description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia...'
-    },
-    {
-      id: 4,
-      name: 'Logitech K380s',
-      description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia...'
-    },
-    {
-      id: 5,
-      name: 'Logitech K380s',
-      description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia...'
-    }
-  ];
+  ngOnInit() {
+    // call vendor detail get api
+    this.getVendorInfo();
+    this.getVendorProducts();
+  }
 
-  previewUrl: string | null = null;
-    @ViewChild('fileUploader') fileUploader!: ElementRef<HTMLInputElement>;
-    @ViewChild('cameraCapture') cameraCapture!: ElementRef<HTMLInputElement>;
+  private getVendorInfo(): void {
+    this.isLoading = true;
+    this.vendorManagementService.GetVendorInfo().subscribe(
+      (response: any) => {
+        this.vendor = response.responseData;
+        this.profilePicture = this.vendor?.profilePicturePath || '';
+        if (this.vendor !== null) {
+          this.setValidatorData();
+        }
+        this.isLoading = false;
+      }, (error: HttpErrorResponse) => {
+        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.isLoading = false;
+        this.showAlert = true;
+      }, () => {
+        this.getVendorProducts();
+      }
+    );
+  }
 
-  toggleEdit() {
-    this.tempVendor = { ...this.vendor }; // Make fresh editable copy
+  private getVendorProducts(): void {
+    this.isLoading = true;
+    this.vendorManagementService.GetVendorProducts().subscribe(
+      (response: any) => {
+        this.products = response.responseData || [];
+        this.isLoading = false;
+      }, (error: HttpErrorResponse) => {
+        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.isLoading = false;
+        this.showAlert = true;
+      }
+    );
+  }
+
+  private setValidatorData() {
+    this.vendorInfoForm.controls['vendorName'].setValue(this.vendor.vendorName);
+    this.vendorInfoForm.controls['contactPersonName'].setValue(this.vendor.contactPerson);
+    this.vendorInfoForm.controls['vendorEmail'].setValue(this.vendor.email);
+    this.vendorInfoForm.controls['vendorPhone'].setValue(this.vendor.phoneNumber);
+    this.vendorInfoForm.controls['vendorAddress'].setValue(this.vendor.officeAddress);
+  }
+
+
+  public toggleEdit() {
     this.isEditMode = !this.isEditMode;
     console.log('Edit mode toggled:', this.isEditMode);
   }
 
-  saveChanges() {
-    this.vendor = { ...this.tempVendor }; // Apply changes
+  public saveChanges() {
+    if (this.vendorInfoForm.valid) {
+      this.isLoading = true;
+      const tempJwt = sessionStorage.getItem('auth-jwt') || '';
+      let claims;
+      if (tempJwt) {
+        claims = this.jwtService.getTokenClaims(tempJwt);
+      }
+      const vendorData = {
+        "vendorID": 0,
+        "vendorName": this.vendorInfoForm.controls['vendorName'].value,
+        "officeAddress": this.vendorInfoForm.controls['vendorAddress'].value,
+        "phoneNumber": this.vendorInfoForm.controls['vendorPhone'].value,
+        "email": this.vendorInfoForm.controls['vendorEmail'].value,
+        "contactPerson": this.vendorInfoForm.controls['contactPersonName'].value,
+        "userID": claims?.userID || '0',
+      }
+      this.vendorManagementService.CreateUpdateVendorInfo(vendorData).subscribe(
+        (response: any) => {
+          this.alertTitle = response.responseData?.[0] || 'Success';
+          this.alertMessage = response.responseData?.[1] || 'Vendor data updated successfully.';
+          this.isEditMode = false;
+          this.isLoading = false;
+          this.showAlert = true;
+        }, (error: HttpErrorResponse) => {
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+          this.isLoading = false;
+          this.showAlert = true;
+        }
+      );
+    } else {
+      this.vendorInfoForm.markAllAsTouched();
+    }
+  }
+
+  public cancelChanges() {
+    // Revert to original data
     this.isEditMode = false;
-    console.log("Vendor changes saved:", this.vendor);
+    this.vendorInfoForm.reset();
+    this.setValidatorData();
   }
 
-  cancelChanges() {
-    this.tempVendor = { ...this.vendor }; // Revert edits
-    this.isEditMode = false;
-    // Optionally reload original vendor data if needed
-    console.log("Vendor changes cancelled");
+  public onDeleteImage(): void {
+    this.profilePicture = '';
+    this.selectedFile = null;
+    if (this.imageUpload) {
+      this.imageUpload.nativeElement.value = '';
+    }
   }
 
-  onDelete() {
-    this.previewUrl = null;
-    this.fileUploader.nativeElement.value = '';
-    this.cameraCapture.nativeElement.value = '';
-    console.log('Image Deleted');
+  public onUploadImage() {
+    this.imageUpload.nativeElement.click();
   }
 
-  onUpload() {
-    this.fileUploader.nativeElement.click();
-    console.log('Image uploaded');
+  public handleFileInput(event: Event): void {
+    this.onFileSelected(event).subscribe({
+      next: (file) => {
+        this.selectedFile = file;
+        this.uploadToServer(); // Only called after file is read and valid
+      },
+      error: (err) => {
+        this.alertTitle = 'Error';
+        this.alertMessage = err;
+        this.showAlert = true;
+        this.onDeleteImage();
+      }
+    });
   }
 
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
-
-    const file = input.files[0];
-    const reader = new FileReader();
-    reader.onload = () => {
-      // reader.result is a base64 data URL
-      this.previewUrl = reader.result as string;
-    };
-    reader.readAsDataURL(file);
+  private uploadToServer(): void {
+    if (this.selectedFile) {
+      this.isLoading = true;
+      const formData = new FormData();
+      formData.append('file', this.selectedFile, this.selectedFile.name);
+      this.vendorManagementService.UploadVendorProfilePicture(formData).subscribe(
+        (response: any) => {
+          this.alertTitle = response.responseData?.[0] || 'Success';
+          this.alertMessage = response.responseData?.[1] || 'Vendor profile picture updated successfully.';
+          this.isLoading = false;
+          this.showAlert = true;
+        }, (error: HttpErrorResponse) => {
+          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+          this.isLoading = false;
+          this.showAlert = true;
+        });
+    } else {
+      this.alertTitle = 'Error';
+      this.alertMessage = 'No file selected for upload.';
+      this.showAlert = true;
+    }
   }
 
+  private onFileSelected(event: Event): Observable<File> {
+    return new Observable<File>((observer) => {
+      const input = event.target as HTMLInputElement;
+
+      if (!input.files || input.files.length === 0) {
+        observer.error('No file selected.');
+        return;
+      }
+
+      const file = input.files[0];
+
+      // Validate type
+      if (!file.type.startsWith('image/')) {
+        observer.error('Please select a valid image file (jpg, jpeg, png, gif).');
+        return;
+      }
+
+      // Validate size
+      if (file.size > 5 * 1024 * 1024) {
+        observer.error('File size must be less than 5MB.');
+        return;
+      }
+
+      // FileReader for preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.profilePicture = reader.result as string;
+        observer.next(file);
+        observer.complete();
+      };
+      reader.onerror = () => {
+        observer.error('Error reading file.');
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
 }

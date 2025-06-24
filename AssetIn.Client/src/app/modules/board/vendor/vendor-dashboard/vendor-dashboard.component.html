@@ -1,144 +1,245 @@
 <div class="main-container">
   <div class="vendor-info">
-    <h2>Vendor Info</h2>
-    <div style="display: flex; width: 100%;">
-      <div class="vendor-details">
-        <!-- Row 1: Full Name + Email -->
-        <div class="row">
-          <div class="form-group icon-input">
-            <label>Full Name</label>
-            <div class="input-wrapper">
-              <img src="icons/house.png" class="icon-img" alt="User" />
-              <input type="text"
-                [value]="isEditMode ? tempVendor.fullName : vendor.fullName"
-                [readonly]="!isEditMode"
-                (input)="isEditMode && (tempVendor.fullName = $any($event.target).value)" 
-              />
-
-            </div>
-          </div>
-
-          <div class="form-group icon-input">
-            <label>Email</label>
-            <div class="input-wrapper">
-              <img src="icons/email.png" class="icon-img" alt="Email" />
-              <input type="email"
-                [value]="isEditMode ? tempVendor.email : vendor.email"
-                [readonly]="!isEditMode"
-                (input)="isEditMode && (tempVendor.email = $any($event.target).value)"
-              />
-
-            </div>
-          </div>
+    <div class="vendor-header">
+      <h2>Vendor Info</h2>
+      <div class="edit-button-container">
+        @if(!isEditMode){
+        <button (click)="toggleEdit()" class="edit-btn">
+          <img src="icons/edit.png" class="btn-icon" alt="Edit" />
+          Edit
+        </button>
+        } @else {
+        <div class="edit-actions">
+          <button (click)="saveChanges()" class="save-btn">Save</button>
+          <button (click)="cancelChanges()" class="cancel-btn">Cancel</button>
         </div>
+        }
+      </div>
+    </div>
 
-        <!-- Row 2: Address + Phone Number -->
-        <div class="row">
-          <div class="form-group icon-input">
-            <label>Address</label>
+    <div class="vendor-content" [formGroup]="vendorInfoForm">
+      <form class="vendor-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fullName">Vendor Name</label>
             <div class="input-wrapper">
-              <img src="icons/location.png" class="icon-img" alt="Address" />
-              <input type="text"
-                [value]="isEditMode ? tempVendor.address : vendor.address"
-                [readonly]="!isEditMode"
-                (input)="isEditMode && (tempVendor.address = $any($event.target).value)"
+              <img src="icons/Vendor.png" class="input-icon" alt="User" />
+              <input
+                id="fullName"
+                type="text"
+                formControlName="vendorName"
+                [readOnly]="!isEditMode"
+                placeholder="Name that organization can see"
+                [class.editable]="isEditMode"
               />
-
             </div>
+            @if (vendorInfoForm.controls['vendorName'].touched &&
+            vendorInfoForm.controls['vendorName'].hasError('required')) {
+            <div class="input-error">Vendor Name is required.</div>
+            }
           </div>
 
           <div class="form-group">
-            <label>Phone Number</label>
-            <div class="phone">
-              <select [value]="isEditMode ? tempVendor.countryCode : vendor.countryCode"
-                      [disabled]="!isEditMode"
-                      (change)="tempVendor.countryCode = $any($event.target).value">
-                <option value="+92">+92</option>
-              </select>
-
-              <input type="text"
-                [value]="isEditMode ? tempVendor.phoneNumber : vendor.phoneNumber"
-                [readonly]="!isEditMode"
-                (input)="isEditMode && (tempVendor.phoneNumber = $any($event.target).value)"
+            <label for="fullName">Contact Person Name</label>
+            <div class="input-wrapper">
+              <img src="icons/Avatar.png" class="input-icon" alt="User" />
+              <input
+                id="fullName"
+                type="text"
+                formControlName="contactPersonName"
+                [readOnly]="!isEditMode"
+                placeholder="Name that organization can see"
+                [class.editable]="isEditMode"
               />
+            </div>
+            @if (vendorInfoForm.controls['contactPersonName'].touched &&
+            vendorInfoForm.controls['contactPersonName'].hasError('required')) {
+            <div class="input-error">Contact Person Name is required.</div>
+            }
+          </div>
+        </div>
 
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <div class="input-wrapper">
+              <img src="icons/email.png" class="input-icon" alt="Email" />
+              <input
+                id="email"
+                type="email"
+                formControlName="vendorEmail"
+                [readOnly]="!isEditMode"
+                placeholder="contact@email.com"
+                [class.editable]="isEditMode"
+              />
+            </div>
+            @if (vendorInfoForm.controls['vendorEmail'].touched &&
+            vendorInfoForm.controls['vendorEmail'].hasError('required')) {
+            <div class="input-error">Vendor Email is required.</div>
+            } @if (vendorInfoForm.controls['vendorEmail'].touched &&
+            vendorInfoForm.controls['vendorEmail'].hasError('email')) {
+            <div class="input-error">Invalid email format.</div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <div class="input-wrapper">
+              <img src="icons/Phone.png" class="input-icon" alt="Phone" />
+              <input
+                id="phone"
+                type="tel"
+                formControlName="vendorPhone"
+                [readOnly]="!isEditMode"
+                placeholder="+92xxxxxxxxxx"
+                class="phone-input"
+                [class.editable]="isEditMode"
+              />
+            </div>
+            @if (vendorInfoForm.controls['vendorPhone'].touched &&
+            vendorInfoForm.controls['vendorPhone'].hasError('required')) {
+            <div class="input-error">Vendor Phone is required.</div>
+            } @if (vendorInfoForm.controls['vendorPhone'].touched &&
+            vendorInfoForm.controls['vendorPhone'].hasError('pattern')) {
+            <div class="input-error">Invalid phone number format.</div>
+            }@if (vendorInfoForm.controls['vendorPhone'].touched &&
+            vendorInfoForm.controls['vendorPhone'].hasError('minLength')) {
+            <div class="input-error">Invalid phone number format.</div>
+            }@if (vendorInfoForm.controls['vendorPhone'].touched &&
+            vendorInfoForm.controls['vendorPhone'].hasError('maxLength')) {
+            <div class="input-error">Invalid phone number format.</div>
+            }
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="address">Address</label>
+            <div class="input-wrapper">
+              <img src="icons/location.png" class="input-icon" alt="Address" />
+              <textarea
+                id="address"
+                formControlName="vendorAddress"
+                [readOnly]="!isEditMode"
+                placeholder="Your, shop, Address."
+                [class.editable]="isEditMode"
+                rows="3"
+              ></textarea>
+              @if (vendorInfoForm.controls['vendorAddress'].touched &&
+              vendorInfoForm.controls['vendorAddress'].hasError('required')) {
+              <div class="input-error">Vendor Address is required.</div>
+              }
             </div>
           </div>
         </div>
+      </form>
 
-        <div class="btn-edit">
-          <div class="input-wrapper">
-            @if(!isEditMode){
-              <button (click)="toggleEdit()">
-                {{ isEditMode ? 'Save' : 'Edit' }}
-              </button>
-              <img src="icons/edit.png" class="icon-img-edit" alt="Edit" />
-            }
-            @else {
-              <div style="display: flex; gap: 1vw;">
-                <button (click)="saveChanges()">Save</button>
-                <button (click)="cancelChanges()">Cancel</button>
-              </div>}
-          </div>
-        </div>
-      </div>
-      
-      <div class="vendor-img-div">
-        <div class="action-img-div">
-          <button class="btn-action" (click)="onDelete()">
-            <img src="icons/delete-black.png" alt="Delete Image">
-          </button>
-          <button class="btn-action" (click)="onUpload()">
-            <img src="icons/upload.png" alt="Upload Image">
+      <div class="vendor-image-section">
+        <div class="image-actions">
+          <!-- <button
+            class="action-btn delete-btn"
+            (click)="onDeleteImage()"
+            title="Delete Image"
+          >
+            <img src="icons/delete-black.png" alt="Delete" />
+          </button> -->
+          <button
+            class="action-btn upload-btn"
+            (click)="onUploadImage()"
+            title="Upload Image"
+          >
+            <img src="icons/upload.png" alt="Upload" />
           </button>
         </div>
-        <div class="img-div">
-          <img [src]="previewUrl ? previewUrl : 'icons/emp_avatar.png'" alt="Vendor Image">
+
+        <div class="vendor-avatar">
+          <img
+            [src]="profilePicture || 'icons/emp_avatar.png'"
+            alt="Vendor Image"
+            class="avatar-image"
+          />
         </div>
+
         <input
           type="file"
           accept="image/*"
-          #fileUploader
-          (change)="onFileSelected($event)"
-          hidden>
-        <input
-          type="file"
-          accept="image/*"
-          capture="environment"
-          #cameraCapture
-          (change)="onFileSelected($event)"
-          hidden>
+          (change)="handleFileInput($event)"
+          #imageUpload
+          hidden
+        />
       </div>
     </div>
   </div>
 </div>
 
+@if(vendor === null|| vendor === undefined|| vendor === {}){
+<p
+  style="
+    text-align: center;
+    color: #666;
+    font-size: 18px;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+  "
+>
+  Update your Vendor Profile Info
+</p>
+} @else {
 <div class="product-container">
   <div>
     <div class="products-header">
       <h2>Products</h2>
       <div class="input-wrapper">
-        <button class="add-product" [routerLink]="['../addNewProduct']">Add New Product</button>
-        <img src="icons/add-new-asset.png" class="icon-img-add-new" alt="Add Product" />
+        <button class="add-product" [routerLink]="['../addNewProduct']">
+          Add New Product
+        </button>
+        <img
+          src="icons/add-new-asset.png"
+          class="icon-img-add-new"
+          alt="Add Product"
+        />
       </div>
     </div>
-
     <div class="product-cards">
       @for (product of products; track product.id) {
-        <div class="product-card">
-          <div class="product-image">
-            <img src="icons/camera.png" alt="Product Image" />
-          </div>
-          <div class="product-info">
-            <h3>{{ product.name }}</h3>
-            <p>{{ product.description }}</p>  
-            <div class="product-meta">
-              <div class="product-meta-div">Price: <div>5000</div></div>
-              <div class="product-meta-div">Model: <div>Lorem ipsum</div></div>
+      <div class="product-card">
+        <div class="product-image">
+          <img
+            [src]="product?.productImage || 'icons/camera.png'"
+            alt="Product Image"
+          />
+        </div>
+        <div class="product-info">
+          <h3>{{ product?.productName }}</h3>
+          <p>{{ product?.description }}</p>
+          <div class="product-meta">
+            <div class="product-meta-div">
+              Price
+              <div>${{ product?.price | number }}</div>
+            </div>
+            <div class="product-meta-div">
+              Model
+              <div>{{ product?.model }}</div>
             </div>
           </div>
         </div>
+      </div>
+      } @if (products.length === 0) {
+      <div class="no-products">
+        <p>No products available. Click "Add New Product" to get started.</p>
+      </div>
       }
     </div>
   </div>
 </div>
+} @if(isLoading) {
+<app-page-loader></app-page-loader>
+} @if (showAlert) {
+<app-alert-card
+  [title]="alertTitle"
+  [message]="alertMessage"
+  (closeCard)="showAlert = $event"
+></app-alert-card>
+}

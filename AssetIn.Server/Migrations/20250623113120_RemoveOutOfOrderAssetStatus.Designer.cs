@@ -4,6 +4,7 @@ using AssetIn.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetIn.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250623113120_RemoveOutOfOrderAssetStatus")]
+    partial class RemoveOutOfOrderAssetStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -562,9 +565,6 @@ namespace AssetIn.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ProfilePicturePath")
-                        .HasColumnType("longtext");
-
                     b.Property<bool>("Status")
                         .HasColumnType("tinyint(1)");
 
@@ -651,28 +651,28 @@ namespace AssetIn.Server.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "045d19a6-bff3-42c1-82be-17039cc1f3a3",
+                            ConcurrencyStamp = "25855d14-72bc-4862-8b00-6f62ebccf051",
                             Name = "OrganizationOwner",
                             NormalizedName = "ORGANIZATIONOWNER"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "1e5bc45f-d7ce-4618-8243-1bfe7ab92f2f",
+                            ConcurrencyStamp = "8dfb6fd2-01e1-46ff-96e9-8435f3eab95a",
                             Name = "OrganizationEmployee",
                             NormalizedName = "ORGANIZATIONEMPLOYEE"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "d07f9279-0a24-47d3-8ebf-1124218c502f",
+                            ConcurrencyStamp = "d519f8a6-f957-4156-ba8b-2dd2a2e1d768",
                             Name = "OrganizationAssetManager",
                             NormalizedName = "ORGANIZATIONASSETMANAGER"
                         },
                         new
                         {
                             Id = "4",
-                            ConcurrencyStamp = "58525f0e-54ff-4653-bd7e-9a061a2df206",
+                            ConcurrencyStamp = "b15c3daa-ffe1-411b-8913-72a954853433",
                             Name = "Vendor",
                             NormalizedName = "VENDOR"
                         });

@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { CrystalReportingService } from '../../../../core/services/crystalReporting/crystal-reporting.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { HelperFunctionService } from '../../../../core/services/HelperFunction/helper-function.service';
 
 @Component({
   selector: 'app-reporting',
@@ -10,6 +11,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class ReportingComponent implements OnInit {
   private crystalReportingService: CrystalReportingService = inject(CrystalReportingService);
+  private helperFunctionService: HelperFunctionService = inject(HelperFunctionService);
   private organizationId: number;
 
   public isLoading: boolean;
@@ -28,6 +30,8 @@ export class ReportingComponent implements OnInit {
   public assetRequestStatuses: any[];
 
   public reportingForm: FormGroup;
+
+  private reportData: any;
 
   constructor() {
     const temp = sessionStorage.getItem('targetOrganizationID');
@@ -70,29 +74,32 @@ export class ReportingComponent implements OnInit {
         quickSelectDateRange: new FormControl(''),
       }
     );
+    this.reportData = {};
   }
+
   ngOnInit(): void {
     this.GetFilterData();
   }
 
   private GetFilterData() {
     this.isLoading = true;
-    this.crystalReportingService.GetFilterData(this.organizationId).subscribe((response: any) => {
-      this.assetRequestStatuses = response.responseData?.["assetRequestStatus"];
-      this.genders = response.responseData?.["gender"];
-      this.employeeRoles = response.responseData?.["employeeRoles"];
-      this.employees = response.responseData?.["employees"];
-      this.employeeStatus = response.responseData?.["employeeStatus"];
-      this.assetCatagories = response.responseData?.["organizationAssetCategories"];
-      this.assetStatuses = response.responseData?.["organizationAssetStatuses"];
-      this.assetTypes = response.responseData?.["organizationAssetTypes"];
-      this.isLoading = false;
-    }, (error: HttpErrorResponse) => {
-      this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-      this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
-      this.showAlert = true;
-      this.isLoading = false;
-    });
+    this.crystalReportingService.GetFilterData(this.organizationId).subscribe(
+      (response: any) => {
+        this.assetRequestStatuses = response.responseData?.["assetRequestStatus"];
+        this.genders = response.responseData?.["gender"];
+        this.employeeRoles = response.responseData?.["employeeRoles"];
+        this.employees = response.responseData?.["employees"];
+        this.employeeStatus = response.responseData?.["employeeStatus"];
+        this.assetCatagories = response.responseData?.["organizationAssetCategories"];
+        this.assetStatuses = response.responseData?.["organizationAssetStatuses"];
+        this.assetTypes = response.responseData?.["organizationAssetTypes"];
+        this.isLoading = false;
+      }, (error: HttpErrorResponse) => {
+        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.showAlert = true;
+        this.isLoading = false;
+      });
   }
 
   public onReportTypeChange(event: any): void {
@@ -105,29 +112,45 @@ export class ReportingComponent implements OnInit {
   }
 
   public fetchReportData(): void {
+    this.isLoading = true;
     const reportFilterationData =
     {
       reportType: this.selectedReportType,
       //asset report
-      assetType: this.reportingForm.controls['assetType'].value,
-      assetStatus: this.reportingForm.controls['assetStatus'].value,
-      assetCategory: this.reportingForm.controls['assetCategory'].value,
+      assetType: Number(this.reportingForm.controls['assetType'].value),
+      assetStatus: Number(this.reportingForm.controls['assetStatus'].value),
+      assetCategory: Number(this.reportingForm.controls['assetCategory'].value),
       assignedTo: this.reportingForm.controls['assignedTo'].value,
       // employee report
       employeeRole: this.reportingForm.controls['employeeRole'].value,
-      employeeStatus: this.reportingForm.controls['employeeStatus'].value,
+      employeeStatus: Boolean(this.reportingForm.controls['employeeStatus'].value),
       specificEmployee: this.reportingForm.controls['specificEmployee'].value,
       gender: this.reportingForm.controls['gender'].value,
       // asset request report
-      requestStatus: this.reportingForm.controls['requestStatus'].value,
+      requestStatus: Number(this.reportingForm.controls['requestStatus'].value),
       requestedBy: this.reportingForm.controls['requestedBy'].value,
       // date filters
       fromDate: this.reportingForm.controls['fromDate'].value,
       toDate: this.reportingForm.controls['toDate'].value,
       // target organization id
-      organizationId: this.organizationId
+      organizationId: Number(this.organizationId)
     };
-    console.log('Data to be sent to API:', reportFilterationData);
+
+    this.crystalReportingService.GenerateHtmlReportByFilter(reportFilterationData).subscribe(
+      (response: any) => {
+        this.reportData = response.responseData;
+        const now = new Date();
+        const formattedDate = `${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}-${now.getFullYear()}`;
+        this.helperFunctionService.exportAssetList(this.reportData, `${this.selectedReportType}-report-${formattedDate}.csv`);
+        this.isLoading = false;
+      },
+      (error: HttpErrorResponse) => {
+        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.showAlert = true;
+        this.isLoading = false;
+      }
+    );
   }
 
   public updateDateRange(event: any): void {
@@ -153,6 +176,5 @@ export class ReportingComponent implements OnInit {
       this.reportingForm.controls['fromDate'].setValue(fromDate.toISOString().split('T')[0]);
       this.reportingForm.controls['toDate'].setValue(toDate.toISOString().split('T')[0]);
     }
-
   }
 }
