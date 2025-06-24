@@ -191,7 +191,6 @@ export class AddUpdateAssetComponent implements OnInit {
   }
 
   public onReset(): void {
-    console.log('Form reseted');
     this.assetForm.reset();
   }
 }

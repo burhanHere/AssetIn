@@ -38,7 +38,6 @@ export class AddNewProductComponent {
   }
 
   onSubmit() {
-    console.log('Form submitted');
     const formData = new FormData();
 
     // Add form fields
@@ -70,7 +69,6 @@ export class AddNewProductComponent {
 
 
   onCancel() {
-    console.log('Form cancelled');
     this.productForm.reset();
     this.router.navigate(['/board/mainBoard/vendor/vendorDashboard']);
   }
@@ -84,7 +82,6 @@ export class AddNewProductComponent {
   }
 
   onUploadImage() {
-    console.log('Image uploaded');
     this.imageUpload.nativeElement.click();
   }
 
@@ -118,8 +115,6 @@ export class AddNewProductComponent {
         this.profilePicture = e.target?.result as string;
       };
       reader.readAsDataURL(file);
-
-      console.log('Image selected:', file.name, 'Size:', file.size, 'Type:', file.type);
     }
   }
 }

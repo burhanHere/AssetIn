@@ -99,7 +99,6 @@ export class VendorDashboardComponent {
 
   public toggleEdit() {
     this.isEditMode = !this.isEditMode;
-    console.log('Edit mode toggled:', this.isEditMode);
   }
 
   public saveChanges() {
