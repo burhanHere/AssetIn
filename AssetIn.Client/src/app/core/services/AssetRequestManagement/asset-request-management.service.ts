@@ -4,6 +4,7 @@ import { ApiUrls } from '../../constants/api-urls';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../models/apiResponse';
 import { NewAssetRequest } from '../../models/newAssetRequest';
+import { newAsset } from '../../models/newAsset';
 
 @Injectable({
   providedIn: 'root'
@@ -33,8 +34,8 @@ export class AssetRequestManagementService {
     return this.httpCient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetRequestManagement.UpdateAssetRequestStatusToDeclined + `?assetRequestId=${assetRequestId}`, null);
   }
 
-  public UpdateAssetRequestStatusToFulfilled(assetRequestId: number): Observable<ApiResponse> {
-    return this.httpCient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetRequestManagement.UpdateAssetRequestStatusToFulfilled + `?assetRequestId=${assetRequestId}`, null);
+  public FulFillAssetRequest(assetRequest: newAsset): Observable<ApiResponse> {
+    return this.httpCient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetRequestManagement.FulFillAssetRequest , assetRequest);
   }
 
   public UpdateAssetRequestStatusToCanceled(assetRequestId: number): Observable<ApiResponse> {

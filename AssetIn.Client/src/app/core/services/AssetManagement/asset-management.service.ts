@@ -3,6 +3,12 @@ import { inject, Injectable } from '@angular/core';
 import { ApiUrls } from '../../constants/api-urls';
 import { ApiResponse } from '../../models/apiResponse';
 import { Observable } from 'rxjs';
+import { checkOut } from '../../models/checkOut';
+import { checkIn } from '../../models/checkIn';
+import { retireAsset } from '../../models/retireAsset';
+import { sendToMaintenance } from '../../models/sendToMaintenance';
+import { returnFromMaintenance } from '../../models/returnFromMaintenance';
+import { updateAsset } from '../../models/updateAsset';
 
 @Injectable({
   providedIn: 'root'
@@ -48,5 +54,34 @@ export class AssetManagementService {
   public CreateAsset(asset: any): Observable<ApiResponse> {
     return this.httpClient.post<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.CreateAsset, asset);
   }
+
+  public RetireAsset(assetID: retireAsset): Observable<ApiResponse> {
+    return this.httpClient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.RetireAsset, assetID);
+  }
+
+  public CheckOutAsset(checkOut: checkOut): Observable<ApiResponse> {
+    return this.httpClient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.CheckOutAsset, checkOut);
+  }
+
+  public CheckInAsset(checkIn: checkIn): Observable<ApiResponse> {
+    return this.httpClient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.CheckInAsset, checkIn);
+  }
+
+  public SendAssetToMaintenance(sendToMaintenance: sendToMaintenance): Observable<ApiResponse> {
+    return this.httpClient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.SendAssetToMaintenance, sendToMaintenance);
+  }
+
+  public ReturnAssetFromMaintenance(returnFromMaintenance: returnFromMaintenance): Observable<ApiResponse> {
+    return this.httpClient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.ReturnAssetFromMaintenance, returnFromMaintenance);
+  }
+
+  public GetAllAssetStatus(organizationID: number): Observable<ApiResponse> {
+    return this.httpClient.get<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.GetAllAssetStatus + `?organizationID=${organizationID}`);
+  }
+
+  public updateAsset(asset: updateAsset): Observable<ApiResponse> {
+    return this.httpClient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.UpdateAsset, asset);
+  }
+
 }
 

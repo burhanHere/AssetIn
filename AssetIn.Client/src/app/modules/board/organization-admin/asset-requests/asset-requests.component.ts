@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AssetRequestManagementService } from '../../../../core/services/AssetRequestManagement/asset-request-management.service';
 import { AssetManagementService } from '../../../../core/services/AssetManagement/asset-management.service';
+import { newAsset } from '../../../../core/models/newAsset';
 @Component({
   selector: 'app-asset-requests',
   templateUrl: './asset-requests.component.html',
@@ -65,6 +66,7 @@ export class AssetRequestsComponent implements OnInit {
       .GetAllAssetRequestAdminList(this.organizationId)
       .subscribe(
         (response: any) => {
+          debugger;
           this.requests = this.filteredRequests = response.responseData.sort(
             (a: any, b: any) =>
               new Date(b.requestDate).getTime() -
@@ -110,6 +112,7 @@ export class AssetRequestsComponent implements OnInit {
   }
 
   public openViewModal(request: any): void {
+    debugger;
     this.selectedRequest = request;
     if (request.requestStatus === 'Accepted') {
       this.showAssignAssetModal = true;
@@ -198,6 +201,7 @@ export class AssetRequestsComponent implements OnInit {
       .GetAllAssetCatagory(this.organizationId)
       .subscribe(
         (response: any) => {
+          debugger;
           this.availableAssetsCategory = response.responseData || [];
           this.isLoading = false;
         },
@@ -234,17 +238,24 @@ export class AssetRequestsComponent implements OnInit {
     this.isLoading = true;
     if (this.assignAssetForm.valid) {
       this.closeAssignAssetModal(); // Close modal first (optional)
-
+      debugger;
+      const newAssetRequest : newAsset = {
+        assetRequestId:this.selectedRequest.assetRequestID,
+        assetID: this.assignAssetForm.controls['availableAssets'].value,
+        notes: this.assignAssetForm.controls['notes'].value,
+      };
       this.assetRequestManagementService
-        .UpdateAssetRequestStatusToFulfilled(this.selectedRequest)
+        .FulFillAssetRequest(newAssetRequest)
         .subscribe(
           (response) => {
+            debugger;
             this.alertMessage = response.responseData[1] || 'Request fulfilled successfully';
             this.alertTitle = response.responseData[0] || 'Success';
             this.isLoading = false;
 
           },
           (error) => {
+            debugger;
             this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
             this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
             this.showAlert = true;

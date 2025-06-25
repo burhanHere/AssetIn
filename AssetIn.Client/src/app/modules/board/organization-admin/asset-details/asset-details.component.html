@@ -5,18 +5,232 @@
         <div class="asset-header__info">
           <h2>{{ asset.assetName }}</h2>
           <p style="color: #6b7280">{{ asset.description }}</p>
+          @if (asset.assetStatusID !==2) {
           <button style="margin: 0.5rem" class="btn btn--primary">
             Update
           </button>
-          <button class="btn btn--danger">Delete</button>
+          } @if (asset.assetStatusID==4) {
+          <button class="btn btn--danger" (click)="deleteAsset()">
+            Delete
+          </button>
+          }
         </div>
       </div>
       <div class="asset-status-actions">
-        <div class="available" disabled>Available</div>
-        <div class="assigned">Assigned</div>
-        <div class="retire" disabled>Retire</div>
-        <div class="under-maintenance" disabled>Under Maintenance</div>
+        @if (asset.assetStatusID==1) {
+        <div style="padding: 5px; width: 100px; margin: 40px 20px">
+          <div class="assigned">assigned</div>
+          <div class="btn btn--primary" (click)="openCheckInModal()">
+            checkIn
+          </div>
+        </div>
+        } @else if(asset.assetStatusID==2) {
+        <div
+          class="retire"
+          style="padding: 5px; width: 100px; margin: 40px 20px"
+        >
+          retired
+        </div>
+        } @else if (asset.assetStatusID== 4) {
+        <div class="available">available</div>
+        <div class="btn btn--primary" (click)="openCheckOutModal()">
+          checkOut
+        </div>
+        <div class="retire" (click)="retire()">retire</div>
+        <div class="under-maintenance" (click)="openSendToMaintenanceModal()">
+          Send Under-Maintenance
+        </div>
+        } @else if(asset.assetStatusID==3) {
+        <div
+          class="under-maintenance"
+          style="padding: 5px; width: 100px; margin: 40px 20px"
+        >
+          Under Maintenance
+        </div>
+        <div class="btn btn--primary" (click)="openReturnFromMaintenanceModal()">
+          Mark as available
+        </div>
+        }
       </div>
+      @if (showCheckInModal) {
+      <div class="modal-container">
+        <div class="modal-box">
+          <form [formGroup]="checkInForm" (ngSubmit)="checkIn()">
+            <h3 class="modal-title">Check-In Asset</h3>
+
+            <div class="modal-body">
+              <textarea
+                class="checkin-textarea"
+                formControlName="notes"
+                rows="4"
+                placeholder="Enter asset condition..."
+              ></textarea>
+
+              @if (checkInForm.get('notes')?.touched &&
+              checkInForm.get('notes')?.invalid) {
+              <div class="error-message">Notes are required.</div>
+              }
+            </div>
+
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn cancel-btn"
+                (click)="closeCheckInModal()"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn submit-btn"
+                [disabled]="checkInForm.invalid"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      } @if(showCheckOutModal){
+      <div class="modal-container">
+        <div class="modal-box">
+          <form [formGroup]="checkOutForm" (ngSubmit)="checkOut()">
+            <h3 class="modal-title">Check-Out Asset</h3>
+
+            <div class="modal-body">
+              <label for="employeeSelect">Select Employee</label>
+              <select
+                id="employeeSelect"
+                formControlName="assignedToUserId"
+                class="checkOut-textarea"
+              >
+                <option value="">Select Employee</option>
+                @for (emp of employees; track emp.name) {
+                <option [value]="emp?.id">{{ emp?.email }}</option>
+                }
+              </select>
+
+              @if ( checkOutForm.get('assignedToUserId')?.touched &&
+              checkOutForm.get('assignedToUserId')?.invalid ) {
+              <div class="error-message">Employee selection is required.</div>
+              }
+
+              <textarea
+                class="checkin-textarea"
+                formControlName="notes"
+                rows="4"
+                placeholder="Notes..."
+              ></textarea>
+
+              @if (checkInForm.get('notes')?.touched &&
+              checkInForm.get('notes')?.invalid) {
+              <div class="error-message">Notes are required.</div>
+              }
+            </div>
+
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn cancel-btn"
+                (click)="closeCheckOutModal()"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn submit-btn"
+                [disabled]="checkOutForm.invalid"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      } @if (showSendToMaintenanceModal) {
+      <div class="modal-container">
+        <div class="modal-box">
+          <form
+            [formGroup]="sendToMaintenanceForm"
+            (ngSubmit)="sendToMaintenance()"
+          >
+            <h3 class="modal-title">Send Asset to Maintenance</h3>
+
+            <div class="modal-body">
+              <textarea
+                class="checkin-textarea"
+                formControlName="problem"
+                rows="4"
+                placeholder="Describe the issue with the asset..."
+              ></textarea>
+
+              @if (sendToMaintenanceForm.get('problem')?.touched &&
+              sendToMaintenanceForm.get('problem')?.invalid) {
+              <div class="error-message">Problem description is required.</div>
+              }
+            </div>
+
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn cancel-btn"
+                (click)="closeSendToMaintenanceModal()"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn submit-btn"
+                [disabled]="sendToMaintenanceForm.invalid"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      }
+      @if (showReturnFromMaintenanceModal) {
+  <div class="modal-container">
+    <div class="modal-box">
+      <form [formGroup]="returnFromMaintenanceForm" (ngSubmit)="returnFromMaintenance()">
+        <h3 class="modal-title">Return Asset from Maintenance</h3>
+
+        <div class="modal-body">
+          <label class="fw-medium mb-1">Maintenance Result</label>
+          <textarea
+            class="checkin-textarea"
+            formControlName="maintanenceResult"
+            rows="4"
+            placeholder="Describe the result of maintenance..."
+          ></textarea>
+
+          @if (returnFromMaintenanceForm.get('maintanenceResult')?.touched && returnFromMaintenanceForm.get('maintanenceResult')?.invalid) {
+            <div class="error-message">Maintenance result is required.</div>
+          }
+
+          <div class="form-check mt-3">
+            <input type="checkbox" class="form-check-input" id="isRepaired"
+              formControlName="isRepaired" />
+            <label class="form-check-label" for="isRepaired">
+              Asset fully repaired
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn cancel-btn" (click)="closeReturnFromMaintenanceModal()">
+            Cancel
+          </button>
+          <button type="submit" class="btn submit-btn" [disabled]="returnFromMaintenanceForm.invalid">
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
     </div>
     <div>
       <div class="asset-section__title">Basic Information</div>
@@ -40,7 +254,7 @@
     <div class="asset-section">
       <div class="asset-section__title">Buying Details</div>
       <div class="asset-grid">
-        <div><strong>Vendor Name:</strong> {{ asset.vendorName }}</div>
+        <div><strong>Cost Price:</strong> {{ asset.costPrice }}</div>
         <div>
           <strong>Purchase Date:</strong>
           {{ asset.purchaseDate | date : "yyyy-MM-dd" }}
