@@ -93,8 +93,8 @@ export class AssetDetailsComponent implements OnInit {
   public getAssetDetail(): void {
     this.assetManagementService.GetAsset(this.assetId).subscribe(
       (response) => {
-        this.isLoading = false;
         this.asset = response.responseData;
+        this.isLoading = false;
       },
       (error) => {
         this.alertTitle =
