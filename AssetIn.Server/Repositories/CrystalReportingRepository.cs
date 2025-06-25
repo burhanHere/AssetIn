@@ -2,6 +2,7 @@ using AssetIn.Server.Data;
 using AssetIn.Server.DTOs;
 using AssetIn.Server.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Versioning;
 
@@ -189,11 +190,82 @@ public class CrystalReportingRepository(ApplicationDbContext applicationDbContex
             query = query.Where(x => x.UpdatedDate <= toDate);
         }
 
-        List<Asset> assets = await query.ToListAsync();
+        var assetTypes = await _applicationDbContext.OrganizationsAssetTypes
+          .Where(x => x.OrganizationsID == organizationId)
+          .Select(x => new
+          {
+              Id = x.OrganizationsAssetTypeID,
+              Name = x.OrganizationsAssetTypeName
+          })
+          .ToListAsync();
+        var assetStatuses = await _applicationDbContext.OrganizationsAssetStatuses
+            .Select(x => new
+            {
+                Id = x.OrganizationsAssetStatusID,
+                Name = x.OrganizationsAssetStatusName
+            })
+            .ToListAsync();
+        var assetCategories = await _applicationDbContext.OrganizationsAssetCatagories
+            .Where(x => x.OrganizationsID == organizationId)
+            .Select(x => new
+            {
+                Id = x.OrganizationsAssetCatagoryID,
+                Name = x.OrganizationsAssetCatagoryName
+            })
+            .ToListAsync();
+
+        var assets = await query.Select(x => new
+        {
+            x.AssetCatagoryID,
+            x.AssetIdentificationNumber,
+            x.AssetName,
+            x.AssetStatusID,
+            x.AssetTypeID,
+            x.AssetlD,
+            x.Barcode,
+            x.CostPrice,
+            x.CreatedDate,
+            x.DeletedByOrganization,
+            x.Description,
+            x.Location,
+            x.Manufacturer,
+            x.Model,
+            x.Problem,
+            x.ProfilePicturePath,
+            x.PurchaseDate,
+            x.PurchasePrice,
+            x.SerialNumber,
+            x.UpdatedDate
+        }).ToListAsync();
+
+        var updatedAsset = assets.Select(x => new
+        {
+            x.AssetlD,
+            x.AssetIdentificationNumber,
+            x.AssetName,
+            x.Description,
+            x.Location,
+            x.SerialNumber,
+            x.Manufacturer,
+            x.Model,
+            x.PurchaseDate,
+            x.PurchasePrice,
+            x.CostPrice,
+            x.Barcode,
+            x.CreatedDate,
+            x.UpdatedDate,
+            x.DeletedByOrganization,
+            AssetTypeName = assetTypes.FirstOrDefault(a => a.Id == x.AssetTypeID)?.Name,
+            AssetCategoryName = assetCategories.FirstOrDefault(c => c.Id == x.AssetCatagoryID)?.Name,
+            AssetStatusName = assetStatuses.FirstOrDefault(s => s.Id == x.AssetStatusID)?.Name,
+            x.Problem,
+            x.ProfilePicturePath
+        }).ToList();
+
         return new()
         {
             Status = StatusCodes.Status200OK,
-            ResponseData = assets
+            ResponseData = updatedAsset
         };
     }
 
@@ -242,18 +314,33 @@ public class CrystalReportingRepository(ApplicationDbContext applicationDbContex
             query = query.Where(x => x.DateOfJoining <= toDate);
         }
 
-        List<UserDto> employees = await query.Select(x => new UserDto()
+        // Step 1: Project in a valid way for EF (no dictionary here)
+        var employeeList = await query.Select(x => new
         {
-            Id = x.Id,
-            Email = x.Email!,
-            UserName = x.UserName!,
-            PhoneNumber = x.PhoneNumber!,
-            ProfilePicturePath = x.ProfilePicturePath!,
-            Status = x.Status,
-            Gender = x.Gender,
-            DateOfJoining = x.DateOfJoining,
-            DateOfBirth = x.DateOfBirth
+            x.Id,
+            x.Email,
+            x.UserName,
+            x.PhoneNumber,
+            x.ProfilePicturePath,
+            AccountStatus = x.Status ? "Active" : "Inactive",
+            x.Gender,
+            x.DateOfJoining,
+            x.DateOfBirth
         }).ToListAsync();
+
+        // Step 2: Now in memory, convert to dictionary with your custom column names
+        var employees = employeeList.Select(x => new Dictionary<string, object?>
+        {
+            ["Id"] = x.Id,
+            ["Email"] = x.Email,
+            ["User Name"] = x.UserName,
+            ["Phone Number"] = x.PhoneNumber,
+            ["Profile Picture Path"] = x.ProfilePicturePath,
+            ["Account Status"] = x.AccountStatus,
+            ["Gender"] = x.Gender,
+            ["Date Of Joining"] = x.DateOfJoining,
+            ["Date Of Birth"] = x.DateOfBirth
+        }).ToList();
         return new()
         {
             Status = StatusCodes.Status200OK,
@@ -305,18 +392,35 @@ public class CrystalReportingRepository(ApplicationDbContext applicationDbContex
             })
             .ToListAsync();
 
-        var assetRequests = await query.Select(x => new
+        var rawData = await query
+        .Select(x => new
         {
-            Id = x.OrganizationsAssetRequestID,
-            Title = x.Title,
-            RequestDate = x.RequestDate,
-            RequestProcessedDate = x.RequestProcessedDate,
-            RequestStatus = assetRequestStatuses.FirstOrDefault(y => y.Id == x.RequestStatus).Name,
-            CompletionStatus = x.CompletionStatus,
-            RequestCompletedDate = x.RequestCompletedDate,
-            UserId = x.UserID,
-            AssetAssignmentId = x.AssetAssignmentId
-        }).ToListAsync();
+            x.OrganizationsAssetRequestID,
+            x.Title,
+            x.RequestDate,
+            x.RequestProcessedDate,
+            x.RequestStatus,
+            x.CompletionStatus,
+            x.RequestCompletedDate,
+            x.UserID,
+            x.AssetAssignmentId
+        })
+        .ToListAsync();
+
+        // Now map `RequestStatus` using the in-memory list
+        var assetRequests = rawData.Select(x => new Dictionary<string, object?>
+        {
+            ["Id"] = x.OrganizationsAssetRequestID,
+            ["Title"] = x.Title,
+            ["RequestDate"] = x.RequestDate,
+            ["RequestProcessedDate"] = x.RequestProcessedDate,
+            ["RequestStatus"] = assetRequestStatuses.FirstOrDefault(y => y.Id == x.RequestStatus)?.Name ?? "Unknown",
+            ["CompletionStatus"] = x.CompletionStatus ? "Completeed" : "-",
+            ["RequestCompletedDate"] = x.RequestCompletedDate,
+            ["UserId"] = x.UserID,
+            ["AssetAssignmentId"] = x.AssetAssignmentId
+        }).ToList();
+
 
         return new()
         {

@@ -58,7 +58,10 @@ export class AssetsComponent implements OnInit {
   }
 
   public downloadAssetList(): void {
-    this.helperFunctionService.exportAssetList(this.assetList, 'asset-list.csv');
+    const now = new Date();
+    const formattedDate = `${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}-${now.getFullYear()}`;
+    const fileName = `asset-list-${formattedDate}.csv`;
+    this.helperFunctionService.exportAssetList(this.assetList, fileName);
   }
 
   public viewAssetDetails(targetAssetId: number): void {

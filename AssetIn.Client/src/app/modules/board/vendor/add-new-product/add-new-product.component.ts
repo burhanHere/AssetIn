@@ -1,5 +1,8 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { Component, ElementRef, inject, input, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { VendorManagementService } from '../../../../core/services/VendorManagement/vendor-management.service';
 
 @Component({
   selector: 'app-add-new-product',
@@ -7,69 +10,111 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   styleUrl: './add-new-product.component.css'
 })
 export class AddNewProductComponent {
-  
+  @ViewChild('imageUpload') imageUpload!: ElementRef<HTMLInputElement>;
+  public profilePicture: string;
+  public selectedFile: File | null;
+  private vendorManagementService: VendorManagementService = inject(VendorManagementService);
+  private router: Router = inject(Router);
   public productForm: FormGroup;
-  public showErrorMessage: boolean;
-  public showForm: boolean;
-  public submitted: boolean;
-  public errorMessage: string;
+  public isLoading: boolean;
+  public showAlert: boolean;
+  public alertTitle: string;
+  public alertMessage: string;
+
 
   constructor() {
-      this.productForm = new FormGroup({
-        productName: new FormControl('', [Validators.required]),
-        unitPrice: new FormControl('', [Validators.required]),
-        model: new FormControl('', [Validators.required]),
-        description: new FormControl('', [Validators.required]),
+    this.productForm = new FormGroup({
+      productName: new FormControl('', [Validators.required]),
+      unitPrice: new FormControl('', [Validators.required]),
+      model: new FormControl('', [Validators.required]),
+      description: new FormControl('', [Validators.required]),
+    });
+    this.isLoading = false;
+    this.showAlert = false;
+    this.alertTitle = '';
+    this.alertMessage = '';
+    this.profilePicture = '';
+    this.selectedFile = null;
+  }
+
+  onSubmit() {
+    const formData = new FormData();
+
+    // Add form fields
+    formData.append('ProductName', this.productForm.get('productName')?.value || '');
+    formData.append('Model', this.productForm.get('model')?.value || '');
+    formData.append('Price', this.productForm.get('unitPrice')?.value || '0');
+    formData.append('Description', this.productForm.get('description')?.value || '');
+    formData.append('VendorID', '1'); // Replace with actual vendor ID
+
+    // Use this.selectedFile for the ProfilePicture property
+    if (this.selectedFile) {
+      formData.append('ProfilePicture', this.selectedFile, this.selectedFile.name);
+    }
+    this.vendorManagementService.CreateVendorProduct(formData).subscribe(
+      (response: any) => {
+        this.alertTitle = response.responseData?.[0] || 'Success';
+        this.alertMessage = response.error?.responseData?.[1] || 'Product Created Successfully';
+        this.isLoading = false;
+        this.showAlert = true;
+        this.productForm.reset();
+      }, (error: HttpErrorResponse) => {
+        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.isLoading = false;
+        this.showAlert = true;
       });
 
-      this.showErrorMessage = false;
-      this.showForm = false;
-      this.submitted = false;
-      this.errorMessage = '';
-    }
-  
-  previewUrl: string | null = null;
-  @ViewChild('fileUploader') fileUploader!: ElementRef<HTMLInputElement>;
-  @ViewChild('cameraCapture') cameraCapture!: ElementRef<HTMLInputElement>;
-
-  onSubmit(a: any) {
-    console.log('Form submitted');
   }
+
 
   onCancel() {
-    console.log('Form cancelled');
     this.productForm.reset();
-    this.previewUrl = null;
+    this.router.navigate(['/board/mainBoard/vendor/vendorDashboard']);
   }
 
-  onDeleteImage() {
-    console.log('Image deleted');
-    this.previewUrl = null;
-    this.fileUploader.nativeElement.value = '';
-    this.cameraCapture.nativeElement.value = '';
+  onDeleteImage(): void {
+    this.profilePicture = '';
+    this.selectedFile = null;
+    if (this.imageUpload) {
+      this.imageUpload.nativeElement.value = '';
+    }
   }
 
   onUploadImage() {
-    console.log('Image uploaded');
-    this.fileUploader.nativeElement.click();
+    this.imageUpload.nativeElement.click();
   }
 
-  onCaptureImage() {
-    console.log('Asset captured');
-    this.cameraCapture.nativeElement.click();
-  }
-
-  onFileSelected(event: Event) {
+  onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
 
-    const file = input.files[0];
-    const reader = new FileReader();
-    reader.onload = () => {
-      // reader.result is a base64 data URL
-      this.previewUrl = reader.result as string;
-    };
-    reader.readAsDataURL(file);
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        this.alertTitle = 'Error';
+        this.alertMessage = 'Please select a valid image file (jpg, jpeg, png, gif).';
+        this.showAlert = true;
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        this.alertTitle = 'Error';
+        this.alertMessage = 'File size must be less than 5MB.';
+        this.showAlert = true;
+        return;
+      }
+
+      // Store the file for API upload
+      this.selectedFile = file;
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.profilePicture = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
   }
-
 }

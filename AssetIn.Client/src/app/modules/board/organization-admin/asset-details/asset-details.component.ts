@@ -95,7 +95,6 @@ export class AssetDetailsComponent implements OnInit {
       (response) => {
         this.isLoading = false;
         this.asset = response.responseData;
-        console.log('Asset Details:', this.asset);
       },
       (error) => {
         this.alertTitle =
