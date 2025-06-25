@@ -3,7 +3,6 @@ import {
   ElementRef,
   inject,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import {
   FormGroup,

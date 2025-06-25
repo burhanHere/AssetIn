@@ -36,6 +36,12 @@ export const ApiUrls = {
     DeleteAssetType: '/AssetManagement/DeleteAssetType',
     UpdateAssetType: '/AssetManagement/UpdateAssetType',
     GetAllAssetType: '/AssetManagement/GetAllAssetType',
+    GetAllAvailableAssetByCatagoryId:'/AssetManagement/GetAllAvailableAssetByCatagoryId',
+    RetireAsset: '/AssetManagement/RetireAsset',
+    CheckOutAsset: '/AssetManagement/CheckOutAsset',
+    CheckInAsset: '/AssetManagement/CheckInAsset',
+    SendAssetToMaintenance: '/AssetManagement/SendAssetToMaintenance',
+    ReturnAssetFromMaintenance: '/AssetManagement/ReturnAssetFromMaintenance',
     GetAllAvailableAssetByCatagoryId: '/AssetManagement/GetAllAvailableAssetByCatagoryId',
   },
   EmployeeManagement: {
@@ -52,7 +58,7 @@ export const ApiUrls = {
     GetAllAssetRequestEmployeeListStatsAndDesignatedAssets: '/AssetRequestManagement/GetAllAssetRequestEmployeeListStatsAndDesignatedAssets',
     UpdateAssetRequestStatusToAccepted: '/AssetRequestManagement/UpdateAssetRequestStatusToAccepted',
     UpdateAssetRequestStatusToDeclined: '/AssetRequestManagement/UpdateAssetRequestStatusToDeclined',
-    UpdateAssetRequestStatusToFulfilled: '/AssetRequestManagement/UpdateAssetRequestStatusToFulfilled',
+    FulFillAssetRequest: '/AssetRequestManagement/FulFillAssetRequest',
     UpdateAssetRequestStatusToCanceled: '/AssetRequestManagement/UpdateAssetRequestStatusToCanceled',
   },
   CrystalReporting: {
