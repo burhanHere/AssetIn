@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { VendorDashboardComponent } from './vendor-dashboard/vendor-dashboard.component';
 import { ErrorPageComponent } from '../../../shared/components/error-page/error-page.component';
-import { SettingsComponent } from './settings/settings.component';
 import { AddNewProductComponent } from './add-new-product/add-new-product.component';
 
 const routes: Routes = [
@@ -20,11 +19,6 @@ const routes: Routes = [
     path: 'addNewProduct',
     component: AddNewProductComponent,
     title: 'Add New Product'
-  },
-  {
-    path: 'vendorSettings',
-    component: SettingsComponent,
-    title: 'Settings'
   },
   { path: '**', component: ErrorPageComponent, title: 'Dashboard' },
 ];

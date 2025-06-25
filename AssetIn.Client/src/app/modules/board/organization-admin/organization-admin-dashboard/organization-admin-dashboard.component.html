@@ -119,21 +119,52 @@
               <td class="activity-date">
                 {{ activity.date | date : "MM-dd-yyyy" }}
               </td>
+              @if (activity.type === 'Retirement') {
               <td class="activity-icon">
-                @if (activity.type === 'Retirement') {
                 <img src="icons/returned.png" alt="Retirement Icon" />
-                } @else if (activity.type === 'Assign/Return') {
-                <img src="icons/assigned.png" alt="Assign/Return Icon" />
-                } @else if (activity.type === 'Request') {
-                <img src="icons/request.png" alt="Request Icon" />
-                } @else {
-                <img src="icons/maintenance.png" alt="Default Icon" />
-                }
               </td>
               <td class="activity-detals">
-                <strong>{{ activity.title }}</strong>
-                <p class="detail">{{ activity.description }}</p>
+                <strong>Condition: {{ activity.condition }}</strong>
+                <p class="detail">{{ activity.retirementReason }}</p>
+                <p class="detail">
+                  {{ activity.organizationsAssetRetirementID }}
+                </p>
+                <p class="detail">Asset Id: {{ activity.assetID }}</p>
               </td>
+              } @else if (activity.type === 'Assign/Return') {
+              <td class="activity-icon">
+                <img src="icons/assigned.png" alt="Assign/Return Icon" />
+              </td>
+              <td class="activity-detals">
+                <strong>Assigned to:{{ activity.assignedToUserID }}</strong>
+                <br />
+                <strong>Assigned by:{{ activity.assignedByUserID }}</strong>
+                <p class="detail">{{ activity.notes }}</p>
+                <p class="detail">Asset Id: {{ activity.assetID }}</p>
+              </td>
+              } @else if (activity.type === 'Request') {
+              <td class="activity-icon">
+                <img src="icons/request.png" alt="Request Icon" />
+              </td>
+              <td class="activity-detals">
+                <strong>{{ activity.Title }}</strong>
+                <strong>Requisitioner: {{ activity.userID }}</strong>
+                <p class="detail">{{ activity.description }}</p>
+                <p class="detail">
+                  Complition Status: {{ activity.requestStatus }}
+                </p>
+              </td>
+              } @else {
+              <!-- activity.type === 'Maintenance' -->
+              <td class="activity-icon">
+                <img src="icons/maintenance.png" alt="Default Icon" />
+              </td>
+              <td class="activity-detals">
+                <strong>{{ activity.Title }}</strong>
+                <strong>Problem: {{ activity.problem }}</strong>
+                <p class="detail">{{ activity.maintanenceResult }}</p>
+              </td>
+              }
             </tr>
             }
           </tbody>

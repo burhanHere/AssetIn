@@ -191,6 +191,7 @@ public class AuthenticationRepository(ApplicationDbContext applicationDbContext,
         {
             new("UserId", userExist.Id),
             new("Email", userExist.Email!),
+            new("ProfilePicturePath", userExist.ProfilePicturePath!),
             new("EmailConfirmed", userExist.EmailConfirmed?"true":"flase"),
             new("FullName",userExist.UserName!),
               new(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),

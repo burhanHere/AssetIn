@@ -10,8 +10,10 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrl: './add-update-asset.component.css'
 })
 export class AddUpdateAssetComponent implements OnInit {
+  @ViewChild('imageUpload') imageUpload!: ElementRef<HTMLInputElement>;
   private assetManagementService: AssetManagementService = inject(AssetManagementService);
   private organizationId: number;
+  public selectedFile: File | null;
   public assetForm: FormGroup;
   public isLoading: boolean;
   public showAlert: boolean;
@@ -54,6 +56,7 @@ export class AddUpdateAssetComponent implements OnInit {
       name: new FormControl('', [Validators.required]),
       CatagoryOrType: new FormControl('', [Validators.required]),
     });
+    this.selectedFile = null;
   }
 
   ngOnInit(): void {
@@ -152,24 +155,47 @@ export class AddUpdateAssetComponent implements OnInit {
   public createNewAsset(): void {
     if (this.assetForm.valid) {
       this.isLoading = true;
-      const apiInput = {
-        "assetlD": 0,
-        "assetName": this.assetForm.controls["assetName"].value,
-        "description": this.assetForm.controls["description"].value,
-        "serialNumber": this.assetForm.controls["serialNumber"].value,
-        "model": this.assetForm.controls["model"].value,
-        "manufacturer": this.assetForm.controls["manufacturer"].value,
-        "purchaseDate": this.assetForm.controls["purchaseDate"].value,
-        "purchasePrice": this.assetForm.controls["purchasePrice"].value,
-        "costPrice": this.assetForm.controls["costPrice"].value,
-        "location": this.assetForm.controls["location"].value,
-        "depreciationRate": this.assetForm.controls["depreciationRate"].value,
-        "problem": this.assetForm.controls["problem"].value,
-        "assetCatagoryID": this.assetForm.controls["assetCategory"].value,
-        "assetTypeID": this.assetForm.controls["assetType"].value,
-        "organizationID": this.organizationId,
-        "profilePicturePath": ""
-      };
+      // const apiInput = {
+      //   "assetlD": 0,
+      //   "assetName": this.assetForm.controls["assetName"].value,
+      //   "description": this.assetForm.controls["description"].value,
+      //   "serialNumber": this.assetForm.controls["serialNumber"].value,
+      //   "model": this.assetForm.controls["model"].value,
+      //   "manufacturer": this.assetForm.controls["manufacturer"].value,
+      //   "purchaseDate": this.assetForm.controls["purchaseDate"].value,
+      //   "purchasePrice": this.assetForm.controls["purchasePrice"].value,
+      //   "costPrice": this.assetForm.controls["costPrice"].value,
+      //   "location": this.assetForm.controls["location"].value,
+      //   "depreciationRate": this.assetForm.controls["depreciationRate"].value,
+      //   "problem": this.assetForm.controls["problem"].value,
+      //   "assetCatagoryID": this.assetForm.controls["assetCategory"].value,
+      //   "assetTypeID": this.assetForm.controls["assetType"].value,
+      //   "organizationID": this.organizationId,
+      //   "profilePicturePath": null
+      // };
+      const apiInput = new FormData();
+
+      // Map frontend form names to backend DTO property names (PascalCase)
+      apiInput.append('AssetlD', '0');
+      apiInput.append('AssetName', this.assetForm.controls["assetName"].value || '');
+      apiInput.append('Description', this.assetForm.controls["description"].value || '');
+      apiInput.append('SerialNumber', this.assetForm.controls["serialNumber"].value || '');
+      apiInput.append('Model', this.assetForm.controls["model"].value || '');
+      apiInput.append('Manufacturer', this.assetForm.controls["manufacturer"].value || '');
+      apiInput.append('PurchaseDate', this.assetForm.controls["purchaseDate"].value || '');
+      apiInput.append('PurchasePrice', this.assetForm.controls["purchasePrice"].value || '0');
+      apiInput.append('CostPrice', this.assetForm.controls["costPrice"].value || '0');
+      apiInput.append('Location', this.assetForm.controls["location"].value || '');
+      apiInput.append('DepreciationRate', this.assetForm.controls["depreciationRate"].value || '0');
+      apiInput.append('Problem', this.assetForm.controls["problem"].value || ' '); // Make sure this has a value
+      apiInput.append('AssetCatagoryID', this.assetForm.controls["assetCategory"].value || '0');
+      apiInput.append('AssetTypeID', this.assetForm.controls["assetType"].value || '0');
+      apiInput.append('OrganizationID', this.organizationId.toString());
+
+      // Add the image file if selected
+      if (this.selectedFile) {
+        apiInput.append('ProfilePicturePath', this.selectedFile, this.selectedFile.name);
+      }
       this.assetManagementService.CreateAsset(apiInput).subscribe(
         (response: any) => {
           this.alertTitle = response?.responseData?.[0] || 'Success';
@@ -177,6 +203,7 @@ export class AddUpdateAssetComponent implements OnInit {
           this.showAlert = true;
           this.isLoading = false;
           this.assetForm.reset();
+          this.uploadedAssetImage = '';
         },
         (error: HttpErrorResponse) => {
           this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
@@ -192,5 +219,50 @@ export class AddUpdateAssetComponent implements OnInit {
 
   public onReset(): void {
     this.assetForm.reset();
+  }
+
+  onDeleteImage(): void {
+    this.uploadedAssetImage = '';
+    this.selectedFile = null;
+    if (this.imageUpload) {
+      this.imageUpload.nativeElement.value = '';
+    }
+  }
+
+  onUploadImage() {
+    this.imageUpload.nativeElement.click();
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        this.alertTitle = 'Error';
+        this.alertMessage = 'Please select a valid image file (jpg, jpeg, png, gif).';
+        this.showAlert = true;
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        this.alertTitle = 'Error';
+        this.alertMessage = 'File size must be less than 5MB.';
+        this.showAlert = true;
+        return;
+      }
+
+      // Store the file for API upload
+      this.selectedFile = file;
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.uploadedAssetImage = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
   }
 }

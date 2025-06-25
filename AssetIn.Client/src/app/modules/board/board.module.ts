@@ -9,10 +9,12 @@ import { MainBoardComponent } from './main-board/main-board.component';
 import { TopbarComponent } from '../../shared/components/topbar/topbar.component';
 import { ErrorPageComponent } from '../../shared/components/error-page/error-page.component';
 import { RouterModule } from '@angular/router';
+import { SettingsComponent } from './settings/settings.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
-  declarations: [MainBoardComponent],
+  declarations: [MainBoardComponent, SettingsComponent],
   imports: [
     CommonModule,
     TopbarComponent,
@@ -21,7 +23,8 @@ import { RouterModule } from '@angular/router';
     PageLoaderComponent,
     AlertCardComponent,
     ErrorPageComponent,
-    RouterModule
+    RouterModule,
+    ReactiveFormsModule
   ]
 })
 export class BoardModule { }

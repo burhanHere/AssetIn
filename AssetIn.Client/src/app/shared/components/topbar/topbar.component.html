@@ -18,13 +18,13 @@
   }
 
   <div class="notificationAndAvatarDiv">
-    <button class="notificationBtn">
-      <img src="./icons/BellRinging04.png" alt="notification" />
+    <button class="notificationBtn" (click)="routeToSettings()">
+      <img src="./icons/Settings.png" alt="Settings icon" />
     </button>
 
     <div class="avatarBtn">
       <button class="avatarImageBtn">
-        <img src="./icons/Avatar.png" alt="Avatar" />
+        <img [src]="profilePicture || './icons/Avatar.png'" alt="Avatar" />
       </button>
 
       <!-- logout div -->
@@ -38,9 +38,9 @@
             <img src="./icons/Help Circle Contained.png" alt="help icon" /> Help
           </li>
           <hr />
-          <li>
+          <!-- <li (click)="routeToSettings()">
             <img src="./icons/Settings.png" alt="Settings icon" /> User Settings
-          </li>
+          </li> -->
           <hr />
           <li (click)="LogoutUser()">
             <img src="./icons/Logout.png" alt="logout icon" /> Logout
