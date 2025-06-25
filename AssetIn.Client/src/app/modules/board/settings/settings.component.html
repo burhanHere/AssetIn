@@ -1,0 +1,229 @@
+<div class="main-container">
+  <div class="user-info">
+    <div class="user-header">
+      <h2>User Info</h2>
+      <div class="edit-button-container">
+        @if(!isEditMode){
+        <button (click)="toggleEdit()" class="edit-btn">
+          <img src="icons/edit.png" class="btn-icon" alt="Edit" />
+          Edit
+        </button>
+        } @else {
+        <div class="edit-actions">
+          <button (click)="saveChanges()" class="save-btn">Save</button>
+          <button (click)="cancelChanges()" class="cancel-btn">Cancel</button>
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="user-content" [formGroup]="userInfoForm">
+      <form class="user-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fullName">User Name</label>
+            <div class="input-wrapper">
+              <img src="icons/User.png" class="input-icon" alt="User" />
+              <input
+                id="fullName"
+                type="text"
+                formControlName="userName"
+                [readOnly]="!isEditMode"
+                placeholder="Name that organization can see"
+                [class.editable]="isEditMode"
+              />
+            </div>
+            @if (userInfoForm.controls['userName'].touched &&
+            userInfoForm.controls['userName'].hasError('required')) {
+            <div class="input-error">User Name is required.</div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="fullName">Contact Person Name</label>
+            <div class="input-wrapper">
+              <img src="icons/Avatar.png" class="input-icon" alt="User" />
+              <input
+                id="fullName"
+                type="text"
+                formControlName="contactPersonName"
+                [readOnly]="!isEditMode"
+                placeholder="Name that organization can see"
+                [class.editable]="isEditMode"
+              />
+            </div>
+            @if (userInfoForm.controls['contactPersonName'].touched &&
+            userInfoForm.controls['contactPersonName'].hasError('required')) {
+            <div class="input-error">Contact Person Name is required.</div>
+            }
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <div class="input-wrapper">
+              <img src="icons/email.png" class="input-icon" alt="Email" />
+              <input
+                id="email"
+                type="email"
+                formControlName="userEmail"
+                [readOnly]="!isEditMode"
+                placeholder="contact@email.com"
+                [class.editable]="isEditMode"
+              />
+            </div>
+            @if (userInfoForm.controls['userEmail'].touched &&
+            userInfoForm.controls['userEmail'].hasError('required')) {
+            <div class="input-error">User Email is required.</div>
+            } @if (userInfoForm.controls['userEmail'].touched &&
+            userInfoForm.controls['userEmail'].hasError('email')) {
+            <div class="input-error">Invalid email format.</div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <div class="input-wrapper">
+              <img src="icons/Phone.png" class="input-icon" alt="Phone" />
+              <input
+                id="phone"
+                type="tel"
+                formControlName="userPhone"
+                [readOnly]="!isEditMode"
+                placeholder="+92xxxxxxxxxx"
+                class="phone-input"
+                [class.editable]="isEditMode"
+              />
+            </div>
+            @if (userInfoForm.controls['userPhone'].touched &&
+            userInfoForm.controls['userPhone'].hasError('required')) {
+            <div class="input-error">User Phone is required.</div>
+            } @if (userInfoForm.controls['userPhone'].touched &&
+            userInfoForm.controls['userPhone'].hasError('pattern')) {
+            <div class="input-error">Invalid phone number format.</div>
+            }@if (userInfoForm.controls['userPhone'].touched &&
+            userInfoForm.controls['userPhone'].hasError('minLength')) {
+            <div class="input-error">Invalid phone number format.</div>
+            }@if (userInfoForm.controls['userPhone'].touched &&
+            userInfoForm.controls['userPhone'].hasError('maxLength')) {
+            <div class="input-error">Invalid phone number format.</div>
+            }
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="address">Address</label>
+            <div class="input-wrapper">
+              <img src="icons/location.png" class="input-icon" alt="Address" />
+              <textarea
+                id="address"
+                formControlName="userAddress"
+                [readOnly]="!isEditMode"
+                placeholder="Your, shop, Address."
+                [class.editable]="isEditMode"
+                rows="3"
+              ></textarea>
+              @if (userInfoForm.controls['userAddress'].touched &&
+              userInfoForm.controls['userAddress'].hasError('required')) {
+              <div class="input-error">User Address is required.</div>
+              }
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="user-image-section">
+        <div class="image-actions">
+          <!-- <button
+            class="action-btn delete-btn"
+            (click)="onDeleteImage()"
+            title="Delete Image"
+          >
+            <img src="icons/delete-black.png" alt="Delete" />
+          </button> -->
+          <button
+            class="action-btn upload-btn"
+            (click)="onUploadImage()"
+            title="Upload Image"
+          >
+            <img src="icons/upload.png" alt="Upload" />
+          </button>
+        </div>
+
+        <div class="user-avatar">
+          <img
+            [src]="profilePicture || 'icons/emp_avatar.png'"
+            alt="User Image"
+            class="avatar-image"
+          />
+        </div>
+
+        <input
+          type="file"
+          accept="image/*"
+          (change)="handleFileInput($event)"
+          #imageUpload
+          hidden
+        />
+      </div>
+    </div>
+    <br />
+    <div class="user-content">
+      <button (click)="toggleEdit()" class="edit-btn" style="width: 170px">
+        <img src="icons/edit.png" class="btn-icon" alt="Edit" />
+        Reset Password
+      </button>
+    </div>
+  </div>
+
+  <div class="user-info">
+    <div class="user-header">Organization settings</div>
+    <div class="user-content">
+      <div class="user-image-section">
+        <div class="image-actions">
+          <!-- <button
+              class="action-btn delete-btn"
+              (click)="onDeleteImage()"
+              title="Delete Image"
+            >
+              <img src="icons/delete-black.png" alt="Delete" />
+            </button> -->
+          <button
+            class="action-btn upload-btn"
+            (click)="onUploadImage()"
+            title="Upload Image"
+          >
+            <img src="icons/upload.png" alt="Upload" />
+          </button>
+        </div>
+
+        <div class="user-avatar">
+          <img
+            [src]="profilePicture || 'icons/emp_avatar.png'"
+            alt="User Image"
+            class="avatar-image"
+          />
+        </div>
+
+        <input
+          type="file"
+          accept="image/*"
+          (change)="handleFileInput($event)"
+          #imageUpload
+          hidden
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+@if(isLoading) {
+<app-page-loader></app-page-loader>
+} @if (showAlert) {
+<app-alert-card
+  [title]="alertTitle"
+  [message]="alertMessage"
+  (closeCard)="showAlert = $event"
+></app-alert-card>
+}

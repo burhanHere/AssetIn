@@ -6,15 +6,16 @@ using AssetIn.Server.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using YourAssetManager.Server.Services;
 
 namespace AssetIn.Server.Controllers;
 
 
 [ApiController]
 [Route("AssetIn.Server/[controller]")]
-public class AssetManagementController(ApplicationDbContext applicationDbContext, UserManager<User> userManager) : ControllerBase
+public class AssetManagementController(ApplicationDbContext applicationDbContext, UserManager<User> userManager, CloudinaryService cloudinaryService) : ControllerBase
 {
-    private readonly AssetManagementRepository _assestManagementRepository = new(applicationDbContext, userManager);
+    private readonly AssetManagementRepository _assestManagementRepository = new(applicationDbContext, userManager, cloudinaryService);
     [HttpPost("CreateAsset")]
     [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerPolicy")]
     public async Task<IActionResult> CreateAsset(AssetDTO newAsset)

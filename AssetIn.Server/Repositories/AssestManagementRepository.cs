@@ -5,13 +5,15 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using YourAssetManager.Server.Services;
 
 namespace AssetIn.Server.Repositories;
 
-public class AssetManagementRepository(ApplicationDbContext applicationDbContext, UserManager<User> userManager)
+public class AssetManagementRepository(ApplicationDbContext applicationDbContext, UserManager<User> userManager, CloudinaryService cloudinaryService)
 {
     private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
     private readonly UserManager<User> _userManager = userManager;
+    private readonly CloudinaryService _cloudinaryService = cloudinaryService;
 
     public async Task<ApiResponse> CreateAsset(AssetDTO newAsset, string userId)
     {
@@ -77,7 +79,23 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
                 break;
             }
         }
-
+        string cloudinaryUrlOfImage = "";
+        if (newAsset.ProfilePicturePath != null)
+        {
+            var stream = newAsset.ProfilePicturePath.OpenReadStream();
+            cloudinaryUrlOfImage = await _cloudinaryService.UploadImageToCloudinaryAsync(stream, newAsset.ProfilePicturePath.FileName);
+            if (string.IsNullOrEmpty(cloudinaryUrlOfImage))
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>()
+                    {
+                        "Failed to update profile."
+                    }
+                };
+            }
+        }
 
         Asset newAssetModel = new()
         {
@@ -94,33 +112,45 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             CostPrice = newAsset.CostPrice,
             Location = newAsset.Location,
             DepreciationRate = newAsset.DepreciationRate,
-            Problem = newAsset.Problem,
+            Problem = newAsset.Problem ?? "No Issue Reported.",
             AssetIdentificationNumber = assetIdentificationNumber,
             OrganizationID = requiredOrganization.OrganizationID,
             AssetStatusID = 4, // 4 = available
             AssetCatagoryID = newAsset.AssetCatagoryID,
             AssetTypeID = newAsset.AssetTypeID,
             DeletedByOrganization = false,
-            ProfilePicturePath = newAsset.ProfilePicturePath
+            ProfilePicturePath = newAsset.ProfilePicturePath != null ? cloudinaryUrlOfImage : "",
         };
 
-        await _applicationDbContext.Assets.AddAsync(newAssetModel);
-        var newAssetCreated = await _applicationDbContext.SaveChangesAsync();
-        if (newAssetCreated > 0)
+        try
+        {
+
+            await _applicationDbContext.Assets.AddAsync(newAssetModel);
+            var newAssetCreated = await _applicationDbContext.SaveChangesAsync();
+            if (newAssetCreated > 0)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status200OK,
+                    ResponseData = new List<string> { "Success", "Asset created successfully." }
+                };
+            }
+        }
+        catch (Exception ex)
         {
             return new ApiResponse
             {
-                Status = StatusCodes.Status200OK,
-                ResponseData = new List<string> { "Success", "Asset created successfully." }
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string> { "Error", "Unable to create asset. ", ex.Message }
             };
         }
-
         return new ApiResponse
         {
             Status = StatusCodes.Status400BadRequest,
             ResponseData = new List<string> { "Error", "Unable to create asset." }
         };
     }
+
     public async Task<ApiResponse> UpdateAsset(AssetDTO updatedAsset, string userId)
     {
         var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
@@ -1241,6 +1271,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
         {
             SentDate = DateTime.Now,
             RetunDate = DateTime.MinValue,
+            MaintanenceResult = "",
             Problem = sendAssetToMaintanenceDTO.Problem,
             AssetID = sendAssetToMaintanenceDTO.AssetID,
         };
@@ -1354,7 +1385,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
         updateEntry.RetunDate = DateTime.Now;
         updateEntry.MaintanenceResult = returnAssetFromMaintanenceDTO.MaintanenceResult;
 
-        await _applicationDbContext.OrganizationsAssetMaintanences.AddAsync(updateEntry);
+        _applicationDbContext.OrganizationsAssetMaintanences.Update(updateEntry);
         _applicationDbContext.Assets.Update(targetAsset);
         var result = await _applicationDbContext.SaveChangesAsync();
         if (result > 0)
@@ -1462,7 +1493,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             Notes = checkOutAssetDTO.Notes.IsNullOrEmpty() ? "" : checkOutAssetDTO.Notes!,
             AssignedToUserID = assignToUser.Id,
             AssignedByUserID = validUser.Id,
-            CheckInByUserID = "",
+            CheckInByUserID = null,
             CheckInNotes = "",
             AssetID = assetToAssign.AssetlD,
         };

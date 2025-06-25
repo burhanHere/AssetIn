@@ -13,10 +13,10 @@ public class AssetDTO
     public decimal CostPrice { get; set; }
     public string Location { get; set; }
     public float DepreciationRate { get; set; }
-    public string Problem { get; set; }
+    public string? Problem { get; set; }
     public int AssetCatagoryID { get; set; }
     public int AssetTypeID { get; set; }
     public int OrganizationID { get; set; }
-    public string? ProfilePicturePath { get; set; }
+    public IFormFile? ProfilePicturePath { get; set; }
 
 }

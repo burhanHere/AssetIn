@@ -222,19 +222,23 @@
 
     <div class="asset-img-div">
       <div class="action-img-div">
-        <button class="btn-action">
+        <button class="btn-action" (click)="onDeleteImage()">
           <img src="icons/delete-black.png" alt="Delete Image" />
         </button>
-        <button class="btn-action">
+        <button class="btn-action" (click)="onUploadImage()">
           <img src="icons/upload.png" alt="Upload Image" />
         </button>
       </div>
       <div class="img-img-div">
-        <img
-          [src]="uploadedAssetImage ? uploadedAssetImage : 'icons/camera.png'"
-          alt="Image"
-        />
+        <img [src]="uploadedAssetImage || 'icons/camera.png'" alt="Image" />
       </div>
+      <input
+        type="file"
+        accept="image/*"
+        (change)="onFileSelected($event)"
+        #imageUpload
+        hidden
+      />
     </div>
   </div>
 </div>

@@ -53,24 +53,6 @@ export const nevbar = [
     displayName: 'Dashboard',
     iconPath: './icons/Dashboard.png',
   },
-  {
-    path: '../../board/mainBoard/organizationAdmin/organizationSettings',
-    acceptableRoles: ['OrganizationAssetManager'],
-    displayName: 'Settings',
-    iconPath: './icons/Settings.png',
-  },
-  {
-    path: '../../board/mainBoard/organizationEmployee/settings',
-    acceptableRoles: ['OrganizationEmployee'],
-    displayName: 'Settings',
-    iconPath: './icons/Settings.png',
-  },
-  {
-    path: '/board/mainBoard/vendor/vendorSettings',
-    acceptableRoles: ['Vendor'],
-    displayName: 'Settings',
-    iconPath: './icons/Settings.png',
-  },
   // {
   //   path: 'organizationVendorChatBox',
   //   acceptableRoles: ['OrganizationOwner', 'Vendor'],

@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { roleAuthGuard } from '../../core/guards/roleAuthGuard/role-auth.guard';
 import { ErrorPageComponent } from '../../shared/components/error-page/error-page.component';
 import { MainBoardComponent } from './main-board/main-board.component';
+import { SettingsComponent } from './settings/settings.component';
 
 const routes: Routes = [
   {
@@ -49,6 +50,11 @@ const routes: Routes = [
           import('./vendor/vendor.module').then((m) => m.VendorModule),
         canActivate: [roleAuthGuard],
         data: { Roles: ['Vendor'] },
+      },
+      {
+        path: 'settings',
+        component: SettingsComponent,
+        title: 'Settings',
       }
     ],
   },

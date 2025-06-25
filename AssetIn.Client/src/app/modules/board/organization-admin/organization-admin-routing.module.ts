@@ -6,7 +6,6 @@ import { AssetsComponent } from './assets/assets.component';
 import { EmployeesComponent } from './employees/employees.component';
 import { AssetRequestsComponent } from './asset-requests/asset-requests.component';
 import { VendorsComponent } from './vendors/vendors.component';
-import { SettingsComponent } from './settings/settings.component';
 import { AddUpdateAssetComponent } from './add-update-asset/add-update-asset.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { AssetDetailsComponent } from './asset-details/asset-details.component';
@@ -32,7 +31,7 @@ const routes: Routes = [
     component: AddUpdateAssetComponent,
     title: 'Add Update Asset'
   },
-   {
+  {
     path: 'organizationAssetDetails',
     component: AssetDetailsComponent,
     title: 'Asset Details'
@@ -56,11 +55,6 @@ const routes: Routes = [
     path: 'organizationVendors',
     component: VendorsComponent,
     title: 'Dashboard'
-  },
-  {
-    path: 'organizationSettings',
-    component: SettingsComponent,
-    title: 'Settings'
   },
   { path: '**', component: ErrorPageComponent, title: 'Dashboard' },
 ];
