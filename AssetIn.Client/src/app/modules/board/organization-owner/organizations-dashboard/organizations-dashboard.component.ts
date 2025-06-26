@@ -116,5 +116,9 @@ export class OrganizationsDashboardComponent implements OnInit {
       'targetOrganizationID',
       targetOrganization.organizationID
     );
+    sessionStorage.setItem(
+      'targetOrganizationDomain',
+      targetOrganization.organizationDomain
+    );
   }
 }

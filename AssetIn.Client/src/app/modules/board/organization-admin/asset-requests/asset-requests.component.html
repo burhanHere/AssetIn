@@ -79,26 +79,24 @@
   <div style="display: flex">
     <div class="request-history-container">
       <div class="request-table-wrapper">
-        <table class="request-table">
-          <thead>
-            <tr>
-              <th>Request ID</th>
-              <th>Requisitioner ID</th>
-              <th>Request Subject</th>
-              <th>Request Date</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-        </table>
-        <div class="scrollable-tbody">
+        <div class="table-container">
           <table class="request-table">
+            <thead>
+              <tr>
+                <th>Request ID</th>
+                <th>Requisitioner ID</th>
+                <th>Request Subject</th>
+                <th>Request Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
             <tbody>
               @for (request of filteredRequests; track $index) {
               <tr>
-                <td>{{ request.assetRequestID }}</td>
-                <td>{{ request.userID }}</td>
-                <td>
+                <td class="col-request-id">{{ request.assetRequestID }}</td>
+                <td class="col-user-id">{{ request.userID }}</td>
+                <td class="col-subject">
                   <div class="description">
                     <div class="title">
                       <strong>{{ request.title }}</strong>
@@ -106,21 +104,21 @@
                     <div class="text">{{ request.description }}</div>
                   </div>
                 </td>
-                <td>{{ request.requestDate | date : "dd/MM/yyyy" }}</td>
-                <td>
-                  <div style="display: flex">
-                    <span
-                      class="status-badge"
-                      [ngClass]="request.requestStatus.toLowerCase()"
-                    >
-                      {{ request.requestStatus }}
-                    </span>
-                  </div>
+                <td class="col-date">
+                  {{ request.requestDate | date : "dd/MM/yyyy" }}
                 </td>
-                <td>
+                <td class="col-status">
+                  <span
+                    class="status-badge"
+                    [ngClass]="request.requestStatus.toLowerCase()"
+                  >
+                    {{ request.requestStatus }}
+                  </span>
+                </td>
+                <td class="col-action">
                   <div class="view-action">
                     <img
-                      style="height: 30px; width: 30px; cursor: pointer"
+                      class="action-icon"
                       src="icons/view.png"
                       alt="View"
                       (click)="openViewModal(request)"
@@ -192,8 +190,7 @@
             (change)="getAvailableAssets($event)"
           >
             <option value="">Select Category</option>
-            @for (category of availableAssetsCategory; track
-            category.organizationsAssetCatagoryID) {
+            @for (category of availableAssetsCategory; track $index) {
             <option [value]="category.organizationsAssetCatagoryID">
               {{ category.organizationsAssetCatagoryName }}
             </option>

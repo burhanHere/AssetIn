@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { OnInit } from '@angular/core';
+import { OrganizationManagementService } from '../../../../core/services/organizationManagement/organization-management.service';
+import { ApiResponse } from '../../../../core/models/apiResponse';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-vendors',
@@ -7,86 +10,48 @@ import { OnInit } from '@angular/core';
   styleUrl: './vendors.component.css',
 })
 export class VendorsComponent implements OnInit {
-  public vendors: any[];
-  public products: any[];
-  public selectedVendor: any = null;
-  public showVendor: boolean ;
+  private organizationManagementService: OrganizationManagementService = inject(OrganizationManagementService);
+  public vendorsAndProducts: any[];
+  public selectedVendor: any;
+  public showVendor: boolean;
+  public isLoading: boolean;
+  public showAlert: boolean;
+  public alertMessage: string;
+  public alertTitle: string;
 
   constructor() {
-    this.vendors = [
-      {
-        name: 'Jaidi Pan Shop',
-        email: 'jaidipan.shop@gmail.com',
-        address: 'Shop 29, 1 Floor, Hafeez Center, Lahore.',
-        phoneNumber: '0300XXXXXXX',
-        logo: 'https://via.placeholder.com/100x100.png?text=J',
-      },
-      {
-        name: 'Tech Planet',
-        email: 'contact@techplanet.com',
-        address: 'Suite 14, Mall Plaza, Rawalpindi.',
-        phoneNumber: '0311XXXXXXX',
-        logo: 'https://via.placeholder.com/100x100.png?text=T',
-      },
-      {
-        name: 'Digital Shoppe',
-        email: 'hello@digitalshoppe.pk',
-        address: 'Shop 5, Ground Floor, Giga Mall, Islamabad.',
-        phoneNumber: '0322XXXXXXX',
-        logo: 'https://via.placeholder.com/100x100.png?text=D',
-      },
-      {
-        name: 'Tech Planet',
-        email: 'contact@techplanet.com',
-        address: 'Suite 14, Mall Plaza, Rawalpindi.',
-        phoneNumber: '0311XXXXXXX',
-        logo: 'https://via.placeholder.com/100x100.png?text=T',
-      },
-      {
-        name: 'Tech Planet',
-        email: 'contact@techplanet.com',
-        address: 'Suite 14, Mall Plaza, Rawalpindi.',
-        phoneNumber: '0311XXXXXXX',
-        logo: 'https://via.placeholder.com/100x100.png?text=T',
-      }
-    ];
-    this.products = [
-      {
-        name: 'Logitech K380s',
-        description:
-          'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia…',
-      },
-      {
-        name: 'Logitech K380s',
-        description:
-          'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia…',
-      },
-      {
-        name: 'Logitech K380s',
-        description:
-          'Lorem ipsum dolor sit amet consectetur adipisicing elit. ',
-      },
-      {
-        name: 'Logitech K380s',
-        description:
-          'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia…',
-      },
-      {
-        name: 'Logitech K380s',
-        description:
-          'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia…',
-      },
-    ];
-    this.selectedVendor = [];
+    this.vendorsAndProducts = [];
+    this.selectedVendor = {};
     this.showVendor = false;
+    this.isLoading = false;
+    this.showAlert = false;
+    this.alertMessage = '';
+    this.alertTitle = '';
   }
-  ngOnInit(): void {}
+
+  ngOnInit(): void {
+    this.isLoading = true;
+    this.organizationManagementService.GetVendorAndVendorProducts().subscribe(
+      (response: ApiResponse) => {
+        debugger;
+        this.vendorsAndProducts = response.responseData?.vendorsWithProducts;
+        this.isLoading = false;
+      },
+      (error: HttpErrorResponse) => {
+        debugger;
+        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.showAlert = true;
+        this.isLoading = false;
+      }
+    );
+  }
 
   public showVendorDetails(vendor: any): void {
     // get vendor info
     // get product info
-    this.showVendor = true;
     this.selectedVendor = vendor;
+    this.showVendor = true;
 
   }
 }

@@ -186,6 +186,16 @@ public class AuthenticationRepository(ApplicationDbContext applicationDbContext,
         Errors = null,
       };
     }
+    var targetOrganization = _applicationDbContext.Organizations.FirstOrDefault(x => x.OrganizationID == userExist.OrganizationId);
+    if (targetOrganization != null && !targetOrganization.ActiveOrganization)
+    {
+      return new()
+      {
+        Status = StatusCodes.Status403Forbidden,
+        ResponseData = new List<string> { "Your organization account is blocked. Contact Admin Sopport." },
+        Errors = null,
+      };
+    }
     // adding user Claims which we want to send in jwt token
     var authClaims = new List<Claim>
         {
@@ -201,6 +211,7 @@ public class AuthenticationRepository(ApplicationDbContext applicationDbContext,
     if (userRoles[0] == "OrganizationAssetManager" || userRoles[0] == "OrganizationEmployee")
     {
       authClaims.Add(new Claim("OrganizationId", userExist.OrganizationId.ToString()!));
+      authClaims.Add(new Claim("OrganizationDomain", targetOrganization?.OrganizationDomain!));
     }
     else if (userRoles[0] == "Vendor")
     {
@@ -346,7 +357,7 @@ public class AuthenticationRepository(ApplicationDbContext applicationDbContext,
     return new()
     {
       Status = StatusCodes.Status200OK,
-      ResponseData = new List<string> { "Passowrd reset link sent to you email. Please check you email." },
+      ResponseData = new List<string> { "Passowrd reset link sent to your email. Please check your email." },
       Errors = null
     };
   }

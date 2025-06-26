@@ -1,16 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 .burhan_bodyContainer {
-  margin-left: 0px;
-  margin-right: 0px;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: url('https://i.postimg.cc/XYjWrv36/dark-hexagonal-background-with-gradient-color_79603-1409.jpg') no-repeat;
+  background: url("https://i.postimg.cc/XYjWrv36/dark-hexagonal-background-with-gradient-color_79603-1409.jpg")
+    no-repeat;
   background-size: cover;
   background-position: center;
 }
@@ -22,10 +23,11 @@
   background: #1c1c1c;
   border-radius: 50px 5px;
   overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .burhan_box::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   left: -50%;
@@ -34,10 +36,11 @@
   background: linear-gradient(60deg, transparent, #45f3ff, #45f3ff);
   transform-origin: bottom right;
   animation: animate 6s linear infinite;
+  z-index: 1;
 }
 
 .burhan_box::after {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   left: -50%;
@@ -47,13 +50,13 @@
   transform-origin: bottom right;
   animation: animate 6s linear infinite;
   animation-delay: -3s;
+  z-index: 2;
 }
 
 @keyframes animate {
   0% {
     transform: rotate(0deg);
   }
-
   100% {
     transform: rotate(360deg);
   }
@@ -65,11 +68,34 @@ form {
   border-radius: 50px 5px;
   background: #28292d;
   z-index: 10;
-  padding: 30px 30px;
+  padding: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  /* Custom scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: #45f3ff #28292d;
+}
+
+form::-webkit-scrollbar {
+  width: 6px;
+}
+
+form::-webkit-scrollbar-track {
+  background: #28292d;
+  border-radius: 10px;
+}
+
+form::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #45f3ff, #d9138a);
+  border-radius: 10px;
+}
+
+form::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #d9138a, #45f3ff);
 }
 
 h2 {
@@ -77,100 +103,487 @@ h2 {
   font-size: 35px;
   font-weight: 500;
   text-align: center;
+  margin: 0 0 30px 0;
+  text-shadow: 0 0 10px rgba(69, 243, 255, 0.3);
+  width: 100%;
+  position: relative;
+  z-index: 20;
 }
 
 .burhan_input-box {
   position: relative;
   width: 300px;
-  margin-top: 35px;
+  margin-top: 25px;
+  z-index: 15;
+  min-height: 60px;
+  padding-bottom: 18px;
 }
 
 .burhan_input-box input {
   position: relative;
   width: 100%;
-  padding: 20px 10px 10px;
-  background: transparent;
-  border: none;
+  padding: 20px 15px 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
   outline: none;
-  color: #23242a;
+  color: #ffffff;
   font-size: 1em;
-  letter-spacing: .05em;
-  z-index: 10;
+  letter-spacing: 0.05em;
+  z-index: 20;
+  cursor: text;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
-input[type="submit"] {
-  font-size: 20px;
-  border: none;
-  outline: none;
-  background: #45f3ff;
-  padding: 5px;
-  margin-top: 40px;
-  border-radius: 90px;
-  font-weight: 600;
-  cursor: pointer;
-  width: 300px;
+.burhan_input-box input:focus {
+  border-color: #45f3ff;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 15px rgba(69, 243, 255, 0.3);
+  transform: scale(1.02);
 }
 
-input[type="submit"]:active {
-  background: linear-gradient(90deg, #45f3ff, #d9138a);
-  opacity: .8;
+.burhan_input-box input:valid {
+  border-color: rgba(69, 243, 255, 0.6);
+}
+
+/* Fix autofill styling */
+.burhan_input-box input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px #28292d inset;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(69, 243, 255, 0.6) !important;
+}
+
+.burhan_input-box input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 30px #28292d inset;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 .burhan_input-box span {
   position: absolute;
-  left: 0;
-  padding: 20px 10px 10px;
+  left: 15px;
+  top: 20px;
   font-size: 1em;
   color: #8f8f8f;
   pointer-events: none;
-  letter-spacing: .05em;
-  transition: .5s;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+  z-index: 25;
+  background: transparent;
+  white-space: nowrap;
 }
 
-.burhan_input-box input:valid~span,
-.burhan_input-box input:focus~span {
+.burhan_input-box input:focus ~ span,
+.burhan_input-box input:valid ~ span,
+.burhan_input-box input:not(:placeholder-shown) ~ span {
   color: #45f3ff;
-  transform: translateX(-10px) translateY(-30px);
-  font-size: .75em;
-}
-
-.burhan_input-box i {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 2px;
-  background: rgb(69, 243, 255);
+  transform: translateY(-32px);
+  font-size: 0.75em;
+  background: #28292d;
+  padding: 3px 6px;
   border-radius: 4px;
-  transition: .5s;
-  pointer-events: none;
-  z-index: 9;
+  left: 10px;
+  text-shadow: 0 0 5px rgba(69, 243, 255, 0.5);
+  z-index: 30;
 }
 
-.burhan_input-box input:valid~i,
-.burhan_input-box input:focus~i {
-  height: 44px;
-  background: rgba(69, 243, 255, .5);
+/* Ensure input has proper state styling */
+.burhan_input-box input:focus,
+.burhan_input-box input:not(:placeholder-shown) {
+  border-color: #45f3ff;
+  background: rgba(255, 255, 255, 0.12);
 }
 
+/* ERROR MESSAGE STYLING - POSITIONED BELOW INPUTS */
+.inputError,
+.input-error,
+.text-danger,
+.burhan_input-box .error-message,
+.burhan_input-box .validation-error {
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  right: 0;
+  font-size: 11px;
+  color: #ff4757;
+  line-height: 1.2;
+  padding: 2px 5px;
+  background: transparent;
+  z-index: 15;
+  display: block;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  text-align: left;
+  hyphens: auto;
+}
+
+/* Remove extra span styling inside error messages */
+.inputError span,
+.input-error span,
+.text-danger span {
+  position: static;
+  font-size: inherit;
+  color: inherit;
+  background: transparent;
+  padding: 0;
+  transform: none;
+  text-shadow: none;
+}
+
+/* Angular form validation error styling */
+.burhan_input-box .ng-invalid.ng-touched ~ .input-error,
+.burhan_input-box .ng-invalid.ng-dirty ~ .input-error {
+  display: block;
+}
+
+/* Submit Button */
+input[type="submit"] {
+  font-size: 18px;
+  border: none;
+  outline: none;
+  background: linear-gradient(135deg, #45f3ff, #4ae4ff);
+  color: #000000;
+  padding: 15px 20px;
+  margin-top: 30px;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 300px;
+  z-index: 20;
+  position: relative;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 5px 15px rgba(69, 243, 255, 0.3);
+}
+
+input[type="submit"]:hover {
+  background: linear-gradient(135deg, #4ae4ff, #45f3ff);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(69, 243, 255, 0.4);
+}
+
+input[type="submit"]:active {
+  background: linear-gradient(135deg, #45f3ff, #d9138a);
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(69, 243, 255, 0.5);
+}
+input[type="submit"]:disabled {
+  background: linear-gradient(135deg, #666666, #555555) !important;
+  color: #cccccc !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Ensure enabled state is clear */
+input[type="submit"]:not(:disabled) {
+  background: linear-gradient(135deg, #45f3ff, #4ae4ff);
+  color: #000000;
+  cursor: pointer;
+}
+
+/* Links Section */
 .burhan_links {
   display: flex;
   justify-content: space-between;
   width: 300px;
+  margin-top: 20px;
 }
 
 .burhan_links a {
-  margin: 25px 0;
-  font-size: 1em;
+  font-size: 0.9em;
   color: #8f8f8f;
   text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-.burhan_links a:hover,
+.burhan_links a:hover {
+  color: #45f3ff;
+  text-shadow: 0 0 5px rgba(69, 243, 255, 0.5);
+}
+
 .burhan_links a:nth-child(2) {
   color: #45f3ff;
+  font-weight: 500;
 }
 
 .burhan_links a:nth-child(2):hover {
   color: #d9138a;
+  text-shadow: 0 0 5px rgba(217, 19, 138, 0.5);
+}
+
+/* Remove unused i element styling */
+.burhan_input-box i {
+  display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 520px) {
+  .burhan_bodyContainer {
+    padding: 10px;
+  }
+
+  .burhan_box {
+    width: 90%;
+    max-width: 400px;
+    height: auto;
+    min-height: 500px;
+    margin: 20px;
+  }
+
+  .burhan_input-box,
+  input[type="submit"],
+  .burhan_links {
+    width: 85%;
+    max-width: 300px;
+  }
+
+  .burhan_input-box {
+    min-height: 55px;
+    padding-bottom: 15px;
+  }
+
+  form {
+    padding: 25px 20px;
+  }
+
+  h2 {
+    font-size: 28px;
+    margin: 0 0 20px 0;
+  }
+
+  .burhan_input-box {
+    margin-top: 20px;
+  }
+
+  .burhan_input-box input {
+    padding: 18px 12px 8px;
+    font-size: 0.9em;
+  }
+
+  .burhan_input-box span {
+    left: 12px;
+    top: 18px;
+    font-size: 0.9em;
+  }
+
+  .burhan_input-box input:focus ~ span,
+  .burhan_input-box input:valid ~ span,
+  .burhan_input-box input:not(:placeholder-shown) ~ span {
+    transform: translateY(-30px);
+    font-size: 0.7em;
+  }
+
+  .inputError {
+    bottom: -13px;
+    font-size: 10px;
+  }
+
+  input[type="submit"] {
+    font-size: 16px;
+    padding: 12px 20px;
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .burhan_box {
+    width: 95%;
+    max-width: 350px;
+    height: auto;
+    min-height: 450px;
+  }
+
+  .burhan_input-box,
+  input[type="submit"],
+  .burhan_links {
+    width: 90%;
+    max-width: 280px;
+  }
+
+  .burhan_input-box {
+    min-height: 52px;
+    padding-bottom: 14px;
+  }
+
+  form {
+    padding: 20px 15px;
+  }
+
+  h2 {
+    font-size: 24px;
+    margin: 0 0 15px 0;
+  }
+
+  .burhan_input-box {
+    margin-top: 18px;
+  }
+
+  .burhan_input-box input {
+    padding: 15px 10px 6px;
+    font-size: 0.85em;
+  }
+
+  .burhan_input-box span {
+    left: 10px;
+    top: 15px;
+    font-size: 0.85em;
+  }
+
+  .burhan_input-box input:focus ~ span,
+  .burhan_input-box input:valid ~ span,
+  .burhan_input-box input:not(:placeholder-shown) ~ span {
+    transform: translateY(-28px);
+    font-size: 0.65em;
+  }
+
+  .inputError {
+    bottom: -12px;
+    font-size: 9px;
+  }
+
+  input[type="submit"] {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .burhan_box {
+    width: 98%;
+    max-width: 320px;
+    height: auto;
+    min-height: 420px;
+  }
+
+  .burhan_input-box,
+  input[type="submit"],
+  .burhan_links {
+    width: 95%;
+    max-width: 250px;
+  }
+
+  .burhan_input-box {
+    min-height: 50px;
+    padding-bottom: 12px;
+  }
+
+  form {
+    padding: 15px 10px;
+  }
+
+  h2 {
+    font-size: 20px;
+    margin: 0 0 12px 0;
+  }
+
+  .burhan_input-box {
+    margin-top: 15px;
+  }
+
+  .burhan_input-box input {
+    padding: 12px 8px 4px;
+    font-size: 0.8em;
+  }
+
+  .burhan_input-box span {
+    left: 8px;
+    top: 12px;
+    font-size: 0.8em;
+  }
+
+  .burhan_input-box input:focus ~ span,
+  .burhan_input-box input:valid ~ span,
+  .burhan_input-box input:not(:placeholder-shown) ~ span {
+    transform: translateY(-25px);
+    font-size: 0.6em;
+  }
+
+  .inputError {
+    bottom: -10px;
+    font-size: 8px;
+  }
+
+  input[type="submit"] {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .burhan_links a {
+    font-size: 0.8em;
+  }
+}
+
+/* Loading and Focus States */
+.burhan_input-box input:focus {
+  animation: inputFocus 0.3s ease;
+}
+
+@keyframes inputFocus {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1.01);
+  }
+}
+
+/* Accessibility improvements */
+.burhan_input-box input:focus {
+  outline: 2px solid rgba(69, 243, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Form validation state improvements */
+.burhan_input-box.ng-invalid.ng-touched {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* Error State (for validation) */
+.burhan_input-box.error input,
+.burhan_input-box .ng-invalid.ng-touched input,
+.burhan_input-box .ng-invalid.ng-dirty input {
+  border-color: #ff4757;
+  background: rgba(255, 71, 87, 0.1);
+}
+
+.burhan_input-box.error span,
+.burhan_input-box .ng-invalid.ng-touched span,
+.burhan_input-box .ng-invalid.ng-dirty span {
+  color: #ff4757;
+}
+
+/* Success State */
+.burhan_input-box.success input,
+.burhan_input-box .ng-valid.ng-touched input,
+.burhan_input-box .ng-valid.ng-dirty input {
+  border-color: #2ed573;
+  background: rgba(46, 213, 115, 0.1);
+}
+
+.burhan_input-box.success span,
+.burhan_input-box .ng-valid.ng-touched span,
+.burhan_input-box .ng-valid.ng-dirty span {
+  color: #2ed573;
 }

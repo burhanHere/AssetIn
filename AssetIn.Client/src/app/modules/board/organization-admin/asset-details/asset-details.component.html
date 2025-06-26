@@ -124,7 +124,7 @@
                 class="checkOut-textarea"
               >
                 <option value="">Select Employee</option>
-                @for (emp of employees; track emp.name) {
+                @for (emp of employees; track $index) {
                 <option [value]="emp?.id">{{ emp?.email }}</option>
                 }
               </select>

@@ -66,7 +66,7 @@
   transition: 0.3s;
 }
 
-.add-new-card-btn:hover{
+.add-new-card-btn:hover {
   transition: 0.3s;
   transform: scale(1.05);
 }
@@ -103,7 +103,7 @@
 }
 
 .gradient-border-wrapper {
-  background: linear-gradient(to right, #CF42D7, #7AC6EC);
+  background: linear-gradient(to right, #cf42d7, #7ac6ec);
   padding: 4px;
   border-radius: 12px;
   display: inline-block;
@@ -161,11 +161,10 @@
   margin-top: 5px;
 }
 
-
 /* Buttons */
 .new-organization-form-container form button {
   width: 100%;
-  background-image: linear-gradient(to right, #CF42D7, #7AC6EC);
+  background-image: linear-gradient(to right, #cf42d7, #7ac6ec);
   color: white;
   padding: 12px;
   border: none;

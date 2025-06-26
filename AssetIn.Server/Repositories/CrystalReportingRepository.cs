@@ -258,8 +258,6 @@ public class CrystalReportingRepository(ApplicationDbContext applicationDbContex
             AssetTypeName = assetTypes.FirstOrDefault(a => a.Id == x.AssetTypeID)?.Name,
             AssetCategoryName = assetCategories.FirstOrDefault(c => c.Id == x.AssetCatagoryID)?.Name,
             AssetStatusName = assetStatuses.FirstOrDefault(s => s.Id == x.AssetStatusID)?.Name,
-            x.Problem,
-            x.ProfilePicturePath
         }).ToList();
 
         return new()

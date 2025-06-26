@@ -16,6 +16,8 @@ import {
   DoughnutController,
   ArcElement,
 } from 'chart.js';
+import { CrystalReportingService } from '../../../../core/services/crystalReporting/crystal-reporting.service';
+import { HelperFunctionService } from '../../../../core/services/HelperFunction/helper-function.service';
 
 Chart.register(
   LineController,
@@ -39,6 +41,8 @@ export class OrganizationAdminDashboardComponent implements OnInit {
   private organizationManagementService: OrganizationManagementService = inject(
     OrganizationManagementService
   );
+  private crystalReportingService: CrystalReportingService = inject(CrystalReportingService);
+  private helperFunctionService: HelperFunctionService = inject(HelperFunctionService);
   private organizationId: number;
 
   public isLoading: boolean;
@@ -70,6 +74,47 @@ export class OrganizationAdminDashboardComponent implements OnInit {
       Title,
       Tooltip,
       Legend
+    );
+  }
+
+  public fetchReportData(): void {
+    this.isLoading = true;
+    const reportFilterationData =
+    {
+      reportType: "Assets",
+      //asset report
+      assetType: 0,
+      assetStatus: 0,
+      assetCategory: 0,
+      assignedTo: '',
+      // employee report
+      employeeRole: '',
+      employeeStatus: false,
+      specificEmployee: '',
+      gender: '',
+      // asset request report
+      requestStatus: 0,
+      requestedBy: '',
+      // date filters
+      fromDate: '',
+      toDate: '',
+      // target organization id
+      organizationId: Number(this.organizationId)
+    };
+    this.crystalReportingService.GenerateHtmlReportByFilter(reportFilterationData).subscribe(
+      (response: any) => {
+        const reportData = response.responseData;
+        const now = new Date();
+        const formattedDate = `${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}-${now.getFullYear()}`;
+        this.helperFunctionService.exportAssetList(reportData, `-report-${formattedDate}.csv`);
+        this.isLoading = false;
+      },
+      (error: HttpErrorResponse) => {
+        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.showAlert = true;
+        this.isLoading = false;
+      }
     );
   }
 
@@ -195,54 +240,55 @@ export class OrganizationAdminDashboardComponent implements OnInit {
     this.router.navigateByUrl('/board/mainBoard/organizationAdmin/addUpdateAsset');
   }
 
-  public exportOrganizationData(): void {
-    if (!this.organizationData || typeof this.organizationData !== 'object') {
-      this.alertTitle = 'No Data';
-      this.alertMessage = 'No organization data available to export.';
-      this.showAlert = true;
-      return;
-    }
+  // not i use nay more
+  // public exportOrganizationData(): void {
+  //   if (!this.organizationData || typeof this.organizationData !== 'object') {
+  //     this.alertTitle = 'No Data';
+  //     this.alertMessage = 'No organization data available to export.';
+  //     this.showAlert = true;
+  //     return;
+  //   }
 
-    // Ensure data is in array form
-    const dataArray = Array.isArray(this.organizationData)
-      ? this.organizationData
-      : [this.organizationData];
+  //   // Ensure data is in array form
+  //   const dataArray = Array.isArray(this.organizationData)
+  //     ? this.organizationData
+  //     : [this.organizationData];
 
-    // Get CSV headers from object keys
-    const keys = Object.keys(dataArray[0]);
-    const csvRows: string[] = [];
+  //   // Get CSV headers from object keys
+  //   const keys = Object.keys(dataArray[0]);
+  //   const csvRows: string[] = [];
 
-    // Add headers
-    csvRows.push(keys.join(','));
+  //   // Add headers
+  //   csvRows.push(keys.join(','));
 
-    // Add rows
-    for (const row of dataArray) {
-      const values = keys.map((key) => {
-        let val = row[key];
-        if (val === null || val === undefined) val = '';
-        if (typeof val === 'string') {
-          val = val.replace(/"/g, '""'); // Escape double quotes
-          return `"${val}"`;
-        }
-        return val;
-      });
-      csvRows.push(values.join(','));
-    }
+  //   // Add rows
+  //   for (const row of dataArray) {
+  //     const values = keys.map((key) => {
+  //       let val = row[key];
+  //       if (val === null || val === undefined) val = '';
+  //       if (typeof val === 'string') {
+  //         val = val.replace(/"/g, '""'); // Escape double quotes
+  //         return `"${val}"`;
+  //       }
+  //       return val;
+  //     });
+  //     csvRows.push(values.join(','));
+  //   }
 
-    // Create CSV blob and trigger download
-    const csvContent = csvRows.join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = window.URL.createObjectURL(blob);
+  //   // Create CSV blob and trigger download
+  //   const csvContent = csvRows.join('\n');
+  //   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  //   const url = window.URL.createObjectURL(blob);
 
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute(
-      'download',
-      `organization_${this.organizationId}_data.csv`
-    );
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url); // Clean up
-  }
+  //   const link = document.createElement('a');
+  //   link.href = url;
+  //   link.setAttribute(
+  //     'download',
+  //     `organization_${this.organizationId}_data.csv`
+  //   );
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  //   window.URL.revokeObjectURL(url); // Clean up
+  // }
 }

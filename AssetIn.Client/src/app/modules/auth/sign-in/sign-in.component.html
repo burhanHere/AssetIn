@@ -1,45 +1,57 @@
 @if (showAlertCard) {
-<app-alert-card [title]="alertCardTitle" [message]="alertCardMessage"
-  (closeCard)="showAlertCard=$event"></app-alert-card>
-}
-
-@if (isLoading) {
+<app-alert-card
+  [title]="alertCardTitle"
+  [message]="alertCardMessage"
+  (closeCard)="showAlertCard = $event"
+></app-alert-card>
+} @if (isLoading) {
 <app-page-loader></app-page-loader>
 }
 
 <div class="burhan_bodyContainer">
   <div class="burhan_box">
     <form action="" [formGroup]="loginForm">
+      <h2>Log In</h2>
+
       <div class="burhan_input-box">
-        <h2>Log In</h2>
-        <input type="text" value="" formControlName="Email" name="Email" required>
+        <input
+          type="text"
+          value=""
+          formControlName="Email"
+          name="Email"
+          required
+        />
         <span>Email</span>
-        <i></i>
-        @if (loginForm.controls['Email'].touched) {
-        <div class="text-danger">
-          @if (loginForm.controls['Email'].errors?.['required']) {
-          <span>Email is required.</span>
-          }@else if(loginForm.controls['Email'].errors?.['email']){
-          <span>Enter a valid Email.</span>
-          }
-        </div>
-        }
+        @if (loginForm.controls['Email'].touched) { @if
+        (loginForm.controls['Email'].errors?.['required']) {
+        <div class="inputError">Email is required.</div>
+        }@else if(loginForm.controls['Email'].errors?.['email']){
+        <div class="inputError">Enter a valid Email.</div>
+        } }
       </div>
-      <br>
+
       <div class="burhan_input-box">
-        <input type="password" value="" formControlName="Password" name="Password" required>
+        <input
+          type="password"
+          value=""
+          formControlName="Password"
+          name="Password"
+          required
+        />
         <span>Enter Password</span>
-        <i></i>
-        @if (loginForm.controls['Password'].touched) {
-        <div class="text-danger">
-          @if (loginForm.controls['Password'].errors?.['required']) {
-          <span>Password is required.</span>
-          }
-        </div>
-        }
+        @if (loginForm.controls['Password'].touched) { @if
+        (loginForm.controls['Password'].errors?.['required']) {
+        <div class="inputError">Password is required.</div>
+        } }
       </div>
-      <br>
-      <input type="submit" value="Log In" (click)="signIn()" [disabled]="!loginForm.valid">
+
+      <input
+        type="submit"
+        value="Log In"
+        (click)="signIn()"
+        [disabled]="!loginForm.valid"
+      />
+
       <div class="burhan_links">
         <a routerLink="../forgotPassword">Forgot Password?</a>
         <a routerLink="../signUp">Sign Up</a>

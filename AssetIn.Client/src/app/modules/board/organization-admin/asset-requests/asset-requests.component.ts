@@ -66,7 +66,6 @@ export class AssetRequestsComponent implements OnInit {
       .GetAllAssetRequestAdminList(this.organizationId)
       .subscribe(
         (response: any) => {
-          debugger;
           this.requests = this.filteredRequests = response.responseData.sort(
             (a: any, b: any) =>
               new Date(b.requestDate).getTime() -
@@ -109,10 +108,10 @@ export class AssetRequestsComponent implements OnInit {
 
   public closeAssignAssetModal(): void {
     this.showAssignAssetModal = false;
+    this.assignAssetForm.reset(); // Reset the form when modal closes
   }
 
   public openViewModal(request: any): void {
-    debugger;
     this.selectedRequest = request;
     if (request.requestStatus === 'Accepted') {
       this.showAssignAssetModal = true;
@@ -201,7 +200,6 @@ export class AssetRequestsComponent implements OnInit {
       .GetAllAssetCatagory(this.organizationId)
       .subscribe(
         (response: any) => {
-          debugger;
           this.availableAssetsCategory = response.responseData || [];
           this.isLoading = false;
         },
@@ -238,9 +236,8 @@ export class AssetRequestsComponent implements OnInit {
     this.isLoading = true;
     if (this.assignAssetForm.valid) {
       this.closeAssignAssetModal(); // Close modal first (optional)
-      debugger;
-      const newAssetRequest : newAsset = {
-        assetRequestId:this.selectedRequest.assetRequestID,
+      const newAssetRequest: newAsset = {
+        assetRequestId: this.selectedRequest.assetRequestID,
         assetID: this.assignAssetForm.controls['availableAssets'].value,
         notes: this.assignAssetForm.controls['notes'].value,
       };
@@ -248,14 +245,13 @@ export class AssetRequestsComponent implements OnInit {
         .FulFillAssetRequest(newAssetRequest)
         .subscribe(
           (response) => {
-            debugger;
             this.alertMessage = response.responseData[1] || 'Request fulfilled successfully';
             this.alertTitle = response.responseData[0] || 'Success';
+            this.assignAssetForm.reset(); // Reset the form after successful submission
             this.isLoading = false;
 
           },
           (error) => {
-            debugger;
             this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
             this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
             this.showAlert = true;

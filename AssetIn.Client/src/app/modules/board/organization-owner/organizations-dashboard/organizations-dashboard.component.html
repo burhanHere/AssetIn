@@ -85,6 +85,7 @@
           alt="logo"
           width="50px"
           height="50px"
+          style="border-radius: 15px"
         />
         <h3>{{ org.organizationName }}</h3>
       </div>
@@ -105,7 +106,8 @@
           <b>Assets:</b>{{ org.organizationAssetCount }}
         </li>
         <li style="color: #da498d; width: max-content">
-          <b>Asset Worth:</b> {{ org.organizationAssetWorth | currency }}
+          <b>Asset Worth:</b>
+          $ {{ org.organizationAssetWorth / 1000 | number : "1.0-0" }}K
         </li>
       </ul>
     </div>

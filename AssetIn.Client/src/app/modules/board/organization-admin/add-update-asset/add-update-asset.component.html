@@ -29,8 +29,9 @@
               </div>
 
               <div class="grid-div">
+                <label>Asset Catagory</label>
                 <select style="margin-top: 1vw" formControlName="assetCategory">
-                  <option value="" disabled>Select Category</option>
+                  <option value="">Select Category</option>
                   @for (category of assetCategories; track $index) {
                   <option [value]="category?.organizationsAssetCatagoryID">
                     {{ category?.organizationsAssetCatagoryName }}
@@ -44,8 +45,9 @@
               </div>
 
               <div class="grid-div">
+                <label>Asset Type</label>
                 <select style="margin-top: 1vw" formControlName="assetType">
-                  <option selected disabled value="">Select Asset Type</option>
+                  <option value="">Select Asset Type</option>
                   @for (type of assetTypes; track $index) {
                   <option [value]="type?.organizationsAssetTypeID">
                     {{ type?.organizationsAssetTypeName }}
@@ -232,6 +234,9 @@
       <div class="img-img-div">
         <img [src]="uploadedAssetImage || 'icons/camera.png'" alt="Image" />
       </div>
+      @if (this.showPictureError) {
+      <div class="input-error">Add asset picture.</div>
+      }
       <input
         type="file"
         accept="image/*"
@@ -249,7 +254,7 @@
     <button
       type="button"
       class="close-btn"
-      (click)="showNewAssetCatagoryForm = false"
+      (click)="closeNewAssetCategoryOrTypeForm()"
     >
       ×
     </button>

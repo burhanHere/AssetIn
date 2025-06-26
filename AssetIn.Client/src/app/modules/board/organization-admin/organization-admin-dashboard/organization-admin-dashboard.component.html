@@ -172,7 +172,7 @@
         <div
           style="display: grid; justify-items: center; align-content: center"
         >
-          <button class="show-more">Show All</button>
+          <!-- <button class="show-more">Show All</button> -->
         </div>
       </div>
     </div>
@@ -186,10 +186,10 @@
           <img src="icons/add-new-asset.png" alt="Add" />
           <i class="add"></i> Add
         </button>
-        <button class="btn export" (click)="exportOrganizationData()">
+        <!-- <button class="btn export" (click)="fetchReportData()">
           <img src="icons/Download.png" alt="Export" />
           <i class="export"></i> Export Asset List
-        </button>
+        </button> -->
       </div>
       <table>
         <thead>
@@ -202,7 +202,7 @@
         </thead>
         <tbody>
           @for (asset of organizationData?.recentlyUpdatedAssetsList; track
-          asset.id) {
+          $index) {
           <tr>
             <td>{{ asset.assetlD }}</td>
             <td>{{ asset.barcode }}</td>

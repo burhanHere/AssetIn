@@ -45,6 +45,7 @@ export class SignInComponent {
           }
           else if (userClaims['Role'].includes('OrganizationAssetManager')) {
             sessionStorage.setItem('targetOrganizationID', userClaims['OrganizationId']);
+            sessionStorage.setItem('targetOrganizationDomain', userClaims['OrganizationDomain']);
             this.router.navigateByUrl('board/mainBoard/organizationAdmin');
           }
           else if (userClaims['Role'].includes('OrganizationEmployee')) {

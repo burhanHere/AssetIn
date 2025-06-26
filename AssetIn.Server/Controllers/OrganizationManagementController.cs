@@ -141,4 +141,22 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
         ApiResponse result = await _organizationManagementRepository.UploadOrganizationProfilePicture(model, userId);
         return HelperFunctions.ResponseFormatter(this, result);
     }
+
+    [HttpGet("GetVendorAndVendorProducts")]
+    [Authorize(policy: "OrganizationOwnerPolicy")]
+    public async Task<IActionResult> GetVendorAndVendorProducts()
+    {
+        var userId = User.FindFirst("UserId")?.Value;
+        if (string.IsNullOrEmpty(userId))
+        {
+            // If the username is not found, return an unauthorized response
+            return Unauthorized(new ApiResponse
+            {
+                Status = StatusCodes.Status401Unauthorized,
+                ResponseData = new List<string> { "User data not found in token." }
+            });
+        }
+        ApiResponse result = await _organizationManagementRepository.GetVendorAndVendorProducts(userId);
+        return HelperFunctions.ResponseFormatter(this, result);
+    }
 }

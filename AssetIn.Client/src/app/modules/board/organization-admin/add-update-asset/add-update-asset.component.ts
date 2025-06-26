@@ -24,6 +24,7 @@ export class AddUpdateAssetComponent implements OnInit {
   public uploadedAssetImage: string;
   public showNewAssetCatagoryForm: boolean;
   public newAssetCategoryOrTypeForm: FormGroup;
+  public showPictureError: boolean;
 
   constructor() {
     const temp = sessionStorage.getItem('targetOrganizationID');
@@ -57,6 +58,7 @@ export class AddUpdateAssetComponent implements OnInit {
       CatagoryOrType: new FormControl('', [Validators.required]),
     });
     this.selectedFile = null;
+    this.showPictureError = false;
   }
 
   ngOnInit(): void {
@@ -135,6 +137,7 @@ export class AddUpdateAssetComponent implements OnInit {
             this.alertMessage = response?.responseData?.[1] || 'New asset type created successfully';
             this.showAlert = true;
             this.isLoading = false;
+            this.newAssetCategoryOrTypeForm.reset();
           },
           (error: HttpErrorResponse) => {
             this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
@@ -153,26 +156,9 @@ export class AddUpdateAssetComponent implements OnInit {
   }
 
   public createNewAsset(): void {
-    if (this.assetForm.valid) {
+    if (this.assetForm.valid && this.selectedFile) {
       this.isLoading = true;
-      // const apiInput = {
-      //   "assetlD": 0,
-      //   "assetName": this.assetForm.controls["assetName"].value,
-      //   "description": this.assetForm.controls["description"].value,
-      //   "serialNumber": this.assetForm.controls["serialNumber"].value,
-      //   "model": this.assetForm.controls["model"].value,
-      //   "manufacturer": this.assetForm.controls["manufacturer"].value,
-      //   "purchaseDate": this.assetForm.controls["purchaseDate"].value,
-      //   "purchasePrice": this.assetForm.controls["purchasePrice"].value,
-      //   "costPrice": this.assetForm.controls["costPrice"].value,
-      //   "location": this.assetForm.controls["location"].value,
-      //   "depreciationRate": this.assetForm.controls["depreciationRate"].value,
-      //   "problem": this.assetForm.controls["problem"].value,
-      //   "assetCatagoryID": this.assetForm.controls["assetCategory"].value,
-      //   "assetTypeID": this.assetForm.controls["assetType"].value,
-      //   "organizationID": this.organizationId,
-      //   "profilePicturePath": null
-      // };
+      this.showPictureError = false;
       const apiInput = new FormData();
 
       // Map frontend form names to backend DTO property names (PascalCase)
@@ -213,12 +199,15 @@ export class AddUpdateAssetComponent implements OnInit {
         }
       );
     } else {
+      this.showPictureError = true;
       this.assetForm.markAllAsTouched();
     }
   }
 
   public onReset(): void {
-    this.assetForm.reset();
+    this.assetForm.reset([
+      { assetCategory: '', assetType: '' }
+    ]);
   }
 
   onDeleteImage(): void {
@@ -256,6 +245,9 @@ export class AddUpdateAssetComponent implements OnInit {
 
       // Store the file for API upload
       this.selectedFile = file;
+      if (this.selectedFile) {
+        this.showPictureError = false;
+      }
 
       // Create preview
       const reader = new FileReader();
@@ -264,5 +256,10 @@ export class AddUpdateAssetComponent implements OnInit {
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  public closeNewAssetCategoryOrTypeForm(): void {
+    this.showNewAssetCatagoryForm = false;
+    this.newAssetCategoryOrTypeForm.reset();
   }
 }

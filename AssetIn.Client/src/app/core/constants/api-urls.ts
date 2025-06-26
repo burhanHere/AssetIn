@@ -15,6 +15,7 @@ export const ApiUrls = {
     GetOrganizationsListForOrganizationsDashboard: '/OrganizationManagement/GetOrganizationsListForOrganizationsDashboard',
     GetOrganizationInfo: '/OrganizationManagement/GetOrganizationInfo',
     UploadOrganizationProfilePicture: '/OrganizationManagement/UploadOrganizationProfilePicture',
+    GetVendorAndVendorProducts: '/OrganizationManagement/GetVendorAndVendorProducts',
   },
   VendorManagement: {
     GetVendorInfo: '/VendorManagement/GetVendorInfo',
@@ -48,6 +49,7 @@ export const ApiUrls = {
   EmployeeManagement: {
     GetEmployeeList: '/EmployeeManagement/GetEmployeeList',
     CreateEmployee: '/EmployeeManagement/CreateEmployee',
+    UpdateEmployee: '/EmployeeManagement/UpdateEmployee',
     LockUserAccount: '/EmployeeManagement/LockUserAccount',
     UnlockUserAccount: '/EmployeeManagement/UnlockUserAccount',
     RevokeAssetManagerPreviliges: '/EmployeeManagement/RevokeAssetManagerPreviliges',

@@ -86,7 +86,7 @@
           <button
             type="button"
             class="close-btn"
-            (click)="showNewAssetRequestForm = false"
+            (click)="closeNewAssetRequestForm()"
           >
             ×
           </button>
@@ -136,27 +136,22 @@
   <div style="display: flex">
     <div class="request-history-container">
       <div class="request-table-wrapper">
-        <!-- Table Header -->
-        <table class="request-table">
-          <thead>
-            <tr>
-              <th>Request ID</th>
-              <th>Request Description</th>
-              <th>Request Date</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-        </table>
-
-        <!-- Scrollable Table Body -->
-        <div class="scrollable-tbody">
+        <div class="table-container">
           <table class="request-table">
+            <thead>
+              <tr>
+                <th>Request ID</th>
+                <th>Request Description</th>
+                <th>Request Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
             <tbody>
               @for (request of dashboardData?.requiredAssetRequests; track
-              request.requestId) {
+              $index) {
               <tr>
-                <td>{{ request.assetRequestID }}</td>
-                <td>
+                <td class="col-request-id">{{ request.assetRequestID }}</td>
+                <td class="col-description">
                   <div class="description">
                     <div class="title">
                       <strong>{{ request.title }}</strong>
@@ -164,9 +159,11 @@
                     <div class="text">{{ request.description }}</div>
                   </div>
                 </td>
-                <td>{{ request.requestDate | date : "dd/MM/yyyy" }}</td>
-                <td>
-                  <div style="display: flex">
+                <td class="col-date">
+                  {{ request.requestDate | date : "dd/MM/yyyy" }}
+                </td>
+                <td class="col-status">
+                  <div class="status-actions">
                     <span
                       class="status-badge"
                       [ngClass]="request.requestStatus.toLowerCase()"
@@ -199,15 +196,11 @@
     <div class="container">
       <h3>Designated Asset</h3>
 
-      @for (asset of dashboardData?.designatedAssetsAssetdetails; track
-      asset.name) {
+      @for (asset of dashboardData?.designatedAssetsAssetdetails; track $index)
+      {
       <div class="card">
         <img
-          [src]="
-            asset.profilePicturePath
-              ? asset.profilePicturePath
-              : 'icons/AssetAvatar.png'
-          "
+          [src]="asset.profilePicturePath || 'icons/AssetAvatar.png'"
           alt="{{ asset.assetName }}"
         />
         <div class="details">

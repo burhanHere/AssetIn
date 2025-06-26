@@ -203,7 +203,7 @@
       </div>
     </div>
     <div class="product-cards">
-      @for (product of products; track product.id) {
+      @for (product of products; track $index) {
       <div class="product-card">
         <div class="product-image">
           <img

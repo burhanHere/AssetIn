@@ -50,6 +50,23 @@ public class EmployeeManagementController(UserManager<User> userManager, Applica
         return HelperFunctions.ResponseFormatter(this, result);
     }
 
+    [HttpPost(template: "UpdateEmployee")]
+    public async Task<IActionResult> UpdateEmployee(UpdateEmployeeDTO updatedEmployee)
+    {
+        var userId = User.FindFirst("UserId")?.Value;
+        if (string.IsNullOrEmpty(userId))
+        {
+            // If the username is not found, return an unauthorized response
+            return Unauthorized(new ApiResponse
+            {
+                Status = StatusCodes.Status401Unauthorized,
+                ResponseData = new List<string> { "User data not found in token." }
+            });
+        }
+        ApiResponse result = await _employeeManagementRepository.UpdateEmployee(userId, updatedEmployee);
+        return HelperFunctions.ResponseFormatter(this, result);
+    }
+
     [HttpPatch(template: "LockUserAccount")]
     public async Task<IActionResult> LockUserAccount(UpdateTargetAccountDto targetUserData)
     {

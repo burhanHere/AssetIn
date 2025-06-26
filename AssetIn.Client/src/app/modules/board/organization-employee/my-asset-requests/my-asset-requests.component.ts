@@ -55,10 +55,10 @@ export class MyAssetRequestsComponent implements OnInit {
 
   ngOnInit(): void {
     // Could load saved asset requests from storage here
-    this.getallAssetrequest();
+    this.getallAssetRequest();
   }
 
-  public getallAssetrequest(): void {
+  public getallAssetRequest(): void {
     this.isLoading = true;
     this.showAlert = false;
     this.assetRequestManagementService
@@ -130,7 +130,7 @@ export class MyAssetRequestsComponent implements OnInit {
           this.isLoading = false;
         },
         () => {
-          this.getallAssetrequest();
+          this.getallAssetRequest();
         }
       );
   }
@@ -149,7 +149,6 @@ export class MyAssetRequestsComponent implements OnInit {
         description: this.newAssetRequestForm.controls['notes'].value,
         organizationID: this.organizationId,
       };
-      this.newAssetRequestForm.reset();
       this.assetRequestManagementService
         .CreateAssetRequest(NewAssetReq)
         .subscribe(
@@ -157,6 +156,7 @@ export class MyAssetRequestsComponent implements OnInit {
             this.alertMessage =
               response.responseData[1] || 'Request created Successfully';
             this.alertTitle = response.responseData[0] || 'Success';
+            this.newAssetRequestForm.reset();
             this.showAlert = true;
             this.isLoading = false;
           },
@@ -167,12 +167,17 @@ export class MyAssetRequestsComponent implements OnInit {
             this.isLoading = false;
           },
           () => {
-            this.getallAssetrequest();
+            this.getallAssetRequest();
           }
         );
     } else {
       this.newAssetRequestForm.markAllAsTouched();
       this.isLoading = false;
     }
+  }
+
+  public closeNewAssetRequestForm() {
+    this.showNewAssetRequestForm = false
+    this.newAssetRequestForm.reset();
   }
 }

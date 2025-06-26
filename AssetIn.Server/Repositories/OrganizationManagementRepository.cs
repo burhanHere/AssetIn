@@ -385,6 +385,7 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
                 OrganizationEmployeeCount = tempOrganizationEmployeeCount,
                 OrganizationAssetCount = tempOrganizationAssetsCount,
                 OrganizationAssetWorth = tempOrganizationAssetWorth,
+                OrganizationDomain = item.OrganizationDomain,
             });
 
         }
@@ -494,6 +495,47 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
         {
             Status = StatusCodes.Status400BadRequest,
             ResponseData = new List<string> { "Error", "Unable to upload profile picture." }
+        };
+    }
+
+    public async Task<ApiResponse> GetVendorAndVendorProducts(string userId)
+    {
+        var validUser = await _userManager.FindByIdAsync(userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "User not found." }
+            };
+        }
+
+        if (validUser.Status == false)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "User is not active." }
+            };
+        }
+
+        var vendorsList = await _applicationDbContext.Vendors.ToListAsync();
+        var vendorProductsList = await _applicationDbContext.VendorProducts.ToListAsync();
+
+        // Group products by vendor ID
+        var vendorsWithProducts = vendorsList.Select(vendor => new
+        {
+            Vendor = vendor,
+            Products = vendorProductsList.Where(product => product.VendorID == vendor.VendorID).ToList()
+        }).ToList();
+
+        return new ApiResponse
+        {
+            Status = StatusCodes.Status200OK,
+            ResponseData = new
+            {
+                VendorsWithProducts = vendorsWithProducts
+            }
         };
     }
 }

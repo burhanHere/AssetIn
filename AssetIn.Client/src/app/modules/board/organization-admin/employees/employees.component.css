@@ -23,7 +23,7 @@
   text-align: center;
   padding: 12px;
   background: #fff;
-  nsition: 0.3s ease;tra
+  transition: 0.3s ease;
   border: 3px solid transparent;
   background-clip: padding-box, border-box;
   background-origin: border-box;
@@ -329,4 +329,34 @@ input:checked + .slider::before {
   font-size: 12px;
   margin-left: 110px;
   margin-bottom: 30px;
+}
+
+.edit-button-container {
+  display: flex;
+  gap: 12px;
+}
+
+.edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #7ac6ec;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.edit-btn:hover {
+  background: #64add4;
+  transform: translateY(-1px);
+}
+
+.btn-icon {
+  width: 16px;
+  height: 16px;
 }

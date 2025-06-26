@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { ApiResponse } from '../../models/apiResponse';
 import { NewEmployee } from '../../models/newEmployee';
 import { lockUnlockUser } from '../../models/lockUnlockUser';
+import { UpdateEmployee } from '../../models/UpdateEmployee';
 
 @Injectable({
   providedIn: 'root'
@@ -18,23 +19,27 @@ export class EmployeeManagementService {
     return this.httpCient.post<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.EmployeeManagement.CreateEmployee, newEmployee);
   }
 
+  public UpdateEmployee(updateEmployee: UpdateEmployee): Observable<ApiResponse> {
+    return this.httpCient.post<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.EmployeeManagement.UpdateEmployee, updateEmployee);
+  }
+
   public GetEmployeeList(organizationId: number): Observable<ApiResponse> {
     return this.httpCient.get<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.EmployeeManagement.GetEmployeeList + `?organizationId=${organizationId}`);
   }
 
-  public LockUserAcount(lockuser:lockUnlockUser): Observable<ApiResponse> {
+  public LockUserAcount(lockuser: lockUnlockUser): Observable<ApiResponse> {
     return this.httpCient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.EmployeeManagement.LockUserAccount, lockuser);
   }
 
-  public UnlockUserAcount(Unlockuser:lockUnlockUser): Observable<ApiResponse> {
+  public UnlockUserAcount(Unlockuser: lockUnlockUser): Observable<ApiResponse> {
     return this.httpCient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.EmployeeManagement.UnlockUserAccount, Unlockuser);
   }
 
-  public RevokeAssetManagerPreviliges(RevokeUser:lockUnlockUser): Observable<ApiResponse> {
+  public RevokeAssetManagerPreviliges(RevokeUser: lockUnlockUser): Observable<ApiResponse> {
     return this.httpCient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.EmployeeManagement.RevokeAssetManagerPreviliges, RevokeUser);
   }
 
-  public GrantAssetManagerPreviliges(GrantUser:lockUnlockUser): Observable<ApiResponse> {
+  public GrantAssetManagerPreviliges(GrantUser: lockUnlockUser): Observable<ApiResponse> {
     return this.httpCient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.EmployeeManagement.GrantAssetManagerPreviliges, GrantUser);
   }
 }

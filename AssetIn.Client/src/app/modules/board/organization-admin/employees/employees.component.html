@@ -104,6 +104,9 @@
               @if (employeeForm.controls['dateOfBirth'].touched &&
               employeeForm.controls['dateOfBirth'].errors?.['required']) {
               <div class="input-error">Date of Birth is required.</div>
+              } @if (employeeForm.controls['dateOfBirth'].touched &&
+              employeeForm.controls['dateOfBirth'].errors?.['underAge']) {
+              <div class="input-error">Under age.</div>
               }
             </div>
             <!-- <div class="user-data-container">
@@ -127,11 +130,11 @@
         </div>
       </div>
     </div>
-    } @for (emp of employees; track emp.name) {
+    } @for (emp of employees; track $index) {
     <div class="card" (click)="selectEmployee(emp)">
       <img
-        [src]="emp.image ? emp.image : 'icons/emp_avatar.png'"
-        alt="{{ emp.name }}"
+        [src]="emp.profilePicturePath || 'icons/emp_avatar.png'"
+        alt="{{ emp.userName }}"
         class="avatar"
       />
       <div style="text-align: center; line-height: 1.1">
@@ -148,10 +151,10 @@
           <div class="profile">
             <img
               [src]="
-                selectedEmployee.profilePicturePath
-                  ? selectedEmployee.profilePicturePath
-                  : 'icons/emp_avatar.png'
+                selectedEmployee.profilePicturePath || 'icons/emp_avatar.png'
               "
+              alt="{{ selectedEmployee.userName }}"
+              class="avatar"
             />
           </div>
 
@@ -193,7 +196,7 @@
               <span class="lable">Allocated assets ids:</span>
               <span class="info-details">
                 @if (selectedEmployee.allocatedAssetIdsList?.length > 0) { @for
-                (id of selectedEmployee.allocatedAssetIdsList; track id) {
+                (id of selectedEmployee.allocatedAssetIdsList; track $index) {
                 <span>{{ id }}</span>
                 } } @else {
                 <span>No assets allocated</span>
@@ -227,6 +230,13 @@
                 />
                 <span class="slider"></span>
               </label>
+            </div>
+            } @if(selectedEmployee.roleName !== 'OrganizationOwner'){
+            <div class="edit-button-container">
+              <button (click)="toggleEdit()" class="edit-btn">
+                <img src="icons/edit.png" class="btn-icon" alt="Edit" />
+                Edit
+              </button>
             </div>
             }
           </div>

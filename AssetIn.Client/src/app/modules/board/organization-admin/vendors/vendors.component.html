@@ -1,77 +1,152 @@
-<div class="container">
-  <div class="sidebar">
-    <h3>Vendors</h3>
-    <div class="vendor-list">
-      @for (vendor of vendors; track vendor.id) {
-      <div class="vendor-item" (click)="showVendorDetails(vendor)">
-        <!-- <div >👤</div> -->
-        <img class="avatar" src="icons/vendorAvatar.png" alt="">
-        <div class="details">
-          <strong>{{ vendor.name }}</strong>
-        </div>
+<div class="main-container">
+  <div class="vendor-sidebar">
+    <div class="sidebar-header">
+      <h3>Vendors</h3>
+      <div class="vendor-count">
+        {{ vendorsAndProducts.length }} vendors
       </div>
-      }
     </div>
-  </div>
 
-  @if(showVendor){
-  <!-- vendor-info.component.html -->
-  <div class="vendor-container">
-    <!-- Vendor Info -->
-    <section class="vendor-info">
-      <div class="vendor-details">
-        <h3>Vendor Info</h3>
-        <div class="info-grid">
-          <div class="form-group">
-            <label>Full Name:</label>
-            <span class="info-details">{{ selectedVendor.name }}</span>
+    <div class="vendor-list-container">
+      <div class="vendor-list">
+        @for (vendor of vendorsAndProducts; track $index) {
+        <div
+          class="vendor-item"
+          (click)="showVendorDetails(vendor)"
+          [class.active]="selectedVendor?.id === vendor.id"
+        >
+          <div class="vendor-avatar">
+            <img
+              [src]="
+                vendor.vendor.profilePicturePath || 'icons/vendorAvatar.png'
+              "
+              [alt]="vendor.vendor.vendorName"
+              onerror="this.src='icons/vendorAvatar.png'"
+            />
           </div>
-
-          <div class="form-group">
-            <label>Email:</label>
-            <span class="info-details">{{ selectedVendor.email }}</span>
-          </div>
-
-          <div class="form-group">
-            <label>Address:</label>
-            <span class="info-details">{{ selectedVendor.address }}</span>
-          </div>
-
-          <div class="form-group">
-            <label>Phone Number:</label>
-            <span class="info-details"
-              >
-              {{ selectedVendor.phoneNumber }}</span
-            >
+          <div class="vendor-details">
+            <div class="vendor-name">{{ vendor.vendor.vendorName }}</div>
+            <div class="vendor-email">{{ vendor.vendor.email }}</div>
           </div>
         </div>
-      </div>
-
-      <div class="vendor-logo">
-        <img [src]="selectedVendor.logo" alt="Vendor Logo" />
-      </div>
-    </section>
-
-    <!-- Products Section -->
-    <div class="products">
-      <label>Products</label>
-      <div class="product-grid">
-        @for (product of products; track product) {
-        <div class="product-card">
-          <!-- <div class="product-image"> -->
-          <img
-            [src]="product.image"
-            alt="{{ product.name }}"
-            class="product-image"
-          />
-          <!-- </div> -->
-          <div>{{ product.name }}</div>
-          <p class="description">{{ product.description }}</p>
+        } @if (!vendorsAndProducts || vendorsAndProducts.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">📦</div>
+          <div class="empty-text">No vendors found</div>
         </div>
         }
       </div>
     </div>
   </div>
 
-  }
+  <div class="vendor-content">
+    @if(showVendor && selectedVendor) {
+    <div class="vendor-info-container">
+      <!-- Vendor Information Section -->
+      <section class="vendor-info-card">
+        <div class="card-header">
+          <h3>Vendor Information</h3>
+          <!-- <div class="vendor-status active">Active</div> -->
+        </div>
+
+        <div class="vendor-main-info">
+          <div class="vendor-logo-section">
+            <div class="logo-container">
+              <img
+                [src]="
+                  selectedVendor.vendor.profilePicturePath ||
+                  'icons/vendorAvatar.png'
+                "
+                [alt]="selectedVendor.vendor.vendorName"
+                onerror="this.src='icons/vendorAvatar.png'"
+              />
+            </div>
+          </div>
+
+          <div class="vendor-details-section">
+            <div class="info-grid">
+              <div class="info-item">
+                <label>Full Name</label>
+                <span class="info-value">{{
+                  selectedVendor.vendor.vendorName
+                }}</span>
+              </div>
+
+              <div class="info-item">
+                <label>Email Address</label>
+                <span class="info-value">{{
+                  selectedVendor.vendor.email
+                }}</span>
+              </div>
+
+              <div class="info-item">
+                <label>Phone Number</label>
+                <span class="info-value">{{
+                  selectedVendor.vendor.phoneNumber || "Not provided"
+                }}</span>
+              </div>
+
+              <div class="info-item">
+                <label>Address</label>
+                <span class="info-value">{{
+                  selectedVendor.vendor.officeAddress || "Not provided"
+                }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Products Section -->
+      <section class="products-section">
+        <div class="section-header">
+          <h3>Products & Services</h3>
+          <div class="product-count">
+            {{ selectedVendor.products?.length || 0 }} items
+          </div>
+        </div>
+
+        @if (selectedVendor.products && selectedVendor.products.length > 0) {
+        <div class="products-grid">
+          @for (product of selectedVendor.products; track $index) {
+          <div class="product-card">
+            <div class="product-image-container">
+              <img
+                [src]="product.productImage || 'icons/camera.png'"
+                [alt]="product.productName"
+                class="product-image"
+                onerror="this.src='icons/camera.png'"
+              />
+            </div>
+            <div class="product-info">
+              <h4 class="product-name">{{ product.productName }}</h4>
+              <p class="product-description">
+                {{ product.description || "No description available" }}
+              </p>
+            </div>
+            <div class="product-info">
+              <h4 class="product-name">{{ product.model }}</h4>
+              <p class="product-description">${{ product.price }}</p>
+            </div>
+          </div>
+          }
+        </div>
+        } @else {
+        <div class="empty-products">
+          <div class="empty-icon">📦</div>
+          <div class="empty-text">No products available</div>
+        </div>
+        }
+      </section>
+    </div>
+    } @else {
+    <div class="vendor-placeholder">
+      <div class="placeholder-content">
+        <div class="placeholder-icon">👥</div>
+        <h3>Select a Vendor</h3>
+        <p>Choose a vendor from the list to view their details and products</p>
+      </div>
+    </div>
+    }
+  </div>
 </div>

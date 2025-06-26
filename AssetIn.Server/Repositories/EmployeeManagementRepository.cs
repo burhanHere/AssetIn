@@ -238,6 +238,90 @@ public class EmployeeManagementRepository(UserManager<User> userManager, Applica
         };
     }
 
+
+    public async Task<ApiResponse> UpdateEmployee(string userId, UpdateEmployeeDTO updatedEmployee)
+    {
+        var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to get employees." }
+            };
+        }
+
+        Organization? requiredOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == updatedEmployee.OrganizationId);
+        if (requiredOrganization == null || !requiredOrganization.ActiveOrganization)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to get employees." }
+            };
+        }
+
+        if (_userManager.IsInRoleAsync(validUser, "OrganizationOwner").Result)
+        {
+            if (requiredOrganization.UserID != userId)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to get employees." }
+                };
+            }
+        }
+        else if (_userManager.IsInRoleAsync(validUser, "OrganizationAssetManager").Result)
+        {
+            if (validUser.OrganizationId != requiredOrganization.OrganizationID)
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string> { "Error", "User not authorized to get employees." }
+                };
+            }
+        }
+
+        var targetEmployee = await _userManager.FindByIdAsync(updatedEmployee.Id);
+        if (targetEmployee == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "Target Employee Not Found." }
+            };
+        }
+
+
+        targetEmployee.Email = updatedEmployee.userName.ToLower() + requiredOrganization.OrganizationDomain;
+        targetEmployee.UserName = updatedEmployee.userName;
+        targetEmployee.Gender = updatedEmployee.Gender;
+        targetEmployee.DateOfBirth = updatedEmployee.DateOfBirth;
+        targetEmployee.PhoneNumber = updatedEmployee.PhoneNumber;
+
+        var updateNewUser = await _userManager.UpdateAsync(targetEmployee);
+
+        if (!updateNewUser.Succeeded)
+        {
+            //if fail to create new employee
+            return new()
+            {
+                Status = StatusCodes.Status400BadRequest,
+                ResponseData = new List<string>
+                {"Unable to create new employee account"},
+                Errors = updateNewUser.Errors,
+            };
+        }
+
+        return new()
+        {
+            Status = StatusCodes.Status200OK,
+            ResponseData = new List<string>() { "Success", "Employee Account Update Successfully." },
+        };
+    }
+
     public async Task<ApiResponse> UpdateUserAccountActiveStatus(string currentUserId, UpdateTargetAccountDto updateAccountLockStatusDto, bool status)
     {
         var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == currentUserId);

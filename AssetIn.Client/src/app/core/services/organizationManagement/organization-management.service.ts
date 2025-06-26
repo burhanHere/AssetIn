@@ -45,4 +45,8 @@ export class OrganizationManagementService {
     formData.append('organizationId', organizationId.toString());
     return this.httpClient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.OrganizationManagement.UploadOrganizationProfilePicture, formData);
   }
+
+  public GetVendorAndVendorProducts(): Observable<ApiResponse> {
+    return this.httpClient.get<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.OrganizationManagement.GetVendorAndVendorProducts);
+  }
 }
