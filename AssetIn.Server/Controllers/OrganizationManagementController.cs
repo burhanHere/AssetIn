@@ -5,14 +5,15 @@ using AssetIn.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using YourAssetManager.Server.Services;
 
 namespace AssetIn.Server.Controllers;
 
 [ApiController]
 [Route("AssetIn.Server/[controller]")]
-public class OrganizationManagementController(ApplicationDbContext applicationDbContext, UserManager<User> userManager) : ControllerBase
+public class OrganizationManagementController(ApplicationDbContext applicationDbContext, UserManager<User> userManager, CloudinaryService cloudinaryService) : ControllerBase
 {
-    private readonly OrganizationManagementRepository _organizationManagementRepository = new(applicationDbContext, userManager);
+    private readonly OrganizationManagementRepository _organizationManagementRepository = new(applicationDbContext, userManager, cloudinaryService);
 
     [HttpPost(template: "CreateOrganization")]
     [Authorize(Policy = "OrganizationOwnerPolicy")]
@@ -101,6 +102,43 @@ public class OrganizationManagementController(ApplicationDbContext applicationDb
             });
         }
         ApiResponse result = await _organizationManagementRepository.GetOrganizationsListForOrganizationsDashboard(userID);
+        return HelperFunctions.ResponseFormatter(this, result);
+    }
+
+    [HttpGet(template: "GetOrganizationInfo")]
+    [Authorize(Policy = "OrganizationOwnerPolicy")]
+    public async Task<IActionResult> GetOrganizationInfo(int organizationId)
+    {
+        var userId = User.FindFirst("UserId")?.Value;
+        if (string.IsNullOrEmpty(userId))
+        {
+            // If the username is not found, return an unauthorized response
+            return Unauthorized(new ApiResponse
+            {
+                Status = StatusCodes.Status401Unauthorized,
+                ResponseData = new List<string> { "User data not found in token." }
+            });
+        }
+        ApiResponse result = await _organizationManagementRepository.GetOrganizationInfo(organizationId, userId);
+        return HelperFunctions.ResponseFormatter(this, result);
+    }
+
+    [HttpPatch("UploadOrganizationProfilePicture")]
+    public async Task<IActionResult> UploadOrganizationProfilePicture(OrganizationProfilePictureUpdateDTO model)
+    {
+        var userId = User.FindFirst("UserId")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            // If the username is not found, return an unauthorized response
+            return Unauthorized(new ApiResponse
+            {
+                Status = StatusCodes.Status401Unauthorized,
+                ResponseData = new List<string> { "User data not found in token." }
+            });
+        }
+
+        ApiResponse result = await _organizationManagementRepository.UploadOrganizationProfilePicture(model, userId);
         return HelperFunctions.ResponseFormatter(this, result);
     }
 }

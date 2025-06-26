@@ -31,7 +31,7 @@ export class OrganizationsDashboardComponent implements OnInit {
       organizationDescription: new FormControl('', [Validators.required]),
       organizationDomain: new FormControl('', [
         Validators.required,
-        domainSuffixValidator(), //contine here
+        domainSuffixValidator(),
       ]),
     });
     this.showNewOrganizationCreationForm = false;

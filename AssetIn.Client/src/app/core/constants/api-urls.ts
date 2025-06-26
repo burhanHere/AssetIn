@@ -12,7 +12,9 @@ export const ApiUrls = {
     UpdateOrganization: '/OrganizationManagement/UpdateOrganization',
     DeleteOrganization: '/OrganizationManagement/DeleteOrganization',
     GetOrganizationInfoForOrganizationDashboard: '/OrganizationManagement/GetOrganizationInfoForOrganizationDashboard',
-    GetOrganizationsListForOrganizationsDashboard: '/OrganizationManagement/GetOrganizationsListForOrganizationsDashboard'
+    GetOrganizationsListForOrganizationsDashboard: '/OrganizationManagement/GetOrganizationsListForOrganizationsDashboard',
+    GetOrganizationInfo: '/OrganizationManagement/GetOrganizationInfo',
+    UploadOrganizationProfilePicture: '/OrganizationManagement/UploadOrganizationProfilePicture',
   },
   VendorManagement: {
     GetVendorInfo: '/VendorManagement/GetVendorInfo',
@@ -63,5 +65,10 @@ export const ApiUrls = {
   CrystalReporting: {
     GetFilterData: '/CrystalReporting/GetFilterData',
     GenerateHtmlReportByFilter: '/CrystalReporting/GenerateHtmlReportByFilter'
+  },
+  UserManagement:
+  {
+    UpdateUserProfilePicture: '/UserManagement/UpdateUserProfilePicture',
+    GetUserInfo: '/UserManagement/GetUserInfo',
   }
 };

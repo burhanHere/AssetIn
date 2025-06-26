@@ -4,13 +4,15 @@ using AssetIn.Server.DTOs;
 using AssetIn.Server.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using YourAssetManager.Server.Services;
 
 namespace AssetIn.Server.Controllers;
 
-class OrganizationManagementRepository(ApplicationDbContext applicationDbContext, UserManager<User> userManager)
+class OrganizationManagementRepository(ApplicationDbContext applicationDbContext, UserManager<User> userManager, CloudinaryService cloudinaryService)
 {
     private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
     private readonly UserManager<User> _userManager = userManager;
+    private readonly CloudinaryService _cloudinaryService = cloudinaryService;
 
     public async Task<ApiResponse> CreateOrganization(OrganizationDto createOrganizationDTO, string userId)
     {
@@ -390,6 +392,108 @@ class OrganizationManagementRepository(ApplicationDbContext applicationDbContext
         {
             Status = StatusCodes.Status200OK,
             ResponseData = requiresOrganizationDataList,
+        };
+    }
+
+    public async Task<ApiResponse> GetOrganizationInfo(int organizationId, string userId)
+    {
+        var validUser = await _userManager.FindByIdAsync(userId);
+        if (validUser == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "User not found." }
+            };
+        }
+
+        if (validUser.Status == false)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "User is not active." }
+            };
+        }
+
+        var requiredOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == organizationId && x.ActiveOrganization);
+        if (requiredOrganization == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "Organization not found." }
+            };
+        }
+        if (validUser.Id != requiredOrganization.UserID)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "User not authorized to access this organization." }
+            };
+        }
+
+        return new ApiResponse
+        {
+            Status = StatusCodes.Status200OK,
+            ResponseData = new
+            {
+                requiredOrganization.OrganizationID,
+                requiredOrganization.OrganizationName,
+                requiredOrganization.Description,
+                requiredOrganization.OrganizationDomain,
+                requiredOrganization.OrganizationLogo,
+                requiredOrganization.CreatedDate,
+            }
+        };
+    }
+
+    public async Task<ApiResponse> UploadOrganizationProfilePicture(OrganizationProfilePictureUpdateDTO model, string userId)
+    {
+        var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == model.organizationId);
+        if (targetOrganization == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status403Forbidden,
+                ResponseData = new List<string> { "Error", "Unable to upload profile picture." }
+            };
+        }
+
+        string cloudinaryUrlOfImage = "";
+        if (model.file != null)
+        {
+            var stream = model.file.OpenReadStream();
+            cloudinaryUrlOfImage = await _cloudinaryService.UploadImageToCloudinaryAsync(stream, model.file.FileName);
+            if (string.IsNullOrEmpty(cloudinaryUrlOfImage))
+            {
+                return new ApiResponse
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>()
+                    {
+                        "Failed to upload profile picture."
+                    }
+                };
+            }
+        }
+
+        targetOrganization.OrganizationLogo = cloudinaryUrlOfImage;
+        _applicationDbContext.Organizations.Update(targetOrganization);
+        int result = await _applicationDbContext.SaveChangesAsync();
+        if (result > 0)
+        {
+            return new()
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string> { "Success", "Profile picture uploaded successfully." }
+            };
+        }
+        return new()
+        {
+            Status = StatusCodes.Status400BadRequest,
+            ResponseData = new List<string> { "Error", "Unable to upload profile picture." }
         };
     }
 }

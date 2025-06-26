@@ -120,6 +120,36 @@
 .avatarBtn {
   position: relative;
   display: inline-block;
+  /* Remove border and sizing from container */
+}
+
+.avatarImageBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #e0e0e0; /* Lighter border color */
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatarImageBtn:hover {
+  border-color: #007bff; /* Blue border on hover */
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.avatarImageBtn img {
+  width: 100%; /* Use 100% instead of fixed pixels */
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
 }
 
 .logoutDiv {

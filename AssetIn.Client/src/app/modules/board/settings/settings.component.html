@@ -2,35 +2,37 @@
   <div class="user-info">
     <div class="user-header">
       <h2>User Info</h2>
-      <div class="edit-button-container">
-        @if(!isEditMode){
-        <button (click)="toggleEdit()" class="edit-btn">
+      <!-- <div class="edit-button-container">
+        @if(!isEditModeUser){
+        <button (click)="toggleEdit('User')" class="edit-btn">
           <img src="icons/edit.png" class="btn-icon" alt="Edit" />
           Edit
         </button>
         } @else {
         <div class="edit-actions">
           <button (click)="saveChanges()" class="save-btn">Save</button>
-          <button (click)="cancelChanges()" class="cancel-btn">Cancel</button>
+          <button (click)="cancelChanges('User')" class="cancel-btn">
+            Cancel
+          </button>
         </div>
         }
-      </div>
+      </div> -->
     </div>
 
-    <div class="user-content" [formGroup]="userInfoForm">
-      <form class="user-form">
+    <div class="user-content">
+      <form class="user-form" [formGroup]="userInfoForm">
         <div class="form-row">
           <div class="form-group">
             <label for="fullName">User Name</label>
             <div class="input-wrapper">
-              <img src="icons/User.png" class="input-icon" alt="User" />
+              <img src="icons/emp_avatar.png" class="input-icon" alt="User" />
               <input
                 id="fullName"
                 type="text"
                 formControlName="userName"
-                [readOnly]="!isEditMode"
-                placeholder="Name that organization can see"
-                [class.editable]="isEditMode"
+                [readOnly]="!isEditModeUser"
+                placeholder="user name"
+                [class.editable]="isEditModeUser"
               />
             </div>
             @if (userInfoForm.controls['userName'].touched &&
@@ -40,27 +42,6 @@
           </div>
 
           <div class="form-group">
-            <label for="fullName">Contact Person Name</label>
-            <div class="input-wrapper">
-              <img src="icons/Avatar.png" class="input-icon" alt="User" />
-              <input
-                id="fullName"
-                type="text"
-                formControlName="contactPersonName"
-                [readOnly]="!isEditMode"
-                placeholder="Name that organization can see"
-                [class.editable]="isEditMode"
-              />
-            </div>
-            @if (userInfoForm.controls['contactPersonName'].touched &&
-            userInfoForm.controls['contactPersonName'].hasError('required')) {
-            <div class="input-error">Contact Person Name is required.</div>
-            }
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
             <label for="email">Email</label>
             <div class="input-wrapper">
               <img src="icons/email.png" class="input-icon" alt="Email" />
@@ -68,9 +49,9 @@
                 id="email"
                 type="email"
                 formControlName="userEmail"
-                [readOnly]="!isEditMode"
+                [readOnly]="!isEditModeUser"
                 placeholder="contact@email.com"
-                [class.editable]="isEditMode"
+                [class.editable]="isEditModeUser"
               />
             </div>
             @if (userInfoForm.controls['userEmail'].touched &&
@@ -81,52 +62,171 @@
             <div class="input-error">Invalid email format.</div>
             }
           </div>
+        </div>
 
+        <div class="form-row">
           <div class="form-group">
-            <label for="phone">Phone Number</label>
+            <label for="phone">Designation</label>
             <div class="input-wrapper">
-              <img src="icons/Phone.png" class="input-icon" alt="Phone" />
+              <!-- <img src="icons/Phone.png" class="input-icon" alt="Phone" /> -->
               <input
                 id="phone"
-                type="tel"
-                formControlName="userPhone"
-                [readOnly]="!isEditMode"
-                placeholder="+92xxxxxxxxxx"
+                type="text"
+                formControlName="role"
+                [readOnly]="!isEditModeUser"
+                placeholder="user role"
                 class="phone-input"
-                [class.editable]="isEditMode"
+                [class.editable]="isEditModeUser"
               />
             </div>
-            @if (userInfoForm.controls['userPhone'].touched &&
-            userInfoForm.controls['userPhone'].hasError('required')) {
-            <div class="input-error">User Phone is required.</div>
-            } @if (userInfoForm.controls['userPhone'].touched &&
-            userInfoForm.controls['userPhone'].hasError('pattern')) {
-            <div class="input-error">Invalid phone number format.</div>
-            }@if (userInfoForm.controls['userPhone'].touched &&
-            userInfoForm.controls['userPhone'].hasError('minLength')) {
-            <div class="input-error">Invalid phone number format.</div>
-            }@if (userInfoForm.controls['userPhone'].touched &&
-            userInfoForm.controls['userPhone'].hasError('maxLength')) {
-            <div class="input-error">Invalid phone number format.</div>
+            @if (userInfoForm.controls['role'].touched &&
+            userInfoForm.controls['role'].hasError('required')) {
+            <div class="input-error">User Role is required.</div>
             }
           </div>
         </div>
+      </form>
+
+      <div class="user-image-section">
+        <div class="image-actions">
+          <!-- <button
+            class="action-btn delete-btn"
+            (click)="onDeleteImage()"
+            title="Delete Image"
+          >
+            <img src="icons/delete-black.png" alt="Delete" />
+          </button> -->
+          <button
+            class="action-btn upload-btn"
+            (click)="onUploadImage('User')"
+            title="Upload Image"
+          >
+            <img src="icons/upload.png" alt="Upload" />
+          </button>
+        </div>
+
+        <div class="user-avatar">
+          <img
+            [src]="profilePictureUser || 'icons/emp_avatar.png'"
+            alt="User Image"
+            class="avatar-image"
+          />
+        </div>
+
+        <input
+          type="file"
+          accept="image/*"
+          (change)="handleFileInput($event)"
+          #imageUploadUser
+          hidden
+        />
+      </div>
+    </div>
+    <br />
+    <div class="user-content">
+      <button (click)="resetPassword()" class="edit-btn" style="width: 170px">
+        <img src="icons/password.png" class="btn-icon" alt="Edit" />
+        Reset Password
+      </button>
+    </div>
+  </div>
+  @if(currentUserRole === 'OrganizationOwner' && this.organizationId !== 0) {
+  <div class="user-info">
+    <div class="user-header">
+      <h2>Organization Settings</h2>
+      <div class="edit-button-container">
+        @if(!isEditModeOrganization){
+        <button (click)="toggleEdit('Organization')" class="edit-btn">
+          <img src="icons/edit.png" class="btn-icon" alt="Edit" />
+          Edit
+        </button>
+        } @else {
+        <div class="edit-actions">
+          <button (click)="updateOrganizationInfo()" class="save-btn">
+            Save
+          </button>
+          <button (click)="cancelChanges('Organization')" class="cancel-btn">
+            Cancel
+          </button>
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="user-content">
+      <form class="user-form" [formGroup]="organizationInfoForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fullName">Organization Name</label>
+            <div class="input-wrapper">
+              <img
+                src="icons/Organizations.png"
+                class="input-icon"
+                alt="User"
+              />
+              <input
+                id="fullName"
+                type="text"
+                formControlName="organizationName"
+                [readOnly]="!isEditModeOrganization"
+                placeholder="Enter organization name"
+                [class.editable]="isEditModeOrganization"
+              />
+            </div>
+            @if (organizationInfoForm.controls['organizationName'].touched &&
+            organizationInfoForm.controls['organizationName'].hasError('required'))
+            {
+            <div class="input-error">Organization Name is required.</div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="fullName">Description</label>
+            <div class="input-wrapper">
+              <img src="icons/Avatar.png" class="input-icon" alt="User" />
+              <textarea
+                id="fullName"
+                formControlName="organizationDescription"
+                [readOnly]="!isEditModeOrganization"
+                placeholder="Write a short Description"
+                [class.editable]="isEditModeOrganization"
+              ></textarea>
+            </div>
+            @if
+            (organizationInfoForm.controls['organizationDescription'].touched &&
+            organizationInfoForm.controls['organizationDescription'].hasError('required'))
+            {
+            <div class="input-error">Description is required.</div>
+            }
+          </div>
+        </div>
+
         <div class="form-row">
           <div class="form-group">
             <label for="address">Address</label>
             <div class="input-wrapper">
               <img src="icons/location.png" class="input-icon" alt="Address" />
-              <textarea
+              <input
                 id="address"
-                formControlName="userAddress"
-                [readOnly]="!isEditMode"
-                placeholder="Your, shop, Address."
-                [class.editable]="isEditMode"
-                rows="3"
-              ></textarea>
-              @if (userInfoForm.controls['userAddress'].touched &&
-              userInfoForm.controls['userAddress'].hasError('required')) {
-              <div class="input-error">User Address is required.</div>
+                type="text"
+                formControlName="organizationDomain"
+                [readOnly]="!isEditModeOrganization"
+                placeholder="@your.domain.here..."
+                [class.editable]="isEditModeOrganization"
+              />
+              @if (organizationInfoForm.controls['organizationDomain'].touched
+              &&
+              organizationInfoForm.controls['organizationDomain'].hasError('required'))
+              {
+              <div class="input-error">Organization Domain is required.</div>
+              }@else if
+              (organizationInfoForm.controls['organizationDomain'].touched &&
+              organizationInfoForm.controls['organizationDomain'].errors?.['domainSuffixInvalid'])
+              {
+              <div class="input-error">
+                Organization Domain must be a valid domain. Like
+                &#64;your.domain.here
+              </div>
               }
             </div>
           </div>
@@ -144,7 +244,7 @@
           </button> -->
           <button
             class="action-btn upload-btn"
-            (click)="onUploadImage()"
+            (click)="onUploadImage('Organization')"
             title="Upload Image"
           >
             <img src="icons/upload.png" alt="Upload" />
@@ -153,7 +253,9 @@
 
         <div class="user-avatar">
           <img
-            [src]="profilePicture || 'icons/emp_avatar.png'"
+            [src]="
+              profilePictureOrganization || 'icons/organization avatar.png'
+            "
             alt="User Image"
             class="avatar-image"
           />
@@ -163,59 +265,13 @@
           type="file"
           accept="image/*"
           (change)="handleFileInput($event)"
-          #imageUpload
-          hidden
-        />
-      </div>
-    </div>
-    <br />
-    <div class="user-content">
-      <button (click)="toggleEdit()" class="edit-btn" style="width: 170px">
-        <img src="icons/edit.png" class="btn-icon" alt="Edit" />
-        Reset Password
-      </button>
-    </div>
-  </div>
-
-  <div class="user-info">
-    <div class="user-header">Organization settings</div>
-    <div class="user-content">
-      <div class="user-image-section">
-        <div class="image-actions">
-          <!-- <button
-              class="action-btn delete-btn"
-              (click)="onDeleteImage()"
-              title="Delete Image"
-            >
-              <img src="icons/delete-black.png" alt="Delete" />
-            </button> -->
-          <button
-            class="action-btn upload-btn"
-            (click)="onUploadImage()"
-            title="Upload Image"
-          >
-            <img src="icons/upload.png" alt="Upload" />
-          </button>
-        </div>
-
-        <div class="user-avatar">
-          <img
-            [src]="profilePicture || 'icons/emp_avatar.png'"
-            alt="User Image"
-            class="avatar-image"
-          />
-        </div>
-
-        <input
-          type="file"
-          accept="image/*"
-          (change)="handleFileInput($event)"
-          #imageUpload
+          #imageUploadOrganization
           hidden
         />
       </div>
     </div>
   </div>
+  }
 </div>
 
 @if(isLoading) {

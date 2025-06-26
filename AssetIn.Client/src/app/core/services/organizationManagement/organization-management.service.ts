@@ -34,4 +34,15 @@ export class OrganizationManagementService {
   public GetOrganizationsListForOrganizationsDashboard(): Observable<ApiResponse> {
     return this.httpClient.get<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.OrganizationManagement.GetOrganizationsListForOrganizationsDashboard);
   }
+
+  public GetOrganizationInfo(targetOrganizationId: number): Observable<ApiResponse> {
+    return this.httpClient.get<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.OrganizationManagement.GetOrganizationInfo + `?organizationId=${targetOrganizationId}`);
+  }
+
+  public UploadOrganizationProfilePicture(file: File, organizationId: number): Observable<ApiResponse> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('organizationId', organizationId.toString());
+    return this.httpClient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.OrganizationManagement.UploadOrganizationProfilePicture, formData);
+  }
 }

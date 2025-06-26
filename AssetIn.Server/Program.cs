@@ -83,6 +83,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("OrganizationOwnerOrganizationAssetManagerPolicy", policy => policy.RequireClaim("Role", ["OrganizationOwner", "OrganizationAssetManager"]));
     options.AddPolicy("OrganizationOwnerOrganizationAssetManagerOrganizationEmployeePolicy", policy => policy.RequireClaim("Role", ["OrganizationOwner", "OrganizationAssetManager", "OrganizationEmployee"]));
     options.AddPolicy("VendorPolicy", policy => policy.RequireClaim("Role", ["Vendor"]));
+    options.AddPolicy("All", policy => policy.RequireClaim("Role", ["OrganizationOwner", "OrganizationAssetManager", "OrganizationEmployee", "Vendor"]));
 });
 
 // Add Cors to accep requests from only our webpages  
