@@ -1,1 +1,77 @@
-<p>chat box here</p>
+<div class="container">
+  <div class="sidebar">
+    <h3>Vendors</h3>
+    <div class="vendor-list">
+      @for (vendor of vendors; track vendor.id) {
+      <div class="vendor-item" (click)="showVendorDetails(vendor)">
+        <!-- <div >👤</div> -->
+        <img class="avatar" src="icons/vendorAvatar.png" alt="">
+        <div class="details">
+          <strong>{{ vendor.name }}</strong>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+
+  @if(showVendor){
+  <!-- vendor-info.component.html -->
+  <div class="vendor-container">
+    <!-- Vendor Info -->
+    <section class="vendor-info">
+      <div class="vendor-details">
+        <h3>Vendor Info</h3>
+        <div class="info-grid">
+          <div class="form-group">
+            <label>Full Name:</label>
+            <span class="info-details">{{ selectedVendor.name }}</span>
+          </div>
+
+          <div class="form-group">
+            <label>Email:</label>
+            <span class="info-details">{{ selectedVendor.email }}</span>
+          </div>
+
+          <div class="form-group">
+            <label>Address:</label>
+            <span class="info-details">{{ selectedVendor.address }}</span>
+          </div>
+
+          <div class="form-group">
+            <label>Phone Number:</label>
+            <span class="info-details"
+              >
+              {{ selectedVendor.phoneNumber }}</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="vendor-logo">
+        <img [src]="selectedVendor.logo" alt="Vendor Logo" />
+      </div>
+    </section>
+
+    <!-- Products Section -->
+    <div class="products">
+      <label>Products</label>
+      <div class="product-grid">
+        @for (product of products; track product) {
+        <div class="product-card">
+          <!-- <div class="product-image"> -->
+          <img
+            [src]="product.image"
+            alt="{{ product.name }}"
+            class="product-image"
+          />
+          <!-- </div> -->
+          <div>{{ product.name }}</div>
+          <p class="description">{{ product.description }}</p>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  }
+</div>
