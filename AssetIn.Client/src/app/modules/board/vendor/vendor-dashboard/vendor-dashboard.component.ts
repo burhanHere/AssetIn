@@ -8,13 +8,15 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-vendor-dashboard',
   templateUrl: './vendor-dashboard.component.html',
-  styleUrl: './vendor-dashboard.component.css'
+  styleUrl: './vendor-dashboard.component.css',
 })
 export class VendorDashboardComponent {
   @ViewChild('imageUpload') imageUpload!: ElementRef<HTMLInputElement>;
   public profilePicture: string;
   public selectedFile: File | null;
-  private vendorManagementService: VendorManagementService = inject(VendorManagementService);
+  private vendorManagementService: VendorManagementService = inject(
+    VendorManagementService
+  );
   private jwtService: JwtService = inject(JwtService);
   public vendorInfoForm: FormGroup;
   public isEditMode: boolean;
@@ -30,9 +32,12 @@ export class VendorDashboardComponent {
       vendorName: new FormControl('', [Validators.required]),
       contactPersonName: new FormControl('', [Validators.required]),
       vendorEmail: new FormControl('', [Validators.required, Validators.email]),
-      vendorPhone: new FormControl('', [Validators.required, Validators.maxLength(13),
-      Validators.minLength(13),
-      Validators.pattern(/^\+\d{1,3}\d{9,12}$/)]),
+      vendorPhone: new FormControl('', [
+        Validators.required,
+        Validators.maxLength(13),
+        Validators.minLength(13),
+        Validators.pattern(/^\+\d{1,3}\d{9,12}$/),
+      ]),
       vendorAddress: new FormControl('', [Validators.required]),
     });
     this.isEditMode = false;
@@ -49,7 +54,6 @@ export class VendorDashboardComponent {
   ngOnInit() {
     // call vendor detail get api
     this.getVendorInfo();
-    this.getVendorProducts();
   }
 
   private getVendorInfo(): void {
@@ -60,14 +64,19 @@ export class VendorDashboardComponent {
         this.profilePicture = this.vendor?.profilePicturePath || '';
         if (this.vendor !== null) {
           this.setValidatorData();
+          this.getVendorProducts();
         }
         this.isLoading = false;
-      }, (error: HttpErrorResponse) => {
-        this.alertTitle = error.error?.responseData?.[0] || 'Error';
-        this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
+      },
+      (error: HttpErrorResponse) => {
+        this.alertTitle = 'Note';
+        this.alertMessage = 'Please comeplete you profile setup.';
+        // this.alertTitle = error.error?.responseData?.[0] || 'Error';
+        // this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
         this.isLoading = false;
         this.showAlert = true;
-      }, () => {
+      },
+      () => {
         this.getVendorProducts();
       }
     );
@@ -79,23 +88,30 @@ export class VendorDashboardComponent {
       (response: any) => {
         this.products = response.responseData || [];
         this.isLoading = false;
-      }, (error: HttpErrorResponse) => {
-        this.alertTitle = error.error?.responseData?.[0] || 'Error';
-        this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
+      },
+      (error: HttpErrorResponse) => {
+        // this.alertTitle = error.error?.responseData?.[0] || 'Error';
+        // this.alertMessage =
+        //   error.error?.responseData?.[1] || 'Unknown error occurred';
+        // this.showAlert = true;
         this.isLoading = false;
-        this.showAlert = true;
       }
     );
   }
 
   private setValidatorData() {
     this.vendorInfoForm.controls['vendorName'].setValue(this.vendor.vendorName);
-    this.vendorInfoForm.controls['contactPersonName'].setValue(this.vendor.contactPerson);
+    this.vendorInfoForm.controls['contactPersonName'].setValue(
+      this.vendor.contactPerson
+    );
     this.vendorInfoForm.controls['vendorEmail'].setValue(this.vendor.email);
-    this.vendorInfoForm.controls['vendorPhone'].setValue(this.vendor.phoneNumber);
-    this.vendorInfoForm.controls['vendorAddress'].setValue(this.vendor.officeAddress);
+    this.vendorInfoForm.controls['vendorPhone'].setValue(
+      this.vendor.phoneNumber
+    );
+    this.vendorInfoForm.controls['vendorAddress'].setValue(
+      this.vendor.officeAddress
+    );
   }
-
 
   public toggleEdit() {
     this.isEditMode = !this.isEditMode;
@@ -110,24 +126,27 @@ export class VendorDashboardComponent {
         claims = this.jwtService.getTokenClaims(tempJwt);
       }
       const vendorData = {
-        "vendorID": 0,
-        "vendorName": this.vendorInfoForm.controls['vendorName'].value,
-        "officeAddress": this.vendorInfoForm.controls['vendorAddress'].value,
-        "phoneNumber": this.vendorInfoForm.controls['vendorPhone'].value,
-        "email": this.vendorInfoForm.controls['vendorEmail'].value,
-        "contactPerson": this.vendorInfoForm.controls['contactPersonName'].value,
-        "userID": claims?.userID || '0',
-      }
+        vendorID: 0,
+        vendorName: this.vendorInfoForm.controls['vendorName'].value,
+        officeAddress: this.vendorInfoForm.controls['vendorAddress'].value,
+        phoneNumber: this.vendorInfoForm.controls['vendorPhone'].value,
+        email: this.vendorInfoForm.controls['vendorEmail'].value,
+        contactPerson: this.vendorInfoForm.controls['contactPersonName'].value,
+        userID: claims?.userID || '0',
+      };
       this.vendorManagementService.CreateUpdateVendorInfo(vendorData).subscribe(
         (response: any) => {
           this.alertTitle = response.responseData?.[0] || 'Success';
-          this.alertMessage = response.responseData?.[1] || 'Vendor data updated successfully.';
+          this.alertMessage =
+            response.responseData?.[1] || 'Vendor data updated successfully.';
           this.isEditMode = false;
           this.isLoading = false;
           this.showAlert = true;
-        }, (error: HttpErrorResponse) => {
+        },
+        (error: HttpErrorResponse) => {
           this.alertTitle = error.error?.responseData?.[0] || 'Error';
-          this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
+          this.alertMessage =
+            error.error?.responseData?.[1] || 'Unknown error occurred';
           this.isLoading = false;
           this.showAlert = true;
         }
@@ -167,7 +186,7 @@ export class VendorDashboardComponent {
         this.alertMessage = err;
         this.showAlert = true;
         this.onDeleteImage();
-      }
+      },
     });
   }
 
@@ -176,18 +195,25 @@ export class VendorDashboardComponent {
       this.isLoading = true;
       const formData = new FormData();
       formData.append('file', this.selectedFile, this.selectedFile.name);
-      this.vendorManagementService.UploadVendorProfilePicture(formData).subscribe(
-        (response: any) => {
-          this.alertTitle = response.responseData?.[0] || 'Success';
-          this.alertMessage = response.responseData?.[1] || 'Vendor profile picture updated successfully.';
-          this.isLoading = false;
-          this.showAlert = true;
-        }, (error: HttpErrorResponse) => {
-          this.alertTitle = error.error?.responseData?.[0] || 'Error';
-          this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
-          this.isLoading = false;
-          this.showAlert = true;
-        });
+      this.vendorManagementService
+        .UploadVendorProfilePicture(formData)
+        .subscribe(
+          (response: any) => {
+            this.alertTitle = response.responseData?.[0] || 'Success';
+            this.alertMessage =
+              response.responseData?.[1] ||
+              'Vendor profile picture updated successfully.';
+            this.isLoading = false;
+            this.showAlert = true;
+          },
+          (error: HttpErrorResponse) => {
+            this.alertTitle = error.error?.responseData?.[0] || 'Error';
+            this.alertMessage =
+              error.error?.responseData?.[1] || 'Unknown error occurred';
+            this.isLoading = false;
+            this.showAlert = true;
+          }
+        );
     } else {
       this.alertTitle = 'Error';
       this.alertMessage = 'No file selected for upload.';
@@ -208,7 +234,9 @@ export class VendorDashboardComponent {
 
       // Validate type
       if (!file.type.startsWith('image/')) {
-        observer.error('Please select a valid image file (jpg, jpeg, png, gif).');
+        observer.error(
+          'Please select a valid image file (jpg, jpeg, png, gif).'
+        );
         return;
       }
 

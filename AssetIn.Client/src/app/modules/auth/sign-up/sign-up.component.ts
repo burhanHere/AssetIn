@@ -83,6 +83,8 @@ export class SignUpComponent implements OnInit {
         }
       );
       this.signUpForm.reset();
+    }else{
+      this.signUpForm.markAllAsTouched()
     }
   }
 
