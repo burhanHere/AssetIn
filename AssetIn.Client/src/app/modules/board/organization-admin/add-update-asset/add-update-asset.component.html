@@ -1,6 +1,10 @@
 <div class="main-div">
   <div class="heading-container">
+    @if(updateMode){
+    <h2 class="main-div-text">Update Asset</h2>
+    }@else {
     <h2 class="main-div-text">New Asset</h2>
+    }
     <div
       class="request-card add-new"
       (click)="showNewAssetCatagoryForm = !showNewAssetCatagoryForm"
@@ -211,11 +215,13 @@
       </div>
 
       <div class="btn-div">
+        @if(!this.updateMode){
         <button class="btn" (click)="onReset()">
           <img class="btn-img" src="icons/cancel.png" alt="Cancel Icon" />
           Reset Form
         </button>
-        <button class="btn" (click)="createNewAsset()">
+        }
+        <button class="btn" (click)="submitAsset()">
           <img class="btn-img" src="icons/save.png" alt="Save Icon" />
           Save Asset
         </button>
@@ -234,7 +240,7 @@
       <div class="img-img-div">
         <img [src]="uploadedAssetImage || 'icons/camera.png'" alt="Image" />
       </div>
-      @if (this.showPictureError) {
+      @if (this.showPictureError && !this.uploadedAssetImage) {
       <div class="input-error">Add asset picture.</div>
       }
       <input

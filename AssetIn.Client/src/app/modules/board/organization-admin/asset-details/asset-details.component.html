@@ -1,3 +1,13 @@
+@if(isLoading) {
+<app-page-loader></app-page-loader>
+} @if (showAlert) {
+<app-alert-card
+  [title]="alertTitle"
+  [message]="alertMessage"
+  (closeCard)="showAlert = $event"
+></app-alert-card>
+}
+<!-- loaders and alert -->
 <div class="main-div">
   <div class="asset-detail-container">
     <div class="asset-header">
@@ -22,11 +32,18 @@
           <h2>{{ asset.assetName }}</h2>
           <p style="color: #6b7280">{{ asset.description }}</p>
           @if (asset.assetStatusID !==2) {
-          <button style="margin: 0.5rem" class="btn btn--primary">
+          <button
+            style="margin: 0.5rem"
+            class="btn btn--primary"
+            (click)="updateAsset()"
+          >
             Update
           </button>
           } @if (asset.assetStatusID==4) {
-          <button class="btn btn--danger" (click)="deleteAsset()">
+          <button
+            class="btn btn--danger"
+            (click)="showDeleteAssetConfirmation()"
+          >
             Delete
           </button>
           }
@@ -37,7 +54,7 @@
         <div style="padding: 5px; width: 100px; margin: 40px 20px">
           <div class="assigned">assigned</div>
           <div class="btn btn--primary" (click)="openCheckInModal()">
-            checkIn
+            Check In
           </div>
         </div>
         } @else if(asset.assetStatusID==2) {
@@ -45,16 +62,16 @@
           class="retire"
           style="padding: 5px; width: 100px; margin: 40px 20px"
         >
-          retired
+          Retired
         </div>
         } @else if (asset.assetStatusID== 4) {
         <div class="available">available</div>
         <div class="btn btn--primary" (click)="openCheckOutModal()">
-          checkOut
+          Check Out
         </div>
         <div class="retire" (click)="retire()">retire</div>
         <div class="under-maintenance" (click)="openSendToMaintenanceModal()">
-          Send Under-Maintenance
+          Mask as Under Maintenance
         </div>
         } @else if(asset.assetStatusID==3) {
         <div
@@ -373,12 +390,23 @@
   </div>
 </div>
 
-@if(isLoading) {
-<app-page-loader></app-page-loader>
-} @if (showAlert) {
-<app-alert-card
-  [title]="alertTitle"
-  [message]="alertMessage"
-  (closeCard)="showAlert = $event"
-></app-alert-card>
+<!-- delete asset alert -->
+
+@if(showDeleteAssetAlert) {
+<div>
+  <div class="blur-overlay"></div>
+  <div class="gradient-border-wrapper">
+    <div class="delete-confirmation-container">
+      <div>
+        <h3>Are you sure you want to delete this asset?</h3>
+      </div>
+      <div class="delete-confirmation-container-buttons">
+        <button (click)="deleteAsset()">yes</button>
+        <button (click)="showDeleteAssetAlert = !showDeleteAssetAlert">
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 }

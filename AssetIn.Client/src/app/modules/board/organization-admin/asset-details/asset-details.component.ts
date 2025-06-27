@@ -47,6 +47,7 @@ export class AssetDetailsComponent implements OnInit {
   public sendToMaintenanceForm: FormGroup;
   public showReturnFromMaintenanceModal: boolean;
   public returnFromMaintenanceForm: FormGroup;
+  public showDeleteAssetAlert: boolean;
 
   constructor() {
     this.organizationId =
@@ -83,14 +84,15 @@ export class AssetDetailsComponent implements OnInit {
     this.employees = [];
     this.showSendToMaintenanceModal = false;
     this.showReturnFromMaintenanceModal = false;
+    this.showDeleteAssetAlert = false;
   }
 
   ngOnInit(): void {
     this.getAssetDetail();
-    this.getallEmployees();
   }
 
   public getAssetDetail(): void {
+    this.isLoading = true;
     this.assetManagementService.GetAsset(this.assetId).subscribe(
       (response) => {
         this.asset = response.responseData;
@@ -130,6 +132,10 @@ export class AssetDetailsComponent implements OnInit {
           this.isLoading = false;
         }
       );
+  }
+
+  public showDeleteAssetConfirmation() {
+    this.showDeleteAssetAlert = !this.showDeleteAssetAlert;
   }
 
   public deleteAsset(): void {
@@ -243,6 +249,7 @@ export class AssetDetailsComponent implements OnInit {
   }
 
   openCheckOutModal() {
+    this.getallEmployees();
     this.showCheckOutModal = true;
   }
 
@@ -283,7 +290,9 @@ export class AssetDetailsComponent implements OnInit {
     );
   }
 
-  public updateAsset(): void { }
+  public updateAsset(): void {
+    this.router.navigateByUrl(`/board/mainBoard/organizationAdmin/addUpdateAsset?assetId=${this.assetId}`);
+  }
 
   public sendToMaintenance(): void {
     this.isLoading = true;

@@ -8,7 +8,6 @@ import { checkIn } from '../../models/checkIn';
 import { retireAsset } from '../../models/retireAsset';
 import { sendToMaintenance } from '../../models/sendToMaintenance';
 import { returnFromMaintenance } from '../../models/returnFromMaintenance';
-import { updateAsset } from '../../models/updateAsset';
 
 @Injectable({
   providedIn: 'root'
@@ -79,7 +78,7 @@ export class AssetManagementService {
     return this.httpClient.get<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.GetAllAssetStatus + `?organizationID=${organizationID}`);
   }
 
-  public updateAsset(asset: updateAsset): Observable<ApiResponse> {
+  public updateAsset(asset: any): Observable<ApiResponse> {
     return this.httpClient.patch<ApiResponse>(this.apiUrls.baseUrl + this.apiUrls.AssetManagement.UpdateAsset, asset);
   }
 

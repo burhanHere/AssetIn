@@ -151,7 +151,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
         };
     }
 
-    public async Task<ApiResponse> UpdateAsset(AssetDTO updatedAsset, string userId)
+    public async Task<ApiResponse> UpdateAsset(UpdateAssetDTO updatedAsset, string userId)
     {
         var validUser = await _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Status);
         if (validUser == null)
@@ -219,6 +219,28 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
         targetAsset.AssetCatagoryID = updatedAsset.AssetCatagoryID;
         targetAsset.AssetTypeID = updatedAsset.AssetTypeID;
         targetAsset.UpdatedDate = DateTime.UtcNow;
+
+        if (updatedAsset.ProfilePictureUpdated)
+        {
+            string cloudinaryUrlOfImage = "";
+            if (updatedAsset.ProfilePicturePath != null)
+            {
+                var stream = updatedAsset.ProfilePicturePath.OpenReadStream();
+                cloudinaryUrlOfImage = await _cloudinaryService.UploadImageToCloudinaryAsync(stream, updatedAsset.ProfilePicturePath.FileName);
+                if (string.IsNullOrEmpty(cloudinaryUrlOfImage))
+                {
+                    return new ApiResponse
+                    {
+                        Status = StatusCodes.Status400BadRequest,
+                        ResponseData = new List<string>()
+                    {
+                        "Failed to update profile."
+                    }
+                    };
+                }
+            }
+            targetAsset.ProfilePicturePath = cloudinaryUrlOfImage;
+        }
 
         _applicationDbContext.Assets.Update(targetAsset);
         int updateResult = await _applicationDbContext.SaveChangesAsync();

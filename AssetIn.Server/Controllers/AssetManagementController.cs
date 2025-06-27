@@ -37,7 +37,7 @@ public class AssetManagementController(ApplicationDbContext applicationDbContext
 
     [HttpPatch(template: "UpdateAsset")]
     [Authorize(Policy = "OrganizationOwnerOrganizationAssetManagerPolicy")]
-    public async Task<IActionResult> UpdateAsset(AssetDTO newAsset)
+    public async Task<IActionResult> UpdateAsset(UpdateAssetDTO newAsset)
     {
         var userId = User.FindFirst("UserId")?.Value;
 
