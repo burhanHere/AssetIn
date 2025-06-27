@@ -206,7 +206,13 @@
 
             <div class="role-action" style="height: 35px; width: 450px">
               <span class="lable" style="width: 180px">Role:</span>
-              <span class="info-details">{{ selectedEmployee.roleName }}</span>
+              <span class="info-details">{{
+                selectedEmployee.roleName == "OrganizationEmployee"
+                  ? "Employee"
+                  : selectedEmployee.roleName == "OrganizationAssetManager"
+                  ? "Asset Manager"
+                  : "Organization Owner"
+              }}</span>
               @if(selectedEmployee.roleName !== 'OrganizationOwner'){
               @if(selectedEmployee.roleName === 'OrganizationEmployee') {
               <button class="Grant" (click)="revokeGrantPrivileges('Grant')">
