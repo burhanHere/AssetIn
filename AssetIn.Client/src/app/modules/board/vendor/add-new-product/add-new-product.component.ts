@@ -20,6 +20,7 @@ export class AddNewProductComponent {
   public showAlert: boolean;
   public alertTitle: string;
   public alertMessage: string;
+  public showPictureError: boolean;
 
 
   constructor() {
@@ -35,36 +36,45 @@ export class AddNewProductComponent {
     this.alertMessage = '';
     this.profilePicture = '';
     this.selectedFile = null;
+    this.showPictureError = false;
   }
 
   onSubmit() {
-    const formData = new FormData();
+    if (this.productForm.valid && this.profilePicture != '') {
+      this.isLoading = true;
+      this.showPictureError = false;
+      const formData = new FormData();
 
-    // Add form fields
-    formData.append('ProductName', this.productForm.get('productName')?.value || '');
-    formData.append('Model', this.productForm.get('model')?.value || '');
-    formData.append('Price', this.productForm.get('unitPrice')?.value || '0');
-    formData.append('Description', this.productForm.get('description')?.value || '');
-    formData.append('VendorID', '1'); // Replace with actual vendor ID
+      // Add form fields
+      formData.append('ProductName', this.productForm.get('productName')?.value || '');
+      formData.append('Model', this.productForm.get('model')?.value || '');
+      formData.append('Price', this.productForm.get('unitPrice')?.value || '0');
+      formData.append('Description', this.productForm.get('description')?.value || '');
+      formData.append('VendorID', '1'); // Replace with actual vendor ID
 
-    // Use this.selectedFile for the ProfilePicture property
-    if (this.selectedFile) {
-      formData.append('ProfilePicture', this.selectedFile, this.selectedFile.name);
+      // Use this.selectedFile for the ProfilePicture property
+      if (this.selectedFile) {
+        formData.append('ProfilePicture', this.selectedFile, this.selectedFile.name);
+      }
+      this.vendorManagementService.CreateVendorProduct(formData).subscribe(
+        (response: any) => {
+          this.alertTitle = response.responseData?.[0] || 'Success';
+          this.alertMessage = response.error?.responseData?.[1] || 'Product Created Successfully';
+          this.isLoading = false;
+          this.showAlert = true;
+          this.productForm.reset();
+          this.router.navigateByUrl('/board/mainBoard/vendor/vendorDashboard');
+        }, (error: HttpErrorResponse) => {
+          this.alertTitle = error.error?.responseData?.[0] || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
+          this.isLoading = false;
+          this.showAlert = true;
+        });
     }
-    this.vendorManagementService.CreateVendorProduct(formData).subscribe(
-      (response: any) => {
-        this.alertTitle = response.responseData?.[0] || 'Success';
-        this.alertMessage = response.error?.responseData?.[1] || 'Product Created Successfully';
-        this.isLoading = false;
-        this.showAlert = true;
-        this.productForm.reset();
-      }, (error: HttpErrorResponse) => {
-        this.alertTitle = error.error?.responseData?.[0] || 'Error';
-        this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
-        this.isLoading = false;
-        this.showAlert = true;
-      });
-
+    else {
+      this.productForm.markAllAsTouched();
+      this.showPictureError = true;
+    }
   }
 
 

@@ -86,6 +86,9 @@
         <img [src]="profilePicture || 'icons/camera.png'" alt="Image" />
         <!-- </button> -->
       </div>
+      @if (showPictureError) {
+      <div class="input-error">Please add a picture.</div>
+      }
       <input
         type="file"
         accept="image/*"

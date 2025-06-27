@@ -33,12 +33,12 @@ export class VendorsComponent implements OnInit {
     this.isLoading = true;
     this.organizationManagementService.GetVendorAndVendorProducts().subscribe(
       (response: ApiResponse) => {
-        debugger;
+
         this.vendorsAndProducts = response.responseData?.vendorsWithProducts;
         this.isLoading = false;
       },
       (error: HttpErrorResponse) => {
-        debugger;
+
         this.alertTitle = error.error?.responseData?.[0] || 'Error';
         this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
         this.showAlert = true;

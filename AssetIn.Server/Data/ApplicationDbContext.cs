@@ -108,5 +108,27 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
            new OrganizationsAssetRequestStatus { OrganizationsAssetRequestStatusID = 4, OrganizationsAssetRequestStatusName = "Fulfilled" },
            new OrganizationsAssetRequestStatus { OrganizationsAssetRequestStatusID = 5, OrganizationsAssetRequestStatusName = "Canceled" }
        );
+
+
+        // table name mappint to keep them stable for all operating systems
+        modelBuilder.Entity<User>().ToTable("aspnetusers");
+        modelBuilder.Entity<IdentityRole>().ToTable("aspnetroles");
+        modelBuilder.Entity<IdentityUserRole<string>>().ToTable("aspnetuserroles");
+        modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("aspnetuserclaims");
+        modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("aspnetuserlogins");
+        modelBuilder.Entity<IdentityUserToken<string>>().ToTable("aspnetusertokens");
+        modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("aspnetroleclaims");
+        modelBuilder.Entity<Asset>().ToTable("assets");
+        modelBuilder.Entity<Organization>().ToTable("organizations");
+        modelBuilder.Entity<OrganizationsAssetAssignReturn>().ToTable("organizationsassetassignreturns");
+        modelBuilder.Entity<OrganizationsAssetCatagory>().ToTable("organizationsassetcatagories");
+        modelBuilder.Entity<OrganizationsAssetMaintanence>().ToTable("organizationsassetmaintanences");
+        modelBuilder.Entity<OrganizationsAssetRequest>().ToTable("organizationsassetrequests");
+        modelBuilder.Entity<OrganizationsAssetRetirement>().ToTable("organizationsassetretirements");
+        modelBuilder.Entity<OrganizationsAssetStatus>().ToTable("organizationsassetstatuses");
+        modelBuilder.Entity<OrganizationsAssetRequestStatus>().ToTable("organizationsassetrequeststatuses");
+        modelBuilder.Entity<OrganizationsAssetType>().ToTable("organizationsassettypes");
+        modelBuilder.Entity<Vendor>().ToTable("vendors");
+        modelBuilder.Entity<VendorProduct>().ToTable("vendorproducts");
     }
 }

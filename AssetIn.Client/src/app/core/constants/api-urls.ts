@@ -1,6 +1,6 @@
 export const ApiUrls = {
-  // baseUrl: 'http://localhost:5152/AssetIn.Server',
-  baseUrl: 'http://31.97.185.143/AssetIn.Server',
+  baseUrl: 'http://localhost:5152/AssetIn.Server',
+  // baseUrl: 'http://31.97.185.143/AssetIn.Server',
   Authentication: {
     SignUp: '/Authentication/UserSignUp',
     ConfirmEmail: '/Authentication/ConfirmEmail',

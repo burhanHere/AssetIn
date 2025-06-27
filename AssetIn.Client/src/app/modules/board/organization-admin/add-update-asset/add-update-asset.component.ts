@@ -243,7 +243,7 @@ export class AddUpdateAssetComponent implements OnInit {
       apiInput.append('AssetCatagoryID', this.assetForm.controls["assetCategory"].value || '0');
       apiInput.append('AssetTypeID', this.assetForm.controls["assetType"].value || '0');
       apiInput.append('OrganizationID', this.organizationId.toString());
-      debugger;
+
       // Add the image file if selected
       if (this.selectedFile) {
         apiInput.append('ProfilePictureUpdated', 'true');
