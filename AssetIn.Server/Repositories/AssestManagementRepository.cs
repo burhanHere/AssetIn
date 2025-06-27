@@ -530,6 +530,54 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
             }
         }
 
+        //_______________________
+        List<dynamic> organizationsAssetMaintenance = _applicationDbContext.OrganizationsAssetMaintanences.Where(x => targetAsset.AssetlD == x.AssetID)
+        .Take(8)
+        .Select(x => (object)new
+        {
+            Type = "Maintenance",
+            Date = (x.RetunDate == DateTime.MinValue) ? x.SentDate : x.RetunDate,
+            x.OrganizationsAssetMaintanenceID,
+            x.Problem,
+            x.MaintanenceResult,
+            x.AssetID
+        }).ToList();
+
+        var organizationEmployeeIds = await _applicationDbContext.Users
+            .Where(x => x.OrganizationId == targetAsset.OrganizationID || targetOrganization.UserID == x.Id)
+            .Select(x => x.Id)
+            .ToListAsync();
+
+        List<dynamic> organizationsAssetAssignReturn = _applicationDbContext.OrganizationsAssetAssignReturns.Where(x => targetAsset.AssetlD == x.AssetID)
+            .Select(x => (object)new
+            {
+                Type = "Assign/Return",
+                Date = x.AssignedAt,
+                x.ID,
+                x.Notes,
+                x.AssignedToUserID,
+                x.AssignedByUserID,
+                x.AssetID
+            }).ToList();
+
+        List<dynamic> organizationsAssetRetirement = _applicationDbContext.OrganizationsAssetRetirements.Where(x => targetAsset.AssetlD == x.AssetID)
+            .Select(x => (object)new
+            {
+                Type = "Retirement",
+                Date = x.RetirementDate,
+                x.OrganizationsAssetRetirementID,
+                x.RetirementReason,
+                x.Condition,
+                x.AssetID
+            }).ToList();
+
+        // Merge all the data
+        List<dynamic> recentActivitiesList = [.. organizationsAssetMaintenance
+     .Concat(organizationsAssetAssignReturn)
+     .Concat(organizationsAssetRetirement)
+     .OrderBy(x => x.Date)];
+
+
         return new ApiResponse
         {
             Status = StatusCodes.Status200OK,
@@ -557,7 +605,7 @@ public class AssetManagementRepository(ApplicationDbContext applicationDbContext
                 AssetCatagoryID = targetAsset.AssetCatagoryID,
                 AssetTypeID = targetAsset.AssetTypeID,
                 ProfilePicturePath = targetAsset.ProfilePicturePath,
-
+                RecentActivitiesList = recentActivitiesList
             }
         };
     }
