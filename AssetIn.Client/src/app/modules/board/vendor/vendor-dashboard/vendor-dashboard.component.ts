@@ -63,8 +63,8 @@ export class VendorDashboardComponent {
         }
         this.isLoading = false;
       }, (error: HttpErrorResponse) => {
-        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.alertTitle = error.error?.responseData?.[0] || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
         this.isLoading = false;
         this.showAlert = true;
       }, () => {
@@ -80,8 +80,8 @@ export class VendorDashboardComponent {
         this.products = response.responseData || [];
         this.isLoading = false;
       }, (error: HttpErrorResponse) => {
-        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.alertTitle = error.error?.responseData?.[0] || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
         this.isLoading = false;
         this.showAlert = true;
       }
@@ -126,8 +126,8 @@ export class VendorDashboardComponent {
           this.isLoading = false;
           this.showAlert = true;
         }, (error: HttpErrorResponse) => {
-          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+          this.alertTitle = error.error?.responseData?.[0] || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
           this.isLoading = false;
           this.showAlert = true;
         }
@@ -183,8 +183,8 @@ export class VendorDashboardComponent {
           this.isLoading = false;
           this.showAlert = true;
         }, (error: HttpErrorResponse) => {
-          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+          this.alertTitle = error.error?.responseData?.[0] || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
           this.isLoading = false;
           this.showAlert = true;
         });

@@ -214,6 +214,15 @@ public class CrystalReportingRepository(ApplicationDbContext applicationDbContex
             })
             .ToListAsync();
 
+        if (query.Count() == 0)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "No asset found for the given criteria." }
+            };
+        }
+
         var assets = await query.Select(x => new
         {
             x.AssetCatagoryID,
@@ -225,7 +234,6 @@ public class CrystalReportingRepository(ApplicationDbContext applicationDbContex
             x.Barcode,
             x.CostPrice,
             x.CreatedDate,
-            x.DeletedByOrganization,
             x.Description,
             x.Location,
             x.Manufacturer,
@@ -254,7 +262,6 @@ public class CrystalReportingRepository(ApplicationDbContext applicationDbContex
             x.Barcode,
             x.CreatedDate,
             x.UpdatedDate,
-            x.DeletedByOrganization,
             AssetTypeName = assetTypes.FirstOrDefault(a => a.Id == x.AssetTypeID)?.Name,
             AssetCategoryName = assetCategories.FirstOrDefault(c => c.Id == x.AssetCatagoryID)?.Name,
             AssetStatusName = assetStatuses.FirstOrDefault(s => s.Id == x.AssetStatusID)?.Name,
@@ -267,7 +274,7 @@ public class CrystalReportingRepository(ApplicationDbContext applicationDbContex
         };
     }
 
-    public async Task<ApiResponse> GetEmployeeReportDataAsync(string? employeeRole, bool? employeeStatus, string? specificEmployee, string? gender, int organizationId, DateTime? toDate, DateTime? fromDate)
+    public async Task<ApiResponse> GetEmployeeReportDataAsync(string? employeeRole, bool employeeStatus, string? specificEmployee, string? gender, int organizationId, DateTime? toDate, DateTime? fromDate)
     {
         var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationID == organizationId);
         if (targetOrganization == null)
@@ -282,34 +289,46 @@ public class CrystalReportingRepository(ApplicationDbContext applicationDbContex
         IQueryable<User> query = _applicationDbContext.Users
             .Where(x => x.OrganizationId == organizationId || x.Id == targetOrganization.UserID);
 
-        if (employeeRole != default)
+        if (employeeRole != null)
         {
-            query = query.Where(x => _userManager.IsInRoleAsync(x, employeeRole).Result);
+            var role = await _applicationDbContext.Roles.FirstOrDefaultAsync(x => x.Id == employeeRole);
+            // query = query.Where(x => _userManager.IsInRoleAsync(x, role.Name).Result);
+            query = query.Where(user => _applicationDbContext.UserRoles
+          .Any(ur => ur.UserId == user.Id && ur.RoleId == role.Id));
         }
 
-        if (specificEmployee != default)
+        if (specificEmployee != null)
         {
             query = query.Where(x => x.Id == specificEmployee);
         }
 
-        if (employeeStatus != default)
-        {
-            query = query.Where(x => x.Status == employeeStatus);
-        }
 
-        if (gender != default)
+        query = query.Where(x => x.Status == employeeStatus);
+
+
+        if (gender != null)
         {
             query = query.Where(x => x.Gender == gender);
         }
 
-        if (fromDate != default)
+        if (fromDate != null)
         {
             query = query.Where(x => x.DateOfJoining >= fromDate);
         }
 
-        if (toDate != default)
+        if (toDate != null)
         {
             query = query.Where(x => x.DateOfJoining <= toDate);
+        }
+
+        // Use Any() instead of Count() for better performance
+        if (!await query.AnyAsync())
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "No employees found for the given criteria." }
+            };
         }
 
         // Step 1: Project in a valid way for EF (no dictionary here)
@@ -389,7 +408,14 @@ public class CrystalReportingRepository(ApplicationDbContext applicationDbContex
                 Name = x.OrganizationsAssetRequestStatusName
             })
             .ToListAsync();
-
+        if (query.Count() == 0)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "No asset request found for the given criteria." }
+            };
+        }
         var rawData = await query
         .Select(x => new
         {

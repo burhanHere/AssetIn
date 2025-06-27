@@ -75,8 +75,8 @@ export class AssetRequestsComponent implements OnInit {
         },
         (error: any) => {
 
-          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+          this.alertTitle = error.error?.responseData?.[0] || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         }
@@ -142,8 +142,8 @@ export class AssetRequestsComponent implements OnInit {
         },
         (error) => {
 
-          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+          this.alertTitle = error.error?.responseData?.[0] || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         },
@@ -175,8 +175,8 @@ export class AssetRequestsComponent implements OnInit {
           this.showAssignAssetModal = false;
         },
         (error: any) => {
-          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+          this.alertTitle = error.error?.responseData?.[0] || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         },
@@ -204,8 +204,8 @@ export class AssetRequestsComponent implements OnInit {
           this.isLoading = false;
         },
         (error: any) => {
-          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+          this.alertTitle = error.error?.responseData?.[0] || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         }
@@ -224,8 +224,8 @@ export class AssetRequestsComponent implements OnInit {
           this.isLoading = false;
         },
         (error: any) => {
-          this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-          this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+          this.alertTitle = error.error?.responseData?.[0] || 'Error';
+          this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
           this.showAlert = true;
           this.isLoading = false;
         }
@@ -252,8 +252,8 @@ export class AssetRequestsComponent implements OnInit {
 
           },
           (error) => {
-            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+            this.alertTitle = error.error?.responseData?.[0] || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
             this.showAlert = true;
             this.isLoading = false;
           },

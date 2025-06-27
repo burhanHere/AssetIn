@@ -95,8 +95,8 @@ export class ReportingComponent implements OnInit {
         this.assetTypes = response.responseData?.["organizationAssetTypes"];
         this.isLoading = false;
       }, (error: HttpErrorResponse) => {
-        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.alertTitle = error.error?.responseData?.[0] || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
         this.showAlert = true;
         this.isLoading = false;
       });
@@ -123,7 +123,7 @@ export class ReportingComponent implements OnInit {
       assignedTo: this.reportingForm.controls['assignedTo'].value,
       // employee report
       employeeRole: this.reportingForm.controls['employeeRole'].value,
-      employeeStatus: Boolean(this.reportingForm.controls['employeeStatus'].value),
+      employeeStatus: Boolean(!this.reportingForm.controls['employeeStatus'].value ? true : false),
       specificEmployee: this.reportingForm.controls['specificEmployee'].value,
       gender: this.reportingForm.controls['gender'].value,
       // asset request report
@@ -135,7 +135,6 @@ export class ReportingComponent implements OnInit {
       // target organization id
       organizationId: Number(this.organizationId)
     };
-
     this.crystalReportingService.GenerateHtmlReportByFilter(reportFilterationData).subscribe(
       (response: any) => {
         this.reportData = response.responseData;
@@ -145,8 +144,8 @@ export class ReportingComponent implements OnInit {
         this.isLoading = false;
       },
       (error: HttpErrorResponse) => {
-        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.alertTitle = error.error?.responseData?.[0] || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
         this.showAlert = true;
         this.isLoading = false;
       }

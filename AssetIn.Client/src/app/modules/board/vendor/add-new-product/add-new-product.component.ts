@@ -59,8 +59,8 @@ export class AddNewProductComponent {
         this.showAlert = true;
         this.productForm.reset();
       }, (error: HttpErrorResponse) => {
-        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.alertTitle = error.error?.responseData?.[0] || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
         this.isLoading = false;
         this.showAlert = true;
       });

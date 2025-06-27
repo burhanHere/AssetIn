@@ -110,8 +110,8 @@ export class OrganizationAdminDashboardComponent implements OnInit {
         this.isLoading = false;
       },
       (error: HttpErrorResponse) => {
-        this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-        this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+        this.alertTitle = error.error?.responseData?.[0] || 'Error';
+        this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
         this.showAlert = true;
         this.isLoading = false;
       }
@@ -134,8 +134,8 @@ export class OrganizationAdminDashboardComponent implements OnInit {
             this.createDoughnutChart();
           },
           (error: HttpErrorResponse) => {
-            this.alertTitle = error.error?.responseData?.[0] || error.error?.message || 'Error';
-            this.alertMessage = error.error?.responseData?.[1] || error.error?.message || 'Unknown error occurred';
+            this.alertTitle = error.error?.responseData?.[0] || 'Error';
+            this.alertMessage = error.error?.responseData?.[1] || 'Unknown error occurred';
             this.isLoading = false;
             this.showAlert = true;
           }

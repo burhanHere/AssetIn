@@ -98,7 +98,7 @@ export class AssetDetailsComponent implements OnInit {
       },
       (error) => {
         this.alertTitle =
-          error.error?.responseData?.[0] || error.error?.message || 'Error';
+          error.error?.responseData?.[0] || 'Error';
         this.alertMessage =
           error.error?.responseData?.[1] ||
           error.error?.message ||
@@ -121,7 +121,7 @@ export class AssetDetailsComponent implements OnInit {
         },
         (error) => {
           this.alertTitle =
-            error.error?.responseData?.[0] || error.error?.message || 'Error';
+            error.error?.responseData?.[0] || 'Error';
           this.alertMessage =
             error.error?.responseData?.[1] ||
             error.error?.message ||
@@ -147,7 +147,7 @@ export class AssetDetailsComponent implements OnInit {
       },
       (error) => {
         this.alertTitle =
-          error.error?.responseData?.[0] || error.error?.message || 'Error';
+          error.error?.responseData?.[0] || 'Error';
         this.alertMessage =
           error.error?.responseData?.[1] ||
           error.error?.message ||
@@ -180,7 +180,7 @@ export class AssetDetailsComponent implements OnInit {
       },
       (error) => {
         this.alertTitle =
-          error.error?.responseData?.[0] || error.error?.message || 'Error';
+          error.error?.responseData?.[0] || 'Error';
         this.alertMessage =
           error.error?.responseData?.[1] ||
           error.error?.message ||
@@ -228,7 +228,7 @@ export class AssetDetailsComponent implements OnInit {
       },
       (error) => {
         this.alertTitle =
-          error.error?.responseData?.[0] || error.error?.message || 'Error';
+          error.error?.responseData?.[0] || 'Error';
         this.alertMessage =
           error.error?.responseData?.[1] ||
           error.error?.message ||
@@ -269,7 +269,7 @@ export class AssetDetailsComponent implements OnInit {
       },
       (error) => {
         this.alertTitle =
-          error.error?.responseData?.[0] || error.error?.message || 'Error';
+          error.error?.responseData?.[0] || 'Error';
         this.alertMessage =
           error.error?.responseData?.[1] ||
           error.error?.message ||
@@ -283,7 +283,7 @@ export class AssetDetailsComponent implements OnInit {
     );
   }
 
-  public updateAsset(): void {}
+  public updateAsset(): void { }
 
   public sendToMaintenance(): void {
     this.isLoading = true;
@@ -306,10 +306,9 @@ export class AssetDetailsComponent implements OnInit {
         },
         (error) => {
           this.alertTitle =
-            error.error?.responseData?.[0] || error.error?.message || 'Error';
+            error.error?.responseData?.[0] || 'Error';
           this.alertMessage =
             error.error?.responseData?.[1] ||
-            error.error?.message ||
             'Unknown error occurred';
           this.isLoading = false;
           this.showAlert = true;
@@ -352,10 +351,9 @@ export class AssetDetailsComponent implements OnInit {
         },
         (error) => {
           this.alertTitle =
-            error.error?.responseData?.[0] || error.error?.message || 'Error';
+            error.error?.responseData?.[0] || 'Error';
           this.alertMessage =
             error.error?.responseData?.[1] ||
-            error.error?.message ||
             'Unknown error occurred';
           this.isLoading = false;
           this.showAlert = true;

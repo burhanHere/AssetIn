@@ -10,7 +10,7 @@ public class ReportingFilterDto
     public string? assignedTo { get; set; }
     // Employee Report
     public string? employeeRole { get; set; }
-    public bool? employeeStatus { get; set; }
+    public bool employeeStatus { get; set; }
     public string? specificEmployee { get; set; }
     public string? gender { get; set; }
     // Asset Request Report
