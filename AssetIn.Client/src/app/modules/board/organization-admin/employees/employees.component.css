@@ -13,6 +13,7 @@
   gap: 20px;
   justify-content: center; /* Center cards horizontally */
   padding: 20px;
+  padding-bottom: 60px;
 }
 
 /* === Individual employee card styling === */
