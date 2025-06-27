@@ -139,7 +139,15 @@
       />
       <div style="text-align: center; line-height: 1.1">
         <h5 style="font-weight: bold; margin: 0">{{ emp.userName }}</h5>
-        <p style="margin: 0; font-size: small">{{ emp.roleName }}</p>
+        <p style="margin: 0; font-size: small">
+          {{
+            emp.roleName == "OrganizationEmployee"
+              ? "Employee"
+              : selectedEmployee.roleName == "OrganizationAssetManager"
+              ? "Asset Manager"
+              : "Organization Owner"
+          }}
+        </p>
       </div>
     </div>
     } @if (selectedEmployee) {
