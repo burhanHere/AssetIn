@@ -48,6 +48,7 @@ export class AssetDetailsComponent implements OnInit {
   public showReturnFromMaintenanceModal: boolean;
   public returnFromMaintenanceForm: FormGroup;
   public showDeleteAssetAlert: boolean;
+  public showRetireAssetAlert: boolean;
 
   constructor() {
     this.organizationId =
@@ -85,6 +86,7 @@ export class AssetDetailsComponent implements OnInit {
     this.showSendToMaintenanceModal = false;
     this.showReturnFromMaintenanceModal = false;
     this.showDeleteAssetAlert = false;
+    this.showRetireAssetAlert= false;
   }
 
   ngOnInit(): void {
@@ -137,6 +139,11 @@ export class AssetDetailsComponent implements OnInit {
   public showDeleteAssetConfirmation() {
     this.showDeleteAssetAlert = !this.showDeleteAssetAlert;
   }
+
+  public showRetireAssetConfirmation() {
+    this.showRetireAssetAlert = !this.showRetireAssetAlert;
+  }
+
 
   public deleteAsset(): void {
     this.isLoading = true;
@@ -272,7 +279,6 @@ export class AssetDetailsComponent implements OnInit {
         this.alertTitle = 'Success';
         this.alertMessage = 'Asset retired successfully.';
         this.showAlert = true;
-        console.log('Retirement successful:', response);
       },
       (error) => {
         this.alertTitle =

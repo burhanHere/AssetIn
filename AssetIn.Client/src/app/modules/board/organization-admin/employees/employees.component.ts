@@ -13,7 +13,7 @@ import {
 import { EmployeeManagementService } from '../../../../core/services/EmployeeManagement/employee-management.service';
 import { lockUnlockUser } from '../../../../core/models/lockUnlockUser';
 import { NewEmployee } from '../../../../core/models/newEmployee';
-import { ageGreaterThan18Validator } from '../../../../shared/validators/age-gratter-then';
+import {  dateOfBirthValidator } from '../../../../shared/validators/age-gratter-then';
 import { UpdateEmployee } from '../../../../core/models/UpdateEmployee';
 
 @Component({
@@ -51,7 +51,7 @@ export class EmployeesComponent implements OnInit {
       email: new FormControl(this.organizationDomain),
       phone: new FormControl('', [Validators.required]),
       gender: new FormControl('', [Validators.required]),
-      dateOfBirth: new FormControl('', [Validators.required, ageGreaterThan18Validator(18)]),
+      dateOfBirth: new FormControl('', [Validators.required,  dateOfBirthValidator(18)]),
       // role: new FormControl('', [Validators.required]),
     });
 

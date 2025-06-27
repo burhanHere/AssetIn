@@ -27,10 +27,10 @@
           </div>
         </div>
       </div>
-      <div>
+      <div >
         <div class="asset-header__info">
           <h2>{{ asset.assetName }}</h2>
-          <p style="color: #6b7280">{{ asset.description }}</p>
+          <p style="color: #6b7280; align-items: right;">{{ asset.description }}</p>
           @if (asset.assetStatusID !==2) {
           <button
             style="margin: 0.5rem"
@@ -60,16 +60,16 @@
         } @else if(asset.assetStatusID==2) {
         <div
           class="retire"
-          style="padding: 5px; width: 100px; margin: 40px 20px"
+          style="padding: 5px; width: 100px; margin: 40px 20px;   cursor: pointer;"
         >
           Retired
         </div>
         } @else if (asset.assetStatusID== 4) {
-        <div class="available">available</div>
-        <div class="btn btn--primary" (click)="openCheckOutModal()">
+        <div class="available">Available</div>
+        <div class="btn btn--primary" style="border-radius: 3px;" (click)="openCheckOutModal()">
           Check Out
         </div>
-        <div class="retire" (click)="retire()">retire</div>
+        <div class="retire" (click)="showRetireAssetConfirmation()" >Retire</div>
         <div class="under-maintenance" (click)="openSendToMaintenanceModal()">
           Mask as Under Maintenance
         </div>
@@ -403,6 +403,26 @@
       <div class="delete-confirmation-container-buttons">
         <button (click)="deleteAsset()">yes</button>
         <button (click)="showDeleteAssetAlert = !showDeleteAssetAlert">
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+}
+
+@if(showRetireAssetAlert) {
+<div>
+  <div class="blur-overlay"></div>
+  <div class="gradient-border-wrapper">
+    <div class="delete-confirmation-container">
+      <div>
+        <h3>Are you sure you want to Retire this asset?</h3>
+      </div>
+      <div class="delete-confirmation-container-buttons">
+        <button (click)="retire()">yes</button>
+
+        <button (click)="showRetireAssetAlert = !showRetireAssetAlert">
           No
         </button>
       </div>
