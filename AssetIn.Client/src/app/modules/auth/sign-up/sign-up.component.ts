@@ -6,7 +6,7 @@ import { SignUp } from '../../../core/models/sign-up';
 import { ApiResponse } from '../../../core/models/apiResponse';
 import { HttpErrorResponse } from '@angular/common/http';
 import { formControlValueMatch } from '../../../shared/validators/form-control-value-match.validator';
-import { ageGreaterThan18Validator } from '../../../shared/validators/age-gratter-then';
+import { dateOfBirthValidator } from '../../../shared/validators/age-gratter-then';
 
 @Component({
   selector: 'app-sign-up',
@@ -26,7 +26,7 @@ export class SignUpComponent implements OnInit {
       fullName: new FormControl('', [Validators.required]),
       userName: new FormControl('', [Validators.required]),
       gender: new FormControl('', [Validators.required]),
-      dateOfBirth: new FormControl('', [Validators.required, ageGreaterThan18Validator(18)]),
+      dateOfBirth: new FormControl('', [Validators.required, dateOfBirthValidator(18)]),
       email: new FormControl('', [Validators.required, Validators.email]),
       phoneNumber: new FormControl('', [
         Validators.required,
