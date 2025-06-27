@@ -83,9 +83,13 @@
           <div class="inputError">
             @if (signUpForm.controls['dateOfBirth'].errors?.['required']) {
             <span>Date of Birth is required.</span>
-            } @if (signUpForm.controls['dateOfBirth'].errors?.['underAge']) {
-            <span>You should be 18+.</span>
-            }
+            }@else if
+              (signUpForm.controls['dateOfBirth'].errors?.['futureDate']) {
+              <div class="input-error">DOB cannot be in the future.</div>
+              } @else if
+              (signUpForm.controls['dateOfBirth'].errors?.['underAge']) {
+              <div class="input-error">Under age.</div>
+              }
           </div>
           }
         </div>

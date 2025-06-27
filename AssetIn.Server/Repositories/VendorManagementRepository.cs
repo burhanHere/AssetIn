@@ -137,18 +137,27 @@ public class VendorManagementRepository(ApplicationDbContext applicationDbContex
     public async Task<ApiResponse> GetVendorProducts(string userId)
     {
         var targetVendor = await _applicationDbContext.Vendors.FirstOrDefaultAsync(x => x.UserID == userId);
-        if (targetVendor == null)
-        {
-            return new ApiResponse
-            {
-                Status = StatusCodes.Status403Forbidden,
-                ResponseData = new List<string> { "Error", "Unable to fetch vendor products." }
-            };
-        }
+        // if (targetVendor == null)
+        // {
+        //     return new ApiResponse
+        //     {
+        //         Status = StatusCodes.Status403Forbidden,
+        //         ResponseData = new List<string> { "Error", "Unable to fetch vendor products." }
+        //     };
+        // }
 
         var vendorProducts = await _applicationDbContext.VendorProducts
             .Where(x => x.VendorID == targetVendor.VendorID)
             .ToListAsync();
+
+        if (vendorProducts == null)
+        {
+            return new ApiResponse
+            {
+                Status = StatusCodes.Status404NotFound,
+                ResponseData = new List<string> { "Error", "No vendor products found." }
+            };
+        }
 
         return new()
         {

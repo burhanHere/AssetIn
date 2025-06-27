@@ -17,7 +17,7 @@
           ×
         </button>
         <div class="employee-form-container">
-          <h2>Add New Employee</h2>
+          <h2>Employee Details</h2>
           <form [formGroup]="employeeForm">
             <div class="user-data-container">
               <div class="user-data">
@@ -104,8 +104,11 @@
               @if (employeeForm.controls['dateOfBirth'].touched &&
               employeeForm.controls['dateOfBirth'].errors?.['required']) {
               <div class="input-error">Date of Birth is required.</div>
-              } @if (employeeForm.controls['dateOfBirth'].touched &&
-              employeeForm.controls['dateOfBirth'].errors?.['underAge']) {
+              }@else if
+              (employeeForm.controls['dateOfBirth'].errors?.['futureDate']) {
+              <div class="input-error">DOB cannot be in the future.</div>
+              } @else if
+              (employeeForm.controls['dateOfBirth'].errors?.['underAge']) {
               <div class="input-error">Under age.</div>
               }
             </div>

@@ -1,42 +1,36 @@
-import {
-  AbstractControl,
-  ValidationErrors,
-  ValidatorFn,
-} from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-export function ageGreaterThan18Validator(minimumAge: number): ValidatorFn {
+export function dateOfBirthValidator(minAge: number): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) {
-      return null; // Don't validate if no value is provided
-    }
+    if (!control.value) return null;
 
     const birthDate = new Date(control.value);
     const today = new Date();
 
-    // Check if the date is valid
     if (isNaN(birthDate.getTime())) {
       return { invalidDate: true };
     }
 
-    // Check if birth date is in the future
+    // Normalize time to prevent timezone issues
+    birthDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    // ✅ 1. Return if future
     if (birthDate > today) {
-      return { underAge: true };
+      return { futureDate: true };
     }
 
-    // Calculate age
+    // ✅ 2. Check underage only if not in future
     let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    // Adjust age if birthday hasn't occurred this year
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
 
-    // Check if age is less than minimumAge
-    if (age <= minimumAge) {
+    if (age < minAge) {
       return { underAge: true };
     }
 
-    return null; // Age is 18 or above
+    return null; // ✅ Valid
   };
 }
