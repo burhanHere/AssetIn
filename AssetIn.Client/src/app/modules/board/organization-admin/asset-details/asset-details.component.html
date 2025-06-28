@@ -27,10 +27,12 @@
           </div>
         </div>
       </div>
-      <div >
+      <div>
         <div class="asset-header__info">
           <h2>{{ asset.assetName }}</h2>
-          <p style="color: #6b7280; align-items: right;">{{ asset.description }}</p>
+          <p style="color: #6b7280; align-items: right">
+            {{ asset.description }}
+          </p>
           @if (asset.assetStatusID !==2) {
           <button
             style="margin: 0.5rem"
@@ -60,16 +62,20 @@
         } @else if(asset.assetStatusID==2) {
         <div
           class="retire"
-          style="padding: 5px; width: 100px; margin: 40px 20px;   cursor: pointer;"
+          style="padding: 5px; width: 100px; margin: 40px 20px; cursor: pointer"
         >
           Retired
         </div>
         } @else if (asset.assetStatusID== 4) {
         <div class="available">Available</div>
-        <div class="btn btn--primary" style="border-radius: 3px;" (click)="openCheckOutModal()">
+        <div
+          class="btn btn--primary"
+          style="border-radius: 3px"
+          (click)="openCheckOutModal()"
+        >
           Check Out
         </div>
-        <div class="retire" (click)="showRetireAssetConfirmation()" >Retire</div>
+        <div class="retire" (click)="showRetireAssetConfirmation()">Retire</div>
         <div class="under-maintenance" (click)="openSendToMaintenanceModal()">
           Mask as Under Maintenance
         </div>
@@ -286,6 +292,10 @@
       <div class="asset-section__title">Basic Information</div>
       <div class="asset-grid">
         <div>
+          <strong>Asset Id:</strong>
+          {{ assetId }}
+        </div>
+        <div>
           <strong>Identification Number:</strong>
           {{ asset.assetIdentificationNumber }}
         </div>
@@ -409,9 +419,7 @@
     </div>
   </div>
 </div>
-}
-
-@if(showRetireAssetAlert) {
+} @if(showRetireAssetAlert) {
 <div>
   <div class="blur-overlay"></div>
   <div class="gradient-border-wrapper">

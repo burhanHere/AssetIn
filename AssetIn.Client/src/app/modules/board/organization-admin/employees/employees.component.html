@@ -211,7 +211,7 @@
               <span class="info-details">
                 @if (selectedEmployee.allocatedAssetIdsList?.length > 0) { @for
                 (id of selectedEmployee.allocatedAssetIdsList; track $index) {
-                <span>{{ id }}</span>
+                <span>{{ id }}, </span>
                 } } @else {
                 <span>No assets allocated</span>
                 }
