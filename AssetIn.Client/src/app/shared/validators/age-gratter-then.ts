@@ -11,16 +11,13 @@ export function dateOfBirthValidator(minAge: number): ValidatorFn {
       return { invalidDate: true };
     }
 
-    // Normalize time to prevent timezone issues
     birthDate.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
 
-    // ✅ 1. Return if future
     if (birthDate > today) {
       return { futureDate: true };
     }
 
-    // ✅ 2. Check underage only if not in future
     let age = today.getFullYear() - birthDate.getFullYear();
     const m = today.getMonth() - birthDate.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
@@ -31,6 +28,6 @@ export function dateOfBirthValidator(minAge: number): ValidatorFn {
       return { underAge: true };
     }
 
-    return null; // ✅ Valid
+    return null;
   };
 }
