@@ -235,7 +235,6 @@ export class AssetRequestsComponent implements OnInit {
   onSubmit() {
     this.isLoading = true;
     if (this.assignAssetForm.valid) {
-      this.closeAssignAssetModal(); // Close modal first (optional)
       const newAssetRequest: newAsset = {
         assetRequestId: this.selectedRequest.assetRequestID,
         assetID: this.assignAssetForm.controls['availableAssets'].value,
@@ -248,8 +247,8 @@ export class AssetRequestsComponent implements OnInit {
             this.alertMessage = response.responseData[1] || 'Request fulfilled successfully';
             this.alertTitle = response.responseData[0] || 'Success';
             this.assignAssetForm.reset(); // Reset the form after successful submission
+            this.closeAssignAssetModal(); // Close modal first (optional)
             this.isLoading = false;
-
           },
           (error) => {
             this.alertTitle = error.error?.responseData?.[0] || 'Error';
