@@ -1,0 +1,15 @@
+[Unit]
+Description=My .NET Backend API
+After=network.target
+
+[Service]
+WorkingDirectory=/var/www/AssetIn/assetin.server
+ExecStart=/usr/bin/dotnet /var/www/AssetIn/assetin.server/AssetIn.Server.dll
+Restart=always
+RestartSec=10
+SyslogIdentifier=dotnet-backend
+User=www-data
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target

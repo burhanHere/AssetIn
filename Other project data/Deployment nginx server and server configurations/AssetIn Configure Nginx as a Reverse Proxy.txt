@@ -1,0 +1,21 @@
+server {
+    listen 80;
+    server_name 31.97.185.143;
+
+    # API reverse proxy to .NET backend
+    location /assetin.server {
+        proxy_pass         http://localhost:5000;
+        proxy_http_version 1.1;
+        proxy_set_header   Upgrade $http_upgrade;
+        proxy_set_header   Connection keep-alive;
+        proxy_set_header   Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Angular app served from dist folder
+    location / {
+        root /var/www/AssetIn/assetin.client/browser;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+    }
+}

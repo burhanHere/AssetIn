@@ -1,0 +1,6 @@
+root password = Lp-l2817@lrq550
+ssh root@31.97.185.143
+
+scp -r dist/assetin.client root@31.97.185.143:/var/www/AssetIn
+
+scp -r publish root@31.97.185.143:/var/www/AssetIn
